@@ -272,33 +272,37 @@ def parse_llm_output_with_types(llm_output: str) -> List[Dict[str, str]]:
     logger.info(f"LLM输出预览: {llm_output[:200]}...")
     
     # 1. 尝试JSON解析
-    logger.info("尝试JSON解析...")
-    json_data = safe_json_parse(llm_output)
-    logger.info(f"JSON解析结果: {json_data is not None}")
-    if json_data:
-        logger.info(f"JSON解析成功，得到 {len(json_data)} 个条目")
-        results = []
-        for item in json_data:
-            if isinstance(item, dict) and item.get("head") and item.get("relation") and item.get("tail"):
-                results.append({
-                    "head": str(item.get("head", "")).strip(),
-                    "head_type": str(item.get("head_type", "")).strip() or "概念",
-                    "relation": str(item.get("relation", "")).strip(),
-                    "tail": str(item.get("tail", "")).strip(),
-                    "tail_type": str(item.get("tail_type", "")).strip() or "概念"
-                })
-        if results:
-            logger.info(f"从JSON数据中提取到 {len(results)} 个有效三元组")
-            return results
+    logger.debug("尝试JSON解析...")
+    try:
+        json_data = safe_json_parse(llm_output)
+        
+        if json_data:
+            logger.debug(f"JSON解析成功，得到 {len(json_data)} 个条目")
+            results = []
+            for item in json_data:
+                # 确保得到字典且包含必要字段
+                if isinstance(item, dict) and item.get("head") and item.get("relation") and item.get("tail"):
+                    results.append({
+                        "head": str(item.get("head", "")).strip(),
+                        "head_type": str(item.get("head_type", "")).strip() or "概念",
+                        "relation": str(item.get("relation", "")).strip(),
+                        "tail": str(item.get("tail", "")).strip(),
+                        "tail_type": str(item.get("tail_type", "")).strip() or "概念"
+                    })
+            
+            if results:
+                logger.info(f"从JSON数据中提取到 {len(results)} 个有效三元组")
+                return results
+            else:
+                logger.warning("JSON解析成功但没有找到有效的三元组数据")
+                return []
         else:
-            logger.warning("JSON解析成功但没有找到有效的三元组数据")
-    else:
-        logger.info("JSON解析失败，将使用正则表达式")
-
-    # 2. JSON解析失败，使用增强正则
-    regex_results = extract_triplets_with_types_regex(llm_output)
-    logger.info(f"正则表达式解析得到 {len(regex_results)} 个结果")
-    return regex_results
+            logger.debug(f"JSON解析失败: {llm_output[:100]}...")
+            return []
+            
+    except Exception as e:
+        logger.debug(f"JSON处理过程中发生未捕获异常: {e}")
+        return []
 
 def parse_llm_output_to_triplets(llm_output: str) -> List[Tuple[str, str, str]]:
     """

@@ -40,7 +40,7 @@ if not builder.initialize():
 app = Flask(__name__)
 
 # 配置
-app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB 文件大小限制
+app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # 200MB 文件大小限制
 
 # 全局构建器实例
 executor = ThreadPoolExecutor(max_workers=3)
@@ -128,12 +128,34 @@ def build_graph_with_progress(file_url: str, client_id: str) -> Dict[str, Any]:
         # 阶段4：构建知识图谱
         progress_tracker.update_stage("knowledge_graph", "开始构建知识图谱...", 40)
         
+        # 预检: 检查llm_outputs目录权限
+        llm_outputs_dir = Path(os.getcwd()) / "llm_outputs"
+        try:
+            if not llm_outputs_dir.exists():
+                llm_outputs_dir.mkdir(parents=True, exist_ok=True)
+                logger.info(f"已创建输出目录: {llm_outputs_dir}")
+            
+            # 检查写权限
+            test_file = llm_outputs_dir / ".test_write"
+            with open(test_file, 'w') as f:
+                f.write('test')
+            test_file.unlink()
+            logger.info(f"输出目录权限检查通过: {llm_outputs_dir}")
+        except Exception as e:
+            logger.error(f"输出目录权限检查失败: {e}")
+            # 不阻断流程，但记录警告
+        
+        logger.info(f"开始调用 builder.build_knowledge_graph, 文档数: {len(documents)}")
+        
         # 构建知识图谱
         index = builder.build_knowledge_graph(documents, progress_tracker)
+        
         if not index:
             error_msg = '知识图谱构建失败'
             progress_tracker.error("knowledge_graph", error_msg)
             return {'success': False, 'error': error_msg}
+            
+        logger.info("builder.build_knowledge_graph 调用成功")
         
         # 阶段5：完成
         processing_time = (datetime.now() - start_time).total_seconds()
@@ -194,7 +216,7 @@ def upload_file():
             return jsonify({'error': '没有选择文件'}), 400
             
         # 获取参数
-        max_size = request.form.get('max_size', type=int) or (100 * 1024 * 1024)
+        max_size = request.form.get('max_size', type=int) or (200 * 1024 * 1024)
         
         # 读取文件数据
         file_data = file.read()
@@ -257,6 +279,8 @@ def build_graph_sse():
     try:
         data = request.json or request.form
         file_url = data.get('file_url')
+        
+        logger.info(f"收到构建请求 build_graph_sse: {data}")
         
         if not file_url:
              return Response(sse_event(create_error_event("validation", "缺少 file_url 参数")),
@@ -334,7 +358,7 @@ def upload_and_build_sse():
         client_id = f"client_{int(datetime.now().timestamp() * 1000)}"
         
         # 获取参数
-        max_size = request.form.get('max_size', type=int) or (100 * 1024 * 1024)  # 默认100MB
+        max_size = request.form.get('max_size', type=int) or (200 * 1024 * 1024)  # 默认200MB
         
         # 读取文件数据
         file_data = file.read()

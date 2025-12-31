@@ -71,15 +71,16 @@ NEO4J_CONFIG = {
 DOCUMENT_CONFIG = {
     "path": os.getenv("DOCUMENT_PATH", str(PROJECT_ROOT / "data")),
     "supported_extensions": [".txt", ".docx", ".pdf", ".md"],
-    "max_paths_per_chunk": int(os.getenv("MAX_PATHS_PER_CHUNK", "3")),
+    "max_paths_per_chunk": int(os.getenv("MAX_PATHS_PER_CHUNK", "2")),
     "num_workers": int(os.getenv("DOCUMENT_NUM_WORKERS", "1"))
 }
 
 # 提取器配置
 EXTRACTOR_CONFIG = {
-    "max_triplets_per_chunk": 20, # 用于 DynamicLLMPathExtractor
+    "max_triplets_per_chunk": 8, # 用于 DynamicLLMPathExtractor
     "extract_prompt": """你是青少年眼科视光领域的知识图谱提取专家，核心任务是从给定的青少年眼科视光相关文本中，精准提取符合语义逻辑的实体-关系-实体三元组，为视光领域知识体系构建提供结构化支撑。
-
+【质量优先原则】
+优先提取核心、重要、具有明确语义关系的三元组。宁可少提取，也要要确保每个三元组都是高质量、有价值、有意义的。避免提取冗余、重复、或语义模糊的三元组。
 任务拆解（按以下步骤执行）
 1. 文本范围锁定：仅处理与青少年眼科视光直接相关的文本（如近视防控、配镜、视功能训练、眼科检查等内容），若文本涉及非青少年群体或非视光领域信息，自动过滤该部分内容。
 2. 实体识别与类型标注：
@@ -117,18 +118,18 @@ EXTRACTOR_CONFIG = {
     "tail_type": "人群"
   }
 ]
-
+【重要提醒】只提取高质量、核心的三元组。如果文本中没有足够高质量的三元组，可以输出空列表[]。质量比数量更重要。
 Text: {text}"""
 }
 
 # 请求限制配置 - 更严格的速率限制
 RATE_LIMIT_CONFIG = {
     "request_delay": 0.5,  # 增加请求间隔到3秒，避免触发403错误
-    "max_concurrent_requests": 1,  # 严格控制并发数
+    "max_concurrent_requests": 5,  # 严格控制并发数
     "retry_delay": 15.0,  # 增加重试延迟到15秒
     "rpm_limit": 20,  # 大幅降低每分钟请求数限制
     "tpm_limit": 10000,  # 降低每分钟Token数限制
-    "max_tokens_per_request": 500,  # 每个请求的最大Token数
+    "max_tokens_per_request": 1000,  # 每个请求的最大Token数
     "max_retries": 3  # 最大重试次数
 }
 

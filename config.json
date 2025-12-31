@@ -1,0 +1,16 @@
+{
+    "watch_directory": "./wait_build",
+    "upload_api": "http://dev-operate.moineye.com/graphapi/upload",
+    "build_graph_api": "http://dev-operate.moineye.com/graphapi/build_graph_sse",
+    "supported_extensions": [
+        ".txt",
+        ".md",
+        ".docx",
+        ".pdf"
+    ],
+    "log_dir": "./logs",
+    "max_retries": 3,
+    "retry_delay": 5.0,
+    "batch_delay": 1.0,
+    "batch_size": 5
+}

@@ -77,14 +77,14 @@ class COSUploader:
         self.config = config
         
     def upload_file(self, file_data: bytes, filename: str, 
-                   max_size: int = 100 * 1024 * 1024) -> Dict[str, Any]:
+                   max_size: int = 200 * 1024 * 1024) -> Dict[str, Any]:
         """
         上传文件到腾讯云COS
         
         Args:
             file_data: 文件数据
             filename: 文件名
-            max_size: 最大文件大小 (默认 100MB)
+            max_size: 最大文件大小 (默认 200MB)
             
         Returns:
             上传结果信息

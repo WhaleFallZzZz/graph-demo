@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  knowledge-graph:
+    build: .
+    ports:
+      - "8001:8001"
+    environment:
+      - SILICONFLOW_API_KEY=${SILICONFLOW_API_KEY}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+      - COS_SECRET_ID=${COS_SECRET_ID}
+      - COS_SECRET_KEY=${COS_SECRET_KEY}
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped

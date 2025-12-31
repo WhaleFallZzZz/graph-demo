@@ -1,0 +1,54 @@
+# Docker构建忽略文件
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# 虚拟环境
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# 日志和临时文件
+logs/
+temp/
+tmp/
+*.tmp
+
+# 测试文件
+test_files/
+uploads/
+
+# 环境变量文件
+.env
+.env.local
+
+# Docker
+Dockerfile.bak
+docker-compose.override.yml

@@ -6,3 +6,5 @@ __pycache__/
 logs/
 .idea/
 .vscode/
+debug_sent_images/
+.gemini/

@@ -77,7 +77,7 @@ class HybridSiliconFlowEmbedding(BaseEmbedding):
     def _initialize_models(self):
         """初始化嵌入模型 - 只用在线API"""
         # 只用在线SiliconFlow API，不加载本地模型
-        logger.info("只用在线SiliconFlow API，不加载本地模型")
+        logger.debug("只用在线SiliconFlow API，不加载本地模型")
         
         # 初始化SiliconFlow客户端
         try:
@@ -88,7 +88,7 @@ class HybridSiliconFlowEmbedding(BaseEmbedding):
                 request_delay=self._request_delay
             )
             self._siliconflow_available = True
-            logger.info("SiliconFlow API 初始化成功 - 只用在线模式")
+            logger.debug("SiliconFlow API 初始化成功 - 只用在线模式")
         except Exception as e:
             self._siliconflow_available = False
             logger.error(f"SiliconFlow API 初始化失败: {e}")
@@ -202,7 +202,7 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
         self._model = model
         self._base_url = base_url
         
-        logger.info(f"CustomSiliconFlowEmbedding initialized: delay={self._request_delay}s, retries={self._max_retries}, global_concurrency=1")
+        logger.debug(f"CustomSiliconFlowEmbedding initialized: delay={self._request_delay}s, retries={self._max_retries}, global_concurrency=1")
 
     def _mean_pooling(self, embeddings: List[List[float]]) -> List[float]:
         """对多个嵌入向量进行平均池化"""
@@ -231,7 +231,7 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
         # 检查请求大小
         payload_json = json.dumps(payload)
         payload_size = len(payload_json)
-        logger.info(f"Request payload size: {payload_size} bytes, text count: {len(texts)}")
+        logger.debug(f"Request payload size: {payload_size} bytes, text count: {len(texts)}")
         
         if payload_size > 1 * 1024 * 1024: # Warn > 1MB
             logger.warning(f"Large payload detected: {payload_size} bytes")
@@ -281,7 +281,7 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
                 if len(texts) > 1:
                     # Split batch
                     mid = len(texts) // 2
-                    logger.info(f"Splitting batch of {len(texts)} into {mid} and {len(texts)-mid}")
+                    logger.debug(f"Splitting batch of {len(texts)} into {mid} and {len(texts)-mid}")
                     left = self._call_api(texts[:mid])
                     right = self._call_api(texts[mid:])
                     return left + right
@@ -293,7 +293,7 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
                     
                     # Split text
                     mid = len(text) // 2
-                    logger.info(f"Splitting single text of length {len(text)} into two parts")
+                    logger.debug(f"Splitting single text of length {len(text)} into two parts")
                     part1 = text[:mid]
                     part2 = text[mid:]
                     
@@ -318,7 +318,7 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
         }
         
         payload_json = json.dumps(payload)
-        logger.info(f"Async Request payload size: {len(payload_json)} bytes, text count: {len(texts)}")
+        logger.debug(f"Async Request payload size: {len(payload_json)} bytes, text count: {len(texts)}")
 
         import certifi
 
@@ -363,7 +363,7 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
                 if len(texts) > 1:
                     # Split batch
                     mid = len(texts) // 2
-                    logger.info(f"Splitting async batch of {len(texts)} into {mid} and {len(texts)-mid}")
+                    logger.debug(f"Splitting async batch of {len(texts)} into {mid} and {len(texts)-mid}")
                     left = await self._acall_api(texts[:mid])
                     right = await self._acall_api(texts[mid:])
                     return left + right
@@ -375,7 +375,7 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
                     
                     # Split text
                     mid = len(text) // 2
-                    logger.info(f"Splitting single async text of length {len(text)} into two parts")
+                    logger.debug(f"Splitting single async text of length {len(text)} into two parts")
                     part1 = text[:mid]
                     part2 = text[mid:]
                     
@@ -421,33 +421,25 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
     async def aget_text_embedding_batch(
         self, texts: List[str], show_progress: bool = False, **kwargs: Any
     ) -> List[List[float]]:
-        """异步批量获取文本嵌入"""
         if not texts:
             return []
-            
+        import os
+        import asyncio
+        from concurrent.futures import ThreadPoolExecutor
+        max_workers = max(2, (os.cpu_count() or 4) // 2)
+        batch_size = 8
+        loop = asyncio.get_event_loop()
         results = []
-        BATCH_SIZE = 5
-        
-        for i in range(0, len(texts), BATCH_SIZE):
-            batch = texts[i:i + BATCH_SIZE]
-            
-            # 简单的重试逻辑，或者直接调用
-            # 这里我们假设 _acall_api 已经处理了基本的调用
-            # 但为了稳健，最好加上重试
-            for attempt in range(self._max_retries):
-                try:
-                    if i > 0:
-                        await asyncio.sleep(self._request_delay)
-                        
-                    batch_results = await self._acall_api(batch)
-                    results.extend(batch_results)
-                    break
-                except Exception as e:
-                    logger.error(f"异步批量嵌入失败: {e} (尝试 {attempt + 1})")
-                    if attempt < self._max_retries - 1:
-                        await asyncio.sleep(self._request_delay * (attempt + 1))
-                        continue
-                    raise
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            tasks = []
+            for i in range(0, len(texts), batch_size):
+                batch = texts[i:i + batch_size]
+                tasks.append(loop.run_in_executor(executor, self._call_api, batch))
+            done = await asyncio.gather(*tasks, return_exceptions=True)
+            for item in done:
+                if isinstance(item, Exception):
+                    raise item
+                results.extend(item)
         return results
 
     def _get_text_embedding(self, text: str) -> List[float]:

@@ -1,30 +1,1234 @@
 [
   {
-    "head": "Worth4点检测",
-    "head_type": "检查项目",
-    "relation": "用于确定",
-    "tail": "双眼同时视功能",
-    "tail_type": "功能评估"
+    "head": "青少年近视",
+    "head_type": "疾病",
+    "relation": "包含",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "青少年近视",
+    "head_type": "疾病",
+    "relation": "关联",
+    "tail": "眼轴长度",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "青少年近视",
+    "head_type": "疾病",
+    "relation": "关联",
+    "tail": "屈光度",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "青少年近视",
+    "head_type": "疾病",
+    "relation": "关联",
+    "tail": "调节幅度",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "青少年近视",
+    "head_type": "疾病",
+    "relation": "用于防控",
+    "tail": "户外活动",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "青少年近视",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "视物模糊",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "青少年近视",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "视力下降",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "青少年近视",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "眼胀",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "眼轴长度",
+    "head_type": "检查参数",
+    "relation": "导致",
+    "tail": "轴性近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "屈光度",
+    "head_type": "检查参数",
+    "relation": "量化关系",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "近视",
+    "head_type": "疾病",
+    "relation": "包含",
+    "tail": "轴性近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "近视",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "视物模糊",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "近视",
+    "head_type": "疾病",
+    "relation": "关联",
+    "tail": "眼轴长度",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "眼压",
+    "head_type": "检查参数",
+    "relation": "关联",
+    "tail": "青光眼风险",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "角膜塑形镜（OK镜）",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "低浓度阿托品",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "后巩膜加固术",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "病理性近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "病理性近视",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "豹纹状眼底",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "近视",
+    "head_type": "疾病",
+    "relation": "包含",
+    "tail": "病理性近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "眼轴长度",
+    "head_type": "检查参数",
+    "relation": "用于评估",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "角膜",
+    "head_type": "解剖结构",
+    "relation": "组成",
+    "tail": "正常眼外观",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "巩膜",
+    "head_type": "解剖结构",
+    "relation": "组成",
+    "tail": "正常眼外观",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "结膜",
+    "head_type": "解剖结构",
+    "relation": "组成",
+    "tail": "正常眼外观",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "眼睑皮肤",
+    "head_type": "解剖结构",
+    "relation": "组成",
+    "tail": "正常眼外观",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "眼球",
+    "head_type": "解剖结构",
+    "relation": "包含",
+    "tail": "角膜",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "眼球",
+    "head_type": "解剖结构",
+    "relation": "包含",
+    "tail": "晶状体",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "眼球",
+    "head_type": "解剖结构",
+    "relation": "包含",
+    "tail": "视网膜",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "角膜",
+    "head_type": "解剖结构",
+    "relation": "参与",
+    "tail": "光线屈折",
+    "tail_type": "生理过程"
+  },
+  {
+    "head": "视网膜",
+    "head_type": "解剖结构",
+    "relation": "用于成像",
+    "tail": "视力产生",
+    "tail_type": "生理过程"
+  },
+  {
+    "head": "视网膜中心",
+    "head_type": "解剖结构",
+    "relation": "是",
+    "tail": "注视点",
+    "tail_type": "功能部位"
+  },
+  {
+    "head": "中心小凹",
+    "head_type": "解剖结构",
+    "relation": "位于",
+    "tail": "黄斑区",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "黄斑区",
+    "head_type": "解剖结构",
+    "relation": "包含",
+    "tail": "中心凹",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "中心凹",
+    "head_type": "解剖结构",
+    "relation": "具有",
+    "tail": "感光细胞密集区",
+    "tail_type": "功能特征"
+  },
+  {
+    "head": "黄斑区中心凹",
+    "head_type": "功能部位",
+    "relation": "是",
+    "tail": "清晰成像区域",
+    "tail_type": "功能特征"
+  },
+  {
+    "head": "视力",
+    "head_type": "症状体征",
+    "relation": "表现为",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "视力",
+    "head_type": "症状体征",
+    "relation": "表现为",
+    "tail": "远视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "视力",
+    "head_type": "症状体征",
+    "relation": "表现为",
+    "tail": "散光",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "视力下降",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "中心凹",
+    "head_type": "解剖结构",
+    "relation": "用于评估",
+    "tail": "中心视力",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "黄斑区",
+    "head_type": "解剖结构",
+    "relation": "导致",
+    "tail": "视物变形",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "黄斑病变",
+    "head_type": "病理改变",
+    "relation": "导致",
+    "tail": "黑影遮挡",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "眼轴长度",
+    "head_type": "检查参数",
+    "relation": "关联",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "对数视力表",
+    "head_type": "概念",
+    "relation": "用于评估",
+    "tail": "视力",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "LogMAR视力表",
+    "head_type": "检查参数",
+    "relation": "用于评估",
+    "tail": "视力",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "视力表",
+    "head_type": "检查参数",
+    "relation": "用于评估",
+    "tail": "视力",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "视力表亮度要求",
+    "head_type": "检查参数",
+    "relation": "关联",
+    "tail": "对数视力表",
+    "tail_type": "概念"
+  },
+  {
+    "head": "对数视力表",
+    "head_type": "概念",
+    "relation": "对应记录为",
+    "tail": "5.0",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "国际标准视力表",
+    "head_type": "概念",
+    "relation": "对应记录为",
+    "tail": "5.0",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "裸眼视力",
+    "head_type": "概念",
+    "relation": "连0.1都达不到",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "裸眼视力",
+    "head_type": "概念",
+    "relation": "连0.1都达不到",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "视神经",
+    "head_type": "解剖结构",
+    "relation": "传导路径",
+    "tail": "视觉形成过程",
+    "tail_type": "生理过程"
+  },
+  {
+    "head": "调节灵敏度",
+    "head_type": "检查参数",
+    "relation": "检查依据",
+    "tail": "调节幅度",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "＊＊年龄＊＊",
+    "head_type": "检查参数",
+    "relation": "影响",
+    "tail": "调节幅度",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "屈光不正",
+    "head_type": "疾病",
+    "relation": "包含",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "屈光不正",
+    "head_type": "疾病",
+    "relation": "包含",
+    "tail": "远视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "屈光不正",
+    "head_type": "疾病",
+    "relation": "包含",
+    "tail": "散光",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "眼轴长度",
+    "head_type": "检查参数",
+    "relation": "导致",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "角膜屈光力",
+    "head_type": "检查参数",
+    "relation": "导致",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "豹纹状眼底",
+    "head_type": "症状体征",
+    "relation": "表现为",
+    "tail": "病理性近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "远视储备",
+    "head_type": "检查参数",
+    "relation": "关联",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "散光",
+    "head_type": "疾病",
+    "relation": "导致",
+    "tail": "圆锥角膜",
+    "tail_type": "概念"
+  },
+  {
+    "head": "准分子激光手术（LASIK）",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "散光",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "角膜厚度",
+    "head_type": "检查参数",
+    "relation": "导致",
+    "tail": "圆锥角膜",
+    "tail_type": "概念"
+  },
+  {
+    "head": "角膜屈光手术",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "散光",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "角膜表面",
+    "head_type": "解剖结构",
+    "relation": "不规则",
+    "tail": "角膜地形图仪检测图像",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "屈光参差",
+    "head_type": "疾病",
+    "relation": "导致",
+    "tail": "视觉障碍",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "屈光参差",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "视力下降",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "屈光度数",
+    "head_type": "检查参数",
+    "relation": "量化关系",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "准分子激光手术（LASIK）",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "像差仪",
+    "head_type": "检查参数",
+    "relation": "检查依据",
+    "tail": "波前像差引导的LASIK",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "波前像差引导的LASIK",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视矫正",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "角膜曲率",
+    "head_type": "检查参数",
+    "relation": "检查依据",
+    "tail": "角膜形态",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "屈光参差",
+    "head_type": "疾病",
+    "relation": "导致",
+    "tail": "单眼视力",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "弱视",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "视力低下",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "弱视",
+    "head_type": "疾病",
+    "relation": "关联",
+    "tail": "屈光度数差别大",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "散光",
+    "head_type": "疾病",
+    "relation": "导致",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "矫正视力",
+    "head_type": "检查参数",
+    "relation": "量化关系",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "矫正视力",
+    "head_type": "检查参数",
+    "relation": "量化关系",
+    "tail": "远视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "矫正视力低于0.9",
+    "head_type": "症状体征",
+    "relation": "表现为",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "中心凹",
+    "head_type": "解剖结构",
+    "relation": "需要刺激发育",
+    "tail": "视觉细胞发育不良",
+    "tail_type": "发病机制"
+  },
+  {
+    "head": "形体视觉清晰度有障碍",
+    "head_type": "发病机制",
+    "relation": "影响",
+    "tail": "视觉细胞发育",
+    "tail_type": "生理过程"
+  },
+  {
+    "head": "缺乏清晰成像的刺激",
+    "head_type": "发病机制",
+    "relation": "影响",
+    "tail": "黄斑视觉细胞发育",
+    "tail_type": "概念"
+  },
+  {
+    "head": "角膜混浊",
+    "head_type": "症状体征",
+    "relation": "导致",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "上睑下垂",
+    "head_type": "症状体征",
+    "relation": "导致",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "视力检查",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "遮盖试验",
+    "head_type": "检查方法",
+    "relation": "用于",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "视力表",
+    "head_type": "检查参数",
+    "relation": "用于评估",
+    "tail": "视力下降",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "视力表",
+    "head_type": "检查参数",
+    "relation": "用于评估",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "遮盖试验",
+    "head_type": "检查方法",
+    "relation": "表现为",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "旁中心离焦",
+    "head_type": "发病机制",
+    "relation": "导致",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "黄斑中心离焦",
+    "head_type": "发病机制",
+    "relation": "导致",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "框架眼镜",
+    "head_type": "治疗防控",
+    "relation": "导致",
+    "tail": "旁中心离焦",
+    "tail_type": "发病机制"
+  },
+  {
+    "head": "框架眼镜",
+    "head_type": "治疗防控",
+    "relation": "导致",
+    "tail": "近视过快增长",
+    "tail_type": "发病机制"
+  },
+  {
+    "head": "麻痹睫状肌后的验光结果",
+    "head_type": "检查参数",
+    "relation": "表现为",
+    "tail": "调节滞后",
+    "tail_type": "发病机制"
+  },
+  {
+    "head": "调节灵敏度",
+    "head_type": "检查参数",
+    "relation": "表现为",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "户外活动",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "握笔姿势",
+    "head_type": "症状体征",
+    "relation": "影响",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "坐姿",
+    "head_type": "症状体征",
+    "relation": "影响",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "黄斑区",
+    "head_type": "解剖结构",
+    "relation": "影响",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "验光配镜不当",
+    "head_type": "症状体征",
+    "relation": "导致",
+    "tail": "眼轴拉长",
+    "tail_type": "发病机制"
+  },
+  {
+    "head": "眼轴拉长",
+    "head_type": "发病机制",
+    "relation": "导致",
+    "tail": "近视",
+    "tail_type": "疾病"
   },
   {
     "head": "调节滞后",
-    "head_type": "眼部疾病/异常",
+    "head_type": "发病机制",
+    "relation": "导致",
+    "tail": "近视发展速度加快",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "配戴框架眼镜",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "手术治疗",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "屈光参差",
+    "head_type": "疾病",
+    "relation": "导致",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "RGP镜片",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "散光",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "OK镜",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "隐形眼镜",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "屈光参差",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "隐形眼镜",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "散光",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "框架眼镜",
+    "head_type": "治疗防控",
+    "relation": "导致",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "RGP镜片",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "圆锥角膜",
+    "tail_type": "概念"
+  },
+  {
+    "head": "RGP镜片",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "RGP镜片",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "角膜形态",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "泪液镜",
+    "head_type": "解剖结构",
+    "relation": "矫正",
+    "tail": "散光",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "泪液镜",
+    "head_type": "解剖结构",
+    "relation": "矫正",
+    "tail": "角膜散光",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "低浓度阿托品",
+    "head_type": "治疗防控",
+    "relation": "导致",
+    "tail": "瞳孔放大后活动受限",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "散光",
+    "head_type": "疾病",
+    "relation": "由",
+    "tail": "遗传因素",
+    "tail_type": "病因"
+  },
+  {
+    "head": "散光",
+    "head_type": "疾病",
+    "relation": "不能用",
+    "tail": "光学镜片",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "散光",
+    "head_type": "疾病",
+    "relation": "用于矫正",
+    "tail": "硬性角膜接触镜（RGP）",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "近视散光",
+    "head_type": "疾病",
+    "relation": "关联",
+    "tail": "轴位",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "远视散光",
+    "head_type": "疾病",
+    "relation": "关联",
+    "tail": "轴位",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "近视散光",
+    "head_type": "疾病",
+    "relation": "关联",
+    "tail": "屈光度",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "远视散光",
+    "head_type": "疾病",
+    "relation": "关联",
+    "tail": "屈光度",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "生理性的散光",
+    "head_type": "疾病",
     "relation": "表现为",
-    "tail": "晶体的调节反应小于调节刺激",
-    "tail_type": "生理参数"
+    "tail": "不影响视力",
+    "tail_type": "症状体征"
   },
   {
-    "head": "调节幅度",
-    "head_type": "生理参数",
-    "relation": "量化阈值",
-    "tail": "最低调节幅度 = 15-0.25*年龄",
-    "tail_type": "计算公式"
+    "head": "视力下降",
+    "head_type": "疾病",
+    "relation": "导致",
+    "tail": "睫状肌痉挛",
+    "tail_type": "症状体征"
   },
   {
-    "head": "远近距离水平融像",
-    "head_type": "检查项目",
-    "relation": ": 包含",
-    "tail": "'模糊点'、'恢复点'、'破裂点'",
-    "tail_type": "'症状/体征'"
+    "head": "视力下降",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "近距离工作不能持久",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "视力下降",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "容易疲困",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "视力下降",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "视物模糊",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "视力下降",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "复视",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "视力下降",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "流泪",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "屈光状态",
+    "head_type": "检查参数",
+    "relation": "检查依据",
+    "tail": "斜视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "眼肌功能",
+    "head_type": "检查参数",
+    "relation": "检查依据",
+    "tail": "斜视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "弱视",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "视力下降",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "弱视",
+    "head_type": "疾病",
+    "relation": "导致",
+    "tail": "眼轴长度",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "弱视",
+    "head_type": "疾病",
+    "relation": "导致",
+    "tail": "调节幅度",
+    "tail_type": "检查参数"
+  },
+  {
+    "head": "遮盖疗法",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "眼罩遮盖疗法",
+    "head_type": "治疗防控",
+    "relation": "属于",
+    "tail": "遮盖疗法",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "眼贴遮盖法",
+    "head_type": "概念",
+    "relation": "用于",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "眼贴遮盖法",
+    "head_type": "概念",
+    "relation": "属于",
+    "tail": "遮盖疗法",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "压抑膜遮盖法",
+    "head_type": "治疗防控",
+    "relation": "属于",
+    "tail": "遮盖疗法",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "压抑膜遮盖法",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "三色光闪烁弱视治疗仪",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "红光闪烁治疗仪",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "后像疗法",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "后像疗法",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "旁中心注视性弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "后像疗法",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "中心注视性弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "海丁格尔光刷",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "海丁格尔光刷",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "旁中心注视性弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "海丁格尔光刷",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "中心注视性弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "偏振光",
+    "head_type": "症状体征",
+    "relation": "表现为",
+    "tail": "海丁格尔现象",
+    "tail_type": "生理参数_指标"
+  },
+  {
+    "head": "视觉训练",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "VR",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "弱视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "弱视",
+    "head_type": "疾病",
+    "relation": "包含",
+    "tail": "视觉训练",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "弱视",
+    "head_type": "疾病",
+    "relation": "表现为",
+    "tail": "视物模糊",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "准分子激光",
+    "head_type": "检查参数",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "准分子激光",
+    "head_type": "检查参数",
+    "relation": "用于",
+    "tail": "角膜塑形镜（OK镜）",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "准分子激光",
+    "head_type": "检查参数",
+    "relation": "用于评估",
+    "tail": "角膜形态",
+    "tail_type": "解剖结构"
+  },
+  {
+    "head": "角膜瓣",
+    "head_type": "解剖结构",
+    "relation": "包含于",
+    "tail": "准分子激光手术（LASIK）",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "全飞秒激光手术（SMILE）",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "全飞秒激光手术（SMILE）",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "散光",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "全飞秒激光手术（SMILE）",
+    "head_type": "治疗防控",
+    "relation": "关联",
+    "tail": "角膜厚度偏薄",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "全飞秒激光手术（SMILE）",
+    "head_type": "治疗防控",
+    "relation": "关联",
+    "tail": "视网膜不太健康",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "Lasek",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "Lasek",
+    "head_type": "治疗防控",
+    "relation": "关联",
+    "tail": "角膜厚度偏薄",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "Lasek",
+    "head_type": "治疗防控",
+    "relation": "导致",
+    "tail": "Haze（瘢痕混浊）",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "Lasek",
+    "head_type": "治疗防控",
+    "relation": "导致",
+    "tail": "近视回退",
+    "tail_type": "症状体征"
+  },
+  {
+    "head": "准分子激光手术（LASIK）",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "远视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "波前像差仪",
+    "head_type": "检查参数",
+    "relation": "用于评估",
+    "tail": "准分子激光手术（LASIK）",
+    "tail_type": "治疗防控"
+  },
+  {
+    "head": "眼内接触镜植入（ICL）",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "眼内接触镜植入（ICL）",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "远视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "眼内接触镜植入（ICL）",
+    "head_type": "治疗防控",
+    "relation": "用于",
+    "tail": "散光",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "眼内接触镜植入（ICL）",
+    "head_type": "治疗防控",
+    "relation": "关联",
+    "tail": "并发性白内障",
+    "tail_type": "概念"
+  },
+  {
+    "head": "_D_度数",
+    "head_type": "D_度数",
+    "relation": "量化关系",
+    "tail": "近视",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "水平散光",
+    "head_type": "疾病",
+    "relation": "属于",
+    "tail": "散光",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "逆规散光",
+    "head_type": "疾病",
+    "relation": "属于",
+    "tail": "散光",
+    "tail_type": "疾病"
+  },
+  {
+    "head": "斜轴散光",
+    "head_type": "疾病",
+    "relation": "属于",
+    "tail": "散光",
+    "tail_type": "疾病"
   }
 ]

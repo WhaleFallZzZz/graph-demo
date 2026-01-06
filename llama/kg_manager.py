@@ -112,6 +112,12 @@ class KnowledgeGraphManager:
         self.executor = ThreadPoolExecutor(max_workers=DOCUMENT_CONFIG.get("num_workers", 4))
         self._initialized = False
         self.processed_file_manager = ProcessedFileManager()
+        self.metrics = {
+            "processed_docs": 0,
+            "total_docs": 0,
+            "entities_count": 0,
+            "relationships_count": 0
+        }
         
     def initialize(self) -> bool:
         """初始化所有组件"""
@@ -556,15 +562,8 @@ class KnowledgeGraphManager:
                     progress_tracker.error("knowledge_graph", error_msg)
                 return None
             
-            # 进度显示函数
             total_docs = len(documents)
-            def progress_hook(completed: int, total: int, description: str = ""):
-                percentage = 30 + (completed / total) * 60
-                msg = f"{description} ({completed}/{total})"
-                if progress_tracker:
-                    progress_tracker.update_progress("knowledge_graph", msg, percentage=percentage)
-                else:
-                    progress_callback("knowledge_graph", msg, percentage)
+            self.metrics["total_docs"] = total_docs
             
             if progress_tracker:
                 progress_tracker.update_stage("knowledge_graph", "正在初始化图谱索引...", 30)
@@ -596,9 +595,11 @@ class KnowledgeGraphManager:
             if progress_tracker:
                 progress_tracker.update_stage("knowledge_graph", f"正在并行处理 {len(documents)} 个文档块...")
             
-            # 使用 insert_nodes 替代循环 insert，以触发 MultiStageLLMExtractor 的并行机制
-            # documents 列表中的对象已经是 Document (继承自 BaseNode)，可以直接传入
             index.insert_nodes(documents)
+            self.metrics["processed_docs"] = total_docs
+            e_count, r_count = self._get_graph_counts(self.graph_store)
+            self.metrics["entities_count"] = e_count
+            self.metrics["relationships_count"] = r_count
             
             # 标记文件为已处理
             processed_count = 0
@@ -608,6 +609,9 @@ class KnowledgeGraphManager:
             
             if processed_count > 0:
                 logger.info(f"已标记 {processed_count} 个文件为已处理")
+
+            # 实体对齐
+            self._perform_entity_resolution(index, progress_tracker)
 
             if progress_tracker:
                 progress_tracker.update_stage("knowledge_graph", "知识图谱构建完成", 100)
@@ -627,6 +631,191 @@ class KnowledgeGraphManager:
                 progress_callback("knowledge_graph", error_msg, 0)
             return None
     
+    def _get_graph_counts(self, graph_store) -> tuple:
+        try:
+            is_neo4j = "Neo4jPropertyGraphStore" in str(type(graph_store))
+            if is_neo4j:
+                with graph_store._driver.session() as session:
+                    e = session.run("MATCH (n:Entity) RETURN count(n) as c").single()["c"]
+                    r = session.run("MATCH ()-[r]->() RETURN count(r) as c").single()["c"]
+                    return int(e or 0), int(r or 0)
+            triplets = graph_store.get_triplets()
+            entities = set()
+            for t in triplets:
+                entities.add(t[0].name)
+                entities.add(t[2].name)
+            return len(entities), len(triplets)
+        except Exception:
+            return 0, 0
+    
+    def _perform_entity_resolution(self, index: Any, progress_tracker: Optional[ProgressTracker] = None):
+        """执行实体对齐并更新图谱"""
+        try:
+            from entity_resolution import EntityResolver
+            import asyncio
+            
+            logger.info("开始执行实体对齐...")
+            if progress_tracker:
+                progress_tracker.update_stage("knowledge_graph", "正在执行实体对齐...", 90)
+            else:
+                progress_callback("knowledge_graph", "正在执行实体对齐...", 90)
+                
+            resolver = EntityResolver(self.embed_model)
+            graph_store = index.property_graph_store
+            
+            # 1. 获取所有三元组/实体
+            entities = []
+            is_neo4j = "Neo4jPropertyGraphStore" in str(type(graph_store))
+            
+            if is_neo4j:
+                try:
+                    with graph_store._driver.session() as session:
+                        result = session.run("MATCH (n:Entity) RETURN DISTINCT n.name as name")
+                        entities = [record["name"] for record in result]
+                except Exception as e:
+                    logger.warning(f"Neo4j 获取实体失败，回退到通用方法: {e}")
+                    triplets = graph_store.get_triplets()
+                    entities = list(set([t[0].name for t in triplets] + [t[2].name for t in triplets]))
+            else:
+                triplets = graph_store.get_triplets()
+                entities = list(set([t[0].name for t in triplets] + [t[2].name for t in triplets]))
+                
+            logger.info(f"检测到 {len(entities)} 个实体，开始计算相似度...")
+            
+            # 2. 计算相似度
+            try:
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                
+            # 在新循环中运行
+            if loop.is_running():
+                # 如果是主线程且循环正在运行，我们需要小心
+                # 但通常这里的 loop 在 Flask 的线程中是 None 或者是新的
+                # 简单起见，我们创建一个新的 loop 来运行这个任务
+                new_loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(new_loop)
+                duplicates = new_loop.run_until_complete(resolver.find_duplicates(entities))
+                new_loop.close()
+                asyncio.set_event_loop(loop) # 恢复
+            else:
+                duplicates = loop.run_until_complete(resolver.find_duplicates(entities))
+            
+            if not duplicates:
+                logger.info("未发现重复实体")
+                return
+
+            # 3. 生成合并映射
+            merge_map = resolver.apply_resolution_to_triplets([], duplicates)
+            logger.info(f"生成 {len(merge_map)} 个合并操作")
+            
+            # 4. 执行合并
+            if is_neo4j:
+                self._merge_neo4j_entities(graph_store, merge_map)
+            else:
+                self._merge_memory_entities(graph_store, merge_map)
+                
+            logger.info("实体对齐完成")
+            
+        except Exception as e:
+            logger.error(f"实体对齐过程中发生错误: {e}")
+            # 不阻断主流程
+
+    def _merge_neo4j_entities(self, graph_store, merge_map):
+        """Neo4j 专用合并逻辑"""
+        count = 0
+        try:
+            with graph_store._driver.session() as session:
+                for source, target in merge_map.items():
+                    if source == target: continue
+                    try:
+                        # 尝试使用 APOC
+                        query = """
+                        MATCH (s:Entity {name: $source})
+                        MATCH (t:Entity {name: $target})
+                        WITH s, t
+                        CALL apoc.refactor.mergeNodes([t, s]) YIELD node
+                        RETURN count(node)
+                        """
+                        try:
+                            session.run(query, source=source, target=target)
+                        except Exception:
+                            # 回退到手动合并
+                            manual_query = """
+                            MATCH (s:Entity {name: $source})
+                            MATCH (t:Entity {name: $target})
+                            WITH s, t
+                            MATCH (s)-[r]->(o)
+                            MERGE (t)-[nr:TYPE(r)]->(o)
+                            SET nr = properties(r)
+                            DELETE r
+                            WITH s, t
+                            MATCH (o)-[r]->(s)
+                            MERGE (o)-[nr:TYPE(r)]->(t)
+                            SET nr = properties(r)
+                            DELETE r
+                            DETACH DELETE s
+                            """
+                            session.run(manual_query, source=source, target=target)
+                        count += 1
+                    except Exception as e:
+                        logger.warning(f"合并实体 {source}->{target} 失败: {e}")
+        except Exception as e:
+             logger.error(f"Neo4j 合并会话失败: {e}")
+        logger.info(f"Neo4j: 成功合并 {count} 对实体")
+
+    def _merge_memory_entities(self, graph_store, merge_map):
+        """内存图合并逻辑"""
+        try:
+            # SimplePropertyGraphStore 内部可能有 _graph (NetworkX)
+            # 或者我们需要遍历 get_triplets 重新构建
+            # LlamaIndex 的 SimplePropertyGraphStore 实际上比较简单
+            if hasattr(graph_store, "_graph"):
+                G = graph_store._graph
+                count = 0
+                import networkx as nx
+                # 转换为 NetworkX 的 contract_nodes 或者 relabel_nodes
+                # 但这里是合并两个节点。
+                for source, target in merge_map.items():
+                    # 检查节点是否存在（可能在之前已经被合并掉了？）
+                    # NetworkX 的节点是对象，这里 name 是 string。
+                    # SimplePropertyGraphStore 的 graph node 是 EntityNode 对象吗？
+                    # 让我们假设是 EntityNode 对象，或者是 name string。
+                    # 通常 PropertyGraphStore 用 EntityNode 作为 key? 不，NetworkX node key 通常是 ID 或 Name。
+                    
+                    # 简单实现：只处理 NetworkX 层面
+                    # 注意：如果 source 不在图中（可能已经被作为 target 合并了），跳过
+                    nodes_map = {n.name: n for n in G.nodes() if hasattr(n, 'name')}
+                    # 如果节点是 string
+                    if not nodes_map and list(G.nodes()):
+                        nodes_map = {n: n for n in G.nodes()}
+                    
+                    s_node = nodes_map.get(source)
+                    t_node = nodes_map.get(target)
+                    
+                    if s_node and t_node:
+                         # 使用 NetworkX 的 contracted_nodes (生成新图) 或自定义合并
+                         # 这里我们手动转移边
+                         try:
+                             # Out edges
+                             for _, nbr, data in list(G.out_edges(s_node, data=True)):
+                                 if not G.has_edge(t_node, nbr):
+                                     G.add_edge(t_node, nbr, **data)
+                             # In edges
+                             for nbr, _, data in list(G.in_edges(s_node, data=True)):
+                                 if not G.has_edge(nbr, t_node):
+                                     G.add_edge(nbr, t_node, **data)
+                             G.remove_node(s_node)
+                             count += 1
+                         except Exception as e:
+                             logger.warning(f"Memory merge failed for {source}->{target}: {e}")
+                logger.info(f"MemoryStore: 合并了 {count} 对实体")
+            else:
+                logger.warning("不支持的内存图存储结构，跳过合并")
+        except Exception as e:
+            logger.error(f"内存图合并失败: {e}")
+
     def query_knowledge_graph(self, query: str, index: Any = None) -> str:
         """查询知识图谱"""
         try:

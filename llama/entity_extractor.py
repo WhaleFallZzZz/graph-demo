@@ -31,25 +31,65 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+# Try to import safe_json_parse from utils (handling different import paths)
 try:
-    from utils import parse_llm_output_with_types, safe_json_parse
-except (ImportError, ModuleNotFoundError):
-    logger.warning("enhanced_utils.py not found. Using basic fallback.")
-    def parse_llm_output_with_types(llm_output: str) -> List[Dict[str, str]]:
-        # 本地简易回退
-        import re
-        results = []
-        pattern = r'"head"\s*:\s*"(.*?)"\s*,\s*"head_type"\s*:\s*"(.*?)"\s*,\s*"relation"\s*:\s*"(.*?)"\s*,\s*"tail"\s*:\s*"(.*?)"\s*,\s*"tail_type"\s*:\s*"(.*?)"'
-        matches = re.findall(pattern, llm_output, re.DOTALL)
-        for h, ht, r, t, tt in matches:
-             results.append({"head":h, "head_type":ht, "relation":r, "tail":t, "tail_type":tt})
-        return results
+    from llama.utils import safe_json_parse
+except ImportError:
+    try:
+        from utils import safe_json_parse
+    except ImportError:
+        def safe_json_parse(json_str: str) -> List[Dict[str, Any]]:
+            try:
+                # Basic JSON extraction and parsing
+                start = json_str.find('[')
+                end = json_str.rfind(']')
+                if start != -1 and end != -1:
+                    return json.loads(json_str[start:end+1])
+                return json.loads(json_str)
+            except:
+                return []
+
+def parse_llm_output_with_types(llm_output: str) -> List[Dict[str, Any]]:
+    """Parse LLM output using JSON parsing first, falling back to regex"""
+    # 1. Try JSON parsing
+    parsed = safe_json_parse(llm_output)
+    if parsed and isinstance(parsed, list):
+        return parsed
     
-    def safe_json_parse(json_str: str) -> List[Dict[str, Any]]:
+    # 2. Fallback to regex (improved to handle different orders)
+    import re
+    results = []
+    # Pattern to match individual objects
+    object_pattern = r'\{[^{}]+\}'
+    objects = re.findall(object_pattern, llm_output)
+    
+    for obj_str in objects:
         try:
-            return json.loads(json_str)
+            # Try to parse each object as JSON
+            obj = json.loads(obj_str)
+            if isinstance(obj, dict):
+                results.append(obj)
+                continue
         except:
-            return []
+            pass
+            
+        # Regex extraction for fields if object JSON parsing fails
+        head = re.search(r'"head"\s*:\s*"(.*?)"', obj_str)
+        head_type = re.search(r'"head_type"\s*:\s*"(.*?)"', obj_str)
+        relation = re.search(r'"relation"\s*:\s*"(.*?)"', obj_str)
+        tail = re.search(r'"tail"\s*:\s*"(.*?)"', obj_str)
+        tail_type = re.search(r'"tail_type"\s*:\s*"(.*?)"', obj_str)
+        
+        if head and relation and tail:
+            results.append({
+                "head": head.group(1),
+                "head_type": head_type.group(1) if head_type else "概念",
+                "relation": relation.group(1),
+                "tail": tail.group(1),
+                "tail_type": tail_type.group(1) if tail_type else "概念"
+            })
+            
+    return results
 
 class EnhancedEntityExtractor:
     """增强的实体提取器 - 完全信任LLM语义分析"""

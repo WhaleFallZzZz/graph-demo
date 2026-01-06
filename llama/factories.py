@@ -28,6 +28,7 @@ class LlamaModuleFactory:
             from llama_index.embeddings.siliconflow import SiliconFlowEmbedding
             from llama_index.embeddings.huggingface import HuggingFaceEmbedding
             from llama_index.graph_stores.neo4j import Neo4jPropertyGraphStore
+            from llama_index.core.graph_stores import SimplePropertyGraphStore
             from llama_index.core.indices.property_graph import DynamicLLMPathExtractor
             
             cls._modules = {
@@ -39,6 +40,7 @@ class LlamaModuleFactory:
                 'SiliconFlowEmbedding': SiliconFlowEmbedding,
                 'HuggingFaceEmbedding': HuggingFaceEmbedding,
                 'Neo4jPropertyGraphStore': Neo4jPropertyGraphStore,
+                'SimplePropertyGraphStore': SimplePropertyGraphStore,
                 'DynamicLLMPathExtractor': DynamicLLMPathExtractor
             }
             logger.info("成功导入所有必要的 LlamaIndex 模块")
@@ -113,15 +115,27 @@ class GraphStoreFactory:
             return None
             
         try:
+            username = NEO4J_CONFIG.get("username")
+            password = NEO4J_CONFIG.get("password")
+            url = NEO4J_CONFIG.get("url")
+            database = NEO4J_CONFIG.get("database")
+            if not username or not password or not url or not database:
+                logger.warning("Neo4j 配置不完整，回退到内存图存储 SimplePropertyGraphStore")
+                return modules['SimplePropertyGraphStore']()
             return modules['Neo4jPropertyGraphStore'](
-                username=NEO4J_CONFIG["username"],
-                password=NEO4J_CONFIG["password"],
-                url=NEO4J_CONFIG["url"],
-                database=NEO4J_CONFIG["database"]
+                username=username,
+                password=password,
+                url=url,
+                database=database
             )
         except Exception as e:
             logger.error(f"创建图存储失败: {e}")
-            return None
+            try:
+                logger.warning("回退到内存图存储 SimplePropertyGraphStore")
+                return modules['SimplePropertyGraphStore']()
+            except Exception as e2:
+                logger.error(f"创建内存图存储失败: {e2}")
+                return None
 
 class ExtractorFactory:
     """提取器工厂"""

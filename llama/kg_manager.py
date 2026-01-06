@@ -5,6 +5,7 @@
 """
 
 import sys
+import os
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 import logging
@@ -19,20 +20,98 @@ from factories import LlamaModuleFactory, ModelFactory, GraphStoreFactory, Extra
 from progress_sse import ProgressTracker, progress_callback
 from oss_uploader import COSUploader, OSSConfig
 from ocr_parser import DeepSeekOCRParser
+from enhanced_entity_extractor import StandardTermMapper
+import hashlib
+import json
+import collections
+
+class DocumentIndex:
+    """文档倒排索引 - 用于加速关键信息定位"""
+    def __init__(self):
+        self.index = collections.defaultdict(list) # keyword -> list of (doc_id, chunk_index)
+        
+    def build_index(self, documents: List[Any], keywords: List[str]):
+        """建立关键词到文档分块的倒排索引"""
+        logger.info(f"正在为 {len(documents)} 个文档分块建立倒排索引...")
+        start_time = time.time()
+        
+        for idx, doc in enumerate(documents):
+            text = getattr(doc, "text", "")
+            doc_id = getattr(doc, "id_", str(idx))
+            
+            # 检查每个关键词
+            for keyword in keywords:
+                if keyword in text:
+                    self.index[keyword].append((doc_id, idx))
+                    
+        elapsed = time.time() - start_time
+        logger.info(f"倒排索引建立完成，耗时 {elapsed:.2f}s，包含 {len(self.index)} 个关键词条目")
+        return self.index
 
 # 设置日志
 logger = setup_logging()
+
+class ProcessedFileManager:
+    """已处理文件管理器 - 支持增量更新"""
+    def __init__(self, record_file: str = "processed_files.json"):
+        self.record_file = Path(os.getcwd()) / record_file
+        self.processed_files = self._load_records()
+        
+    def _load_records(self) -> Dict[str, str]:
+        if self.record_file.exists():
+            try:
+                with open(self.record_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception as e:
+                logger.warning(f"无法读取处理记录: {e}")
+                return {}
+        return {}
+        
+    def save_records(self):
+        try:
+            with open(self.record_file, 'w', encoding='utf-8') as f:
+                json.dump(self.processed_files, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            logger.error(f"保存处理记录失败: {e}")
+            
+    def get_file_hash(self, file_path: str) -> str:
+        """计算文件MD5"""
+        try:
+            with open(file_path, 'rb') as f:
+                return hashlib.md5(f.read()).hexdigest()
+        except Exception:
+            return ""
+            
+    def is_processed(self, file_path: str) -> bool:
+        """检查文件是否已处理且未修改"""
+        abs_path = str(Path(file_path).absolute())
+        current_hash = self.get_file_hash(abs_path)
+        if not current_hash:
+            return False
+            
+        stored_hash = self.processed_files.get(abs_path)
+        return stored_hash == current_hash
+        
+    def mark_processed(self, file_path: str):
+        """标记文件为已处理"""
+        abs_path = str(Path(file_path).absolute())
+        current_hash = self.get_file_hash(abs_path)
+        if current_hash:
+            self.processed_files[abs_path] = current_hash
+            self.save_records()
 
 class KnowledgeGraphManager:
     """知识图谱管理器 - 核心Facade"""
     
     def __init__(self):
+        """初始化知识图谱管理器"""
         self.modules = None
         self.llm = None
         self.embed_model = None
         self.graph_store = None
-        self.executor = ThreadPoolExecutor(max_workers=3)
+        self.executor = ThreadPoolExecutor(max_workers=DOCUMENT_CONFIG.get("num_workers", 4))
         self._initialized = False
+        self.processed_file_manager = ProcessedFileManager()
         
     def initialize(self) -> bool:
         """初始化所有组件"""
@@ -88,8 +167,19 @@ class KnowledgeGraphManager:
             progress_callback("initialization", f"初始化失败: {str(e)}", 0)
             return False
     
+    def _is_relevant_chunk(self, text: str) -> bool:
+        """检查分块是否包含相关的医学关键词"""
+        # 核心医学关键词列表 - 用于预筛选分块，减少无效LLM调用
+        keywords = [
+            "近视", "远视", "散光", "弱视", "斜视", "屈光", "老视", "白内障", 
+            "视力", "眼轴", "角膜", "晶状体", "视网膜", "脉络膜", "巩膜", "眼压",
+            "阿托品", "OK镜", "塑形镜", "RGP", "眼镜", "接触镜", "手术", "激光",
+            "调节", "集合", "融像", "视疲劳", "眼底", "黄斑", "视神经", "度数"
+        ]
+        return any(k in text for k in keywords)
+
     def load_documents(self, progress_tracker: Optional[ProgressTracker] = None) -> list:
-        """加载文档"""
+        """加载文档并使用优化的分块策略"""
         try:
             if not self.modules:
                 self.initialize()
@@ -99,23 +189,102 @@ class KnowledgeGraphManager:
             else:
                 progress_callback("document_loading", "正在加载文档...", 10)
             
+            # 使用SimpleDirectoryReader加载原始文档
+            import time
+            t0 = time.time()
+            fe = {}
+            try:
+                if ".pdf" in DOCUMENT_CONFIG.get('supported_extensions', ['.txt', '.docx', '.pdf']):
+                    fe[".pdf"] = DeepSeekOCRParser()
+            except Exception as e:
+                logger.warning(f"OCR解析器不可用，已跳过PDF解析: {e}")
+                fe = {}
             reader = self.modules['SimpleDirectoryReader'](
                 input_dir=DOCUMENT_CONFIG['path'],
                 required_exts=DOCUMENT_CONFIG.get('supported_extensions', ['.txt', '.docx', '.pdf']),
                 recursive=True,
                 encoding='utf-8',
-                file_extractor={".pdf": DeepSeekOCRParser()}
+                file_extractor=fe
             )
             
-            documents = reader.load_data()
+            raw_documents = reader.load_data()
+            load_time = time.time() - t0
+            logger.info(f"文档加载耗时 {load_time:.2f}s, 原始文档数 {len(raw_documents)}")
             
-            msg = f"成功加载 {len(documents)} 个文档"
+            # 增量处理：过滤已处理的文档
+            if DOCUMENT_CONFIG.get("incremental_processing", True):
+                new_raw_docs = []
+                for doc in raw_documents:
+                    file_path = doc.metadata.get('file_path') or doc.metadata.get('file_name')
+                    # 如果是绝对路径，直接使用；如果是文件名，尝试拼接（不太准确，最好是full path）
+                    # LlamaIndex usually puts absolute path in file_path
+                    if file_path and self.processed_file_manager.is_processed(str(file_path)):
+                        logger.debug(f"跳过已处理文档: {file_path}")
+                        continue
+                    new_raw_docs.append(doc)
+                
+                skipped_count = len(raw_documents) - len(new_raw_docs)
+                if skipped_count > 0:
+                    logger.info(f"增量处理: 跳过了 {skipped_count} 个未修改文档")
+                raw_documents = new_raw_docs
+
+            # 使用自定义的分块策略处理文档
+            documents = []
+            total_chunks = 0
+            total_chars = 0
+            chunk_time_sum = 0.0
+            filtered_count = 0
+            sample_bench_done = False
+            for raw_doc in raw_documents:
+                t1 = time.time()
+                if DOCUMENT_CONFIG.get("benchmark_chunking", False) and not sample_bench_done:
+                    self._benchmark_chunking(raw_doc)
+                    sample_bench_done = True
+                chunked_docs = self._chunk_document(raw_doc)
+                
+                # 关键词预筛选
+                relevant_docs = []
+                for d in chunked_docs:
+                    if self._is_relevant_chunk(d.text):
+                        relevant_docs.append(d)
+                    else:
+                        filtered_count += 1
+                
+                chunk_time = time.time() - t1
+                chunk_time_sum += chunk_time
+                documents.extend(relevant_docs)
+                total_chunks += len(chunked_docs) # 记录总块数（包括被过滤的）
+                for d in relevant_docs:
+                    total_chars += len(getattr(d, "text", ""))
+            
+            if filtered_count > 0:
+                logger.info(f"关键词预筛选: 过滤了 {filtered_count} 个无关分块")
+            
+            msg = f"成功加载 {len(documents)} 个有效文档块 (来自 {len(raw_documents)} 个原始文档)"
             if progress_tracker:
                 progress_tracker.update_stage("document_loading", msg)
             else:
                 progress_callback("document_loading", msg, 15)
                 
             logger.info(f"✅ {msg}")
+            if DOCUMENT_CONFIG.get("log_chunk_metrics", False):
+                avg_chunk_chars = (total_chars / len(documents)) if documents else 0
+                logger.info(f"分块统计: 总块数 {total_chunks}, 有效块数 {len(documents)}, 平均有效块长度 {avg_chunk_chars:.1f} 字符, 分块耗时合计 {chunk_time_sum:.2f}s")
+            
+            # 建立倒排索引
+            if documents:
+                try:
+                    indexer = DocumentIndex()
+                    # 使用预定义的医学关键词
+                    keywords = [
+                        "近视", "远视", "散光", "弱视", "斜视", "屈光", "老视", "白内障", 
+                        "视力", "眼轴", "角膜", "晶状体", "视网膜", "脉络膜", "巩膜", "眼压",
+                        "阿托品", "OK镜", "塑形镜", "RGP", "眼镜", "接触镜", "手术", "激光"
+                    ]
+                    self.document_index = indexer.build_index(documents, keywords)
+                except Exception as e:
+                    logger.warning(f"建立倒排索引失败: {e}")
+
             return documents
             
         except Exception as e:
@@ -126,6 +295,241 @@ class KnowledgeGraphManager:
             else:
                 progress_callback("document_loading", error_msg, 0)
             return []
+    
+    def _chunk_document(self, document) -> List[Any]:
+        """使用优化的分块策略处理单个文档
+        
+        Args:
+            document: 原始文档对象
+            
+        Returns:
+            分块后的文档列表
+        """
+        from llama_index.core.node_parser import SentenceSplitter
+        
+        # 获取配置参数
+        text_len = len(getattr(document, "text", ""))
+        dyn = DOCUMENT_CONFIG.get('dynamic_chunking', False)
+        base_chunk_size = DOCUMENT_CONFIG.get('chunk_size', 600)
+        max_chunk_length = DOCUMENT_CONFIG.get('max_chunk_length', 800)
+        min_chunk_length = DOCUMENT_CONFIG.get('min_chunk_length', 500)
+        target_chars = DOCUMENT_CONFIG.get('dynamic_target_chars_per_chunk', base_chunk_size)
+        if dyn and text_len > 0:
+            chunk_size = max(min_chunk_length, min(max_chunk_length, target_chars))
+        else:
+            chunk_size = base_chunk_size
+        chunk_overlap = max(0, min(int(chunk_size * 0.1), 200, DOCUMENT_CONFIG.get('chunk_overlap', 80)))
+        
+        # 创建句子分隔符
+        sentence_splitter = DOCUMENT_CONFIG.get('sentence_splitter', '。！？!?')
+        semantic_separator = DOCUMENT_CONFIG.get('semantic_separator', '\n\n')
+        
+        # 使用SentenceSplitter进行分块
+        node_parser = SentenceSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            separator=semantic_separator,  # 优先使用语义分隔符
+            paragraph_separator=semantic_separator,
+            # 确保医学术语完整性
+            include_prev_next_rel=True  # 包含前后关系
+        )
+        
+        # 将文档拆分为节点
+        import time
+        t0 = time.time()
+        nodes = node_parser.get_nodes_from_documents([document])
+        gen_nodes_time = time.time() - t0
+        
+        # 过滤和优化块大小
+        filtered_nodes = []
+        for node in nodes:
+            # 获取文本长度
+            text_length = len(node.text)
+            
+            if text_length < min_chunk_length and filtered_nodes:
+                pass
+            
+            # 如果块太大，需要进一步分割
+            if text_length > max_chunk_length:
+                # 递归分割过大的块
+                sub_chunks = self._split_large_chunk(node, max_chunk_length, chunk_overlap)
+                filtered_nodes.extend(sub_chunks)
+            else:
+                # 检查医学术语完整性
+                processed_node = self._ensure_medical_terminology_integrity(node)
+                filtered_nodes.append(processed_node)
+        
+        # 将节点转换回文档对象
+        documents = []
+        total_chars = 0
+        for node in filtered_nodes:
+            # 创建新的文档对象，保留原始元数据
+            # 使用Document的构造函数而不是from_text方法
+            doc = self.modules['Document'](
+                text=node.text,
+                metadata=node.metadata
+            )
+            documents.append(doc)
+            total_chars += len(node.text)
+        
+        if DOCUMENT_CONFIG.get("log_chunk_metrics", False):
+            avg_len = (total_chars / len(documents)) if documents else 0
+            logger.info(f"ChunkStats: size={chunk_size}, overlap={chunk_overlap}, nodes={len(documents)}, avg_len={avg_len:.1f}, gen_time={gen_nodes_time:.2f}s")
+        
+        return documents
+    
+    def _split_large_chunk(self, node, max_length: int, overlap: int) -> List[Any]:
+        """递归分割过大的文本块
+        
+        Args:
+            node: 节点对象
+            max_length: 最大长度
+            overlap: 重叠字符数
+            
+        Returns:
+            分割后的节点列表
+        """
+        text = node.text
+        if len(text) <= max_length:
+            return [node]
+        
+        # 找到合适的分割点（优先在句子边界分割）
+        split_points = []
+        current_pos = 0
+        
+        # 查找句子分隔符
+        sentence_separators = list(DOCUMENT_CONFIG.get('sentence_splitter', '。！？!?'))
+        
+        while current_pos < len(text) - max_length:
+            # 在最大长度附近查找句子分隔符
+            search_start = current_pos + max_length - 100  # 留出100字符的搜索空间
+            search_end = min(current_pos + max_length, len(text))
+            
+            split_pos = -1
+            for sep in sentence_separators:
+                # 从后往前搜索，找到最接近max_length的分隔符
+                pos = text.rfind(sep, current_pos, search_end)
+                if pos != -1 and pos > current_pos:
+                    split_pos = pos + 1  # 包含分隔符
+                    break
+            
+            # 如果没有找到合适的句子分隔符，就在最大长度处分割
+            if split_pos == -1:
+                split_pos = min(current_pos + max_length, len(text))
+            
+            split_points.append(split_pos)
+            current_pos = split_pos
+        
+        # 创建分割后的节点
+        nodes = []
+        start_pos = 0
+        for end_pos in split_points:
+            chunk_text = text[start_pos:end_pos]
+            
+            # 创建新节点
+            new_node = self.modules['Document'](
+                text=chunk_text,
+                metadata=node.metadata.copy()
+            )
+            nodes.append(new_node)
+            
+            # 更新起始位置，考虑重叠
+            start_pos = max(end_pos - overlap, 0)
+        
+        # 处理最后一个块
+        if start_pos < len(text):
+            last_chunk = text[start_pos:]
+            if len(last_chunk) > 0:  # 确保不是空块
+                nodes.append(self.modules['Document'](text=last_chunk, metadata=node.metadata.copy()))
+        
+        return nodes
+    
+    def _ensure_medical_terminology_integrity(self, node) -> Any:
+        """确保医学术语完整性
+        
+        Args:
+            node: 节点对象
+            
+        Returns:
+            处理后的节点
+        """
+        text = node.text
+        
+        # 医学术语模式 - 避免在这些术语中间分割
+        # 例如：角膜塑形镜(OK镜), 低浓度阿托品, 眼轴长度等
+        medical_terms = [
+            r'角膜塑形镜\\([^)]*\\)',  # 角膜塑形镜(OK镜) 等
+            r'低浓度阿托品[^\\s]*',    # 低浓度阿托品相关
+            r'眼轴长度',               # 眼轴长度
+            r'屈光度',                # 屈光度
+            r'调节幅度',              # 调节幅度
+            r'RGP镜片',               # RGP镜片
+            r'OK镜',                 # OK镜
+            r'LASIK',                # LASIK手术
+            r'SMILE',                # SMILE手术
+            r'ICL',                  # ICL手术
+            r'LogMAR视力表',          # LogMAR视力表
+            r'五分记录法',            # 五分记录法
+        ]
+        
+        # 这里可以添加逻辑来检查是否在医学术语中间分割
+        # 目前我们只是返回原始节点，但可以在此处添加更复杂的逻辑
+        
+        # 保留节点的原始内容，但可以在此处进行医学术语完整性检查
+        return node
+    
+    def _chunk_with_params(self, document, chunk_size: int, chunk_overlap: int, max_chunk_length: int, min_chunk_length: int) -> List[Any]:
+        from llama_index.core.node_parser import SentenceSplitter
+        sentence_splitter = DOCUMENT_CONFIG.get('sentence_splitter', '。！？!?')
+        semantic_separator = DOCUMENT_CONFIG.get('semantic_separator', '\n\n')
+        node_parser = SentenceSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            separator=semantic_separator,
+            paragraph_separator=semantic_separator,
+            include_prev_next_rel=True
+        )
+        nodes = node_parser.get_nodes_from_documents([document])
+        filtered_nodes = []
+        for node in nodes:
+            text_length = len(node.text)
+            if text_length < min_chunk_length and filtered_nodes:
+                prev_node = filtered_nodes[-1]
+                combined_text = prev_node.text + " " + node.text
+                if len(combined_text) <= max_chunk_length:
+                    prev_node.text = combined_text
+                    prev_node.id_ = f"{prev_node.id_}_merged"
+                    continue
+            if text_length > max_chunk_length:
+                sub_chunks = self._split_large_chunk(node, max_chunk_length, chunk_overlap)
+                filtered_nodes.extend(sub_chunks)
+            else:
+                filtered_nodes.append(node)
+        docs = []
+        for n in filtered_nodes:
+            docs.append(self.modules['Document'](text=n.text, metadata=n.metadata))
+        return docs
+    
+    def _benchmark_chunking(self, document):
+        import time
+        old_size = 600
+        old_overlap = 80
+        old_max = 800
+        old_min = 500
+        t0 = time.time()
+        old_docs = self._chunk_with_params(document, old_size, old_overlap, old_max, old_min)
+        old_t = time.time() - t0
+        new_size = DOCUMENT_CONFIG.get('chunk_size', 1024)
+        new_overlap = DOCUMENT_CONFIG.get('chunk_overlap', 120)
+        new_max = DOCUMENT_CONFIG.get('max_chunk_length', 1400)
+        new_min = DOCUMENT_CONFIG.get('min_chunk_length', 600)
+        t1 = time.time()
+        new_docs = self._chunk_with_params(document, new_size, new_overlap, new_max, new_min)
+        new_t = time.time() - t1
+        old_chars = sum(len(d.text) for d in old_docs)
+        new_chars = sum(len(d.text) for d in new_docs)
+        logger.info(f"BenchmarkChunking: old(size={old_size},overlap={old_overlap}) chunks={len(old_docs)} time={old_t:.2f}s avg_len={(old_chars/len(old_docs)) if old_docs else 0:.1f}")
+        logger.info(f"BenchmarkChunking: new(size={new_size},overlap={new_overlap}) chunks={len(new_docs)} time={new_t:.2f}s avg_len={(new_chars/len(new_docs)) if new_docs else 0:.1f}")
     
     def build_knowledge_graph(self, documents: list, progress_tracker: Optional[ProgressTracker] = None) -> Any:
         """构建知识图谱"""
@@ -173,39 +577,38 @@ class KnowledgeGraphManager:
                 embed_model=self.embed_model,
                 property_graph_store=self.graph_store,
                 kg_extractors=[extractor],
-                show_progress=False
+                show_progress=True
             )
             
-            # 迭代插入文档并估算时间
+            # 收集待标记的文件路径
+            file_paths_to_mark = set()
+            for doc in documents:
+                # 尝试获取文件路径
+                fp = doc.metadata.get('file_path') or doc.metadata.get('file_name')
+                if fp:
+                    file_paths_to_mark.add(str(fp))
+            
+            # 批量并行处理文档
             import time
             start_time = time.time()
             
-            logger.info(f"开始处理 {total_docs} 个文档...")
+            logger.info(f"开始并行处理 {len(documents)} 个文档块...")
+            if progress_tracker:
+                progress_tracker.update_stage("knowledge_graph", f"正在并行处理 {len(documents)} 个文档块...")
             
-            for i, doc in enumerate(documents):
-                # 估算剩余时间
-                elapsed = time.time() - start_time
-                if i > 0:
-                    avg_time = elapsed / i
-                    remaining_docs = total_docs - i
-                    eta_seconds = int(avg_time * remaining_docs)
-                    
-                    if eta_seconds > 60:
-                        eta_str = f"预计剩余 {eta_seconds // 60}分{eta_seconds % 60}秒"
-                    else:
-                        eta_str = f"预计剩余 {eta_seconds}秒"
-                else:
-                    eta_str = "正在估算时间..."
-                
-                # 更新进度 (开始处理)
-                progress_hook(i, total_docs, f"正在处理: {eta_str}")
-                
-                # 插入文档 (耗时操作)
-                index.insert(doc)
-                
-                # 更新进度 (完成处理)
-                progress_hook(i + 1, total_docs, f"完成文档 {i+1}/{total_docs}")
+            # 使用 insert_nodes 替代循环 insert，以触发 MultiStageLLMExtractor 的并行机制
+            # documents 列表中的对象已经是 Document (继承自 BaseNode)，可以直接传入
+            index.insert_nodes(documents)
             
+            # 标记文件为已处理
+            processed_count = 0
+            for fp in file_paths_to_mark:
+                self.processed_file_manager.mark_processed(fp)
+                processed_count += 1
+            
+            if processed_count > 0:
+                logger.info(f"已标记 {processed_count} 个文件为已处理")
+
             if progress_tracker:
                 progress_tracker.update_stage("knowledge_graph", "知识图谱构建完成", 100)
             else:

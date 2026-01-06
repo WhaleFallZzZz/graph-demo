@@ -72,8 +72,9 @@ COS_REGION=ap-shanghai
 # 文档路径
 DOCUMENT_PATH=/path/to/your/documents
 
-# 日志目录
-LOG_DIR=/path/to/logs
+# 日志目录 (可选，默认为项目根目录下的 logs)
+LOG_DIR=/path/to/your/custom/logs
+
 ```
 
 在主程序开始处添加：

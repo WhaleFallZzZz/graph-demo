@@ -45,8 +45,14 @@ app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # 200MB 文件大小限制
 # 全局构建器实例
 executor = ThreadPoolExecutor(max_workers=3)
 
-def build_graph_with_progress(file_url: str, client_id: str) -> Dict[str, Any]:
-    """带进度推送的知识图谱构建"""
+def build_graph_with_progress(file_url: str, client_id: str, custom_file_name: Optional[str] = None) -> Dict[str, Any]:
+    """带进度推送的知识图谱构建
+    
+    Args:
+        file_url: 文件URL
+        client_id: 客户端ID
+        custom_file_name: 自定义文件名（可选），如果提供则使用该名称而非从URL中提取
+    """
     start_time = datetime.now()
     temp_dir = None
     
@@ -72,13 +78,22 @@ def build_graph_with_progress(file_url: str, client_id: str) -> Dict[str, Any]:
         # 从COS URL下载文件
         if file_url.startswith('https://') and '.cos.' in file_url:
             import requests
+            import certifi
             
-            # 下载文件
-            response = requests.get(file_url, timeout=30)
+            try:
+                response = requests.get(file_url, timeout=30, verify=certifi.where())
+            except requests.exceptions.SSLError as ssl_err:
+                logger.warning(f"COS证书验证失败，降级为不验证: {ssl_err}")
+                response = requests.get(file_url, timeout=30, verify=False)
             response.raise_for_status()
             
             # 获取文件名
-            filename = file_url.split('/')[-1].split('?')[0]
+            # 优先使用自定义文件名，否则从URL提取
+            if custom_file_name:
+                filename = custom_file_name
+                logger.info(f"使用自定义文件名: {filename}")
+            else:
+                filename = file_url.split('/')[-1].split('?')[0]
             
             # 尝试修复文件名后缀
             # 1. 如果文件名以 _pdf, _docx 等结尾，替换为 .pdf, .docx (针对特殊OSS/COS链接)
@@ -124,6 +139,15 @@ def build_graph_with_progress(file_url: str, client_id: str) -> Dict[str, Any]:
             error_msg = '无法加载文档'
             progress_tracker.error("document_loading", error_msg)
             return {'success': False, 'error': error_msg}
+        
+        # 将自定义文件名添加到所有文档的metadata中
+        for doc in documents:
+            if not hasattr(doc, 'metadata'):
+                doc.metadata = {}
+            # 保存原始文件名信息
+            doc.metadata['source_file_name'] = filename
+            doc.metadata['file_url'] = file_url
+            logger.debug(f"文档metadata已更新: source_file_name={filename}")
         
         # 阶段4：构建知识图谱
         progress_tracker.update_stage("knowledge_graph", "开始构建知识图谱...", 40)
@@ -275,10 +299,32 @@ def upload_file():
 
 @app.route('/build_graph_sse', methods=['POST'])
 def build_graph_sse():
-    """根据文件URL构建图谱 - 返回SSE"""
+    """根据文件URL构建图谱 - 返回SSE
+    
+    请求参数：
+        - file_url: 文件URL（必选）
+        - file_name: 自定义文件名（可选），如果不提供则从URL中提取
+    
+    使用示例：
+        # 使用自定义文件名
+        POST /build_graph_sse
+        Content-Type: application/json
+        {
+            "file_url": "https://example.cos.ap-beijing.myqcloud.com/document.pdf",
+            "file_name": "青少年近视防控手册.pdf"
+        }
+        
+        # 不提供 file_name，使用URL中的文件名
+        POST /build_graph_sse
+        Content-Type: application/json
+        {
+            "file_url": "https://example.cos.ap-beijing.myqcloud.com/document.pdf"
+        }
+    """
     try:
         data = request.json or request.form
         file_url = data.get('file_url')
+        custom_file_name = data.get('file_name')  # 新增可选参数
         
         logger.info(f"收到构建请求 build_graph_sse: {data}")
         
@@ -302,8 +348,8 @@ def build_graph_sse():
                 # 初始进度
                 yield sse_event(create_progress_event("knowledge_graph", "开始构建知识图谱...", 0))
                 
-                # 提交任务
-                future = executor.submit(build_graph_with_progress, file_url, client_id)
+                # 提交任务，传递custom_file_name参数
+                future = executor.submit(build_graph_with_progress, file_url, client_id, custom_file_name)
                 
                 while True:
                     try:
@@ -446,9 +492,9 @@ def upload_and_build_sse():
                 # 阶段3：知识图谱构建（这是耗时操作，放入后台线程）
                 yield sse_event(create_progress_event("knowledge_graph", "开始构建知识图谱...", 40))
                 
-                # 在后台线程启动构建任务
+                # 在后台线程启动构建任务，传递filename作为custom_file_name
                 # 注意：build_graph_with_progress 内部会通过 ProgressTracker -> progress_manager -> callback -> queue 发送进度
-                future = executor.submit(build_graph_with_progress, upload_result['file_url'], client_id)
+                future = executor.submit(build_graph_with_progress, upload_result['file_url'], client_id, filename)
                 
                 # 循环从队列读取进度并推送到SSE流
                 while True:

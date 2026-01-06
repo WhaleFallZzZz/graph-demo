@@ -9,6 +9,9 @@ from llama_index.core.embeddings import BaseEmbedding
 import requests
 from requests.exceptions import HTTPError, ConnectionError, Timeout
 
+import httpx
+import json
+
 logger = logging.getLogger(__name__)
 
 # 全局信号量，确保跨实例的全局并发控制
@@ -187,15 +190,201 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
         actual_max_retries = max_retries if max_retries is not None else MAX_RETRIES
         
         # 设置正确的SiliconFlow API基础URL
-        kwargs['base_url'] = "https://api.siliconflow.cn/v1/embeddings"
+        base_url = "https://api.siliconflow.cn/v1/embeddings"
+        kwargs['base_url'] = base_url
         
         super().__init__(model=model, api_key=api_key, max_retries=actual_max_retries, **kwargs)
         
         # 存储实例变量
         self._request_delay = request_delay if request_delay is not None else DEFAULT_REQUEST_DELAY
         self._max_retries = actual_max_retries
+        self._api_key = api_key
+        self._model = model
+        self._base_url = base_url
         
         logger.info(f"CustomSiliconFlowEmbedding initialized: delay={self._request_delay}s, retries={self._max_retries}, global_concurrency=1")
+
+    def _mean_pooling(self, embeddings: List[List[float]]) -> List[float]:
+        """对多个嵌入向量进行平均池化"""
+        if not embeddings:
+            return []
+        dim = len(embeddings[0])
+        count = len(embeddings)
+        avg_emb = [0.0] * dim
+        for emb in embeddings:
+            for i in range(dim):
+                avg_emb[i] += emb[i]
+        return [val / count for val in avg_emb]
+
+    def _call_api(self, texts: List[str]) -> List[List[float]]:
+        """直接调用API，不依赖父类实现，支持SSL fallback"""
+        headers = {
+            "Authorization": f"Bearer {self._api_key}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": self._model,
+            "input": texts,
+            "encoding_format": "float"
+        }
+        
+        # 检查请求大小
+        payload_json = json.dumps(payload)
+        payload_size = len(payload_json)
+        logger.info(f"Request payload size: {payload_size} bytes, text count: {len(texts)}")
+        
+        if payload_size > 1 * 1024 * 1024: # Warn > 1MB
+            logger.warning(f"Large payload detected: {payload_size} bytes")
+
+        import certifi
+        
+        # 定义内部函数来处理请求，方便重用
+        def _do_request(verify_ssl=True):
+            try:
+                verify_path = certifi.where() if verify_ssl else False
+                response = requests.post(
+                    self._base_url,
+                    headers=headers,
+                    data=payload_json,
+                    timeout=60,
+                    verify=verify_path
+                )
+                response.raise_for_status()
+                return response
+            except requests.exceptions.SSLError as e:
+                if verify_ssl:
+                    logger.warning(f"SSL certificate verification failed, falling back to no verification: {e}")
+                    return _do_request(verify_ssl=False)
+                raise
+            except requests.exceptions.ConnectionError as e:
+                # 有些SSL错误会被包装在ConnectionError中
+                if verify_ssl and "SSL" in str(e):
+                    logger.warning(f"Connection error with SSL implications, falling back to no verification: {e}")
+                    return _do_request(verify_ssl=False)
+                raise
+
+        try:
+            response = _do_request(verify_ssl=True)
+            data = response.json()
+            
+            # 解析结果
+            if "data" not in data:
+                raise ValueError(f"Unexpected API response format: {data}")
+                
+            # 按index排序确保顺序一致
+            sorted_data = sorted(data["data"], key=lambda x: x["index"])
+            return [item["embedding"] for item in sorted_data]
+            
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 413:
+                logger.warning(f"Payload too large (413). Attempting to split request.")
+                if len(texts) > 1:
+                    # Split batch
+                    mid = len(texts) // 2
+                    logger.info(f"Splitting batch of {len(texts)} into {mid} and {len(texts)-mid}")
+                    left = self._call_api(texts[:mid])
+                    right = self._call_api(texts[mid:])
+                    return left + right
+                else:
+                    # Single text too large
+                    text = texts[0]
+                    if len(text) < 100: # Too small to split
+                        raise
+                    
+                    # Split text
+                    mid = len(text) // 2
+                    logger.info(f"Splitting single text of length {len(text)} into two parts")
+                    part1 = text[:mid]
+                    part2 = text[mid:]
+                    
+                    emb1 = self._call_api([part1])[0]
+                    emb2 = self._call_api([part2])[0]
+                    
+                    # Mean pooling
+                    avg_emb = self._mean_pooling([emb1, emb2])
+                    return [avg_emb]
+            raise
+
+    async def _acall_api(self, texts: List[str]) -> List[List[float]]:
+        """异步直接调用API，支持自动拆分过大请求和SSL fallback"""
+        headers = {
+            "Authorization": f"Bearer {self._api_key}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": self._model,
+            "input": texts,
+            "encoding_format": "float"
+        }
+        
+        payload_json = json.dumps(payload)
+        logger.info(f"Async Request payload size: {len(payload_json)} bytes, text count: {len(texts)}")
+
+        import certifi
+
+        async def _do_async_request(verify_ssl=True):
+            try:
+                verify_path = certifi.where() if verify_ssl else False
+                async with httpx.AsyncClient(verify=verify_path) as client:
+                    response = await client.post(
+                        self._base_url,
+                        headers=headers,
+                        content=payload_json,
+                        timeout=60
+                    )
+                    response.raise_for_status()
+                    return response
+            except httpx.ConnectError as e:
+                # SSL errors often manifest as ConnectError in httpx
+                if verify_ssl and ("[SSL: CERTIFICATE_VERIFY_FAILED]" in str(e) or "certificate verify failed" in str(e)):
+                    logger.warning(f"Async SSL certificate verification failed, falling back to no verification: {e}")
+                    return await _do_async_request(verify_ssl=False)
+                raise
+            except Exception as e:
+                # Catch other potential SSL-related errors
+                if verify_ssl and ("SSL" in str(e) or "certificate" in str(e).lower()):
+                    logger.warning(f"Async SSL/Certificate error detected, falling back to no verification: {e}")
+                    return await _do_async_request(verify_ssl=False)
+                raise
+
+        try:
+            response = await _do_async_request(verify_ssl=True)
+            data = response.json()
+            
+            if "data" not in data:
+                raise ValueError(f"Unexpected API response format: {data}")
+                
+            sorted_data = sorted(data["data"], key=lambda x: x["index"])
+            return [item["embedding"] for item in sorted_data]
+                
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 413:
+                logger.warning(f"Async Payload too large (413). Attempting to split request.")
+                if len(texts) > 1:
+                    # Split batch
+                    mid = len(texts) // 2
+                    logger.info(f"Splitting async batch of {len(texts)} into {mid} and {len(texts)-mid}")
+                    left = await self._acall_api(texts[:mid])
+                    right = await self._acall_api(texts[mid:])
+                    return left + right
+                else:
+                    # Single text too large
+                    text = texts[0]
+                    if len(text) < 100:
+                        raise
+                    
+                    # Split text
+                    mid = len(text) // 2
+                    logger.info(f"Splitting single async text of length {len(text)} into two parts")
+                    part1 = text[:mid]
+                    part2 = text[mid:]
+                    
+                    emb1_list = await self._acall_api([part1])
+                    emb2_list = await self._acall_api([part2])
+                    
+                    avg_emb = self._mean_pooling([emb1_list[0], emb2_list[0]])
+                    return [avg_emb]
+            raise
 
     def _handle_rate_limit_error(self, attempt: int, max_attempts: int, error: Exception) -> float:
         """处理速率限制错误，返回等待时间"""
@@ -213,29 +402,82 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
             logger.error(f"API限制错误，已达到最大重试次数 {max_attempts}")
             return 0
 
+    def get_text_embedding(self, text: str) -> List[float]:
+        """Override public method to ensure our logic is used"""
+        return self._get_text_embedding(text)
+
+    def get_query_embedding(self, query: str) -> List[float]:
+        """Override public method to ensure our logic is used"""
+        return self._get_query_embedding(query)
+
+    async def aget_text_embedding(self, text: str) -> List[float]:
+        """Override public method to ensure our logic is used"""
+        return await self._aget_text_embedding(text)
+
+    async def aget_query_embedding(self, query: str) -> List[float]:
+        """Override public method to ensure our logic is used"""
+        return await self._aget_query_embedding(query)
+
+    async def aget_text_embedding_batch(
+        self, texts: List[str], show_progress: bool = False, **kwargs: Any
+    ) -> List[List[float]]:
+        """异步批量获取文本嵌入"""
+        if not texts:
+            return []
+            
+        results = []
+        BATCH_SIZE = 5
+        
+        for i in range(0, len(texts), BATCH_SIZE):
+            batch = texts[i:i + BATCH_SIZE]
+            
+            # 简单的重试逻辑，或者直接调用
+            # 这里我们假设 _acall_api 已经处理了基本的调用
+            # 但为了稳健，最好加上重试
+            for attempt in range(self._max_retries):
+                try:
+                    if i > 0:
+                        await asyncio.sleep(self._request_delay)
+                        
+                    batch_results = await self._acall_api(batch)
+                    results.extend(batch_results)
+                    break
+                except Exception as e:
+                    logger.error(f"异步批量嵌入失败: {e} (尝试 {attempt + 1})")
+                    if attempt < self._max_retries - 1:
+                        await asyncio.sleep(self._request_delay * (attempt + 1))
+                        continue
+                    raise
+        return results
+
     def _get_text_embedding(self, text: str) -> List[float]:
         """获取文本嵌入，带增强的重试机制和并发控制"""
         with _GLOBAL_SYNC_SEMAPHORE:
             for attempt in range(self._max_retries):
                 try:
                     # 请求前延迟
-                    if attempt > 0:  # 第一次尝试不需要额外延迟
+                    if attempt > 0:
                         time.sleep(self._request_delay)
                     else:
-                        # 即使是第一次，为了安全也稍微延迟一点点，避免连续调用太快
                         time.sleep(self._request_delay * 0.5)
                     
-                    # 添加请求头信息
-                    result = super()._get_text_embedding(text)
+                    # 使用自定义 API 调用
+                    embeddings = self._call_api([text])
+                    if not embeddings:
+                        raise ValueError("No embedding returned")
                     
-                    # 成功后添加额外延迟，避免触发速率限制
+                    result = embeddings[0]
+                    
                     time.sleep(self._request_delay)
                     return result
                     
                 except HTTPError as e:
-                    if e.response.status_code in [403, 429]:  # Forbidden or Too Many Requests
+                    if e.response.status_code in [403, 429]:
                         self._handle_rate_limit_error(attempt, self._max_retries, e)
                         continue
+                    elif e.response.status_code == 413:
+                        logger.error(f"Payload too large (413) for text length {len(text)}. Retrying with truncation might be needed.")
+                        raise # 413 usually means logic error, no point retrying same payload
                     else:
                         logger.error(f"HTTP错误 {e.response.status_code}: {e}")
                         if attempt < self._max_retries - 1:
@@ -257,41 +499,35 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
                         continue
                     raise
             
-            raise RuntimeError(f"获取嵌入失败，重试 {self._max_retries} 次后仍失败。请检查API密钥和速率限制。")
+            raise RuntimeError(f"获取嵌入失败，重试 {self._max_retries} 次后仍失败。")
 
     def _get_query_embedding(self, query: str) -> List[float]:
-        """获取查询嵌入，带增强的重试机制"""
-        # 复用文本嵌入的逻辑
+        """获取查询嵌入"""
         return self._get_text_embedding(query)
 
     def get_text_embedding_batch(
         self, texts: List[str], show_progress: bool = False, **kwargs: Any
     ) -> List[List[float]]:
-        """批量获取文本嵌入，带增强的重试机制和更保守的速率控制"""
+        """批量获取文本嵌入，带增强的重试机制和分块处理"""
         if not texts:
             return []
             
         results = []
-        batch_size = 1  # 严格控制批量大小，避免触发速率限制
+        # 增加批处理大小，既然我们自己控制了请求
+        # 之前是1，现在设为10，提高效率但保持安全
+        BATCH_SIZE = 5 
         
-        for i in range(0, len(texts), batch_size):
-            batch = texts[i:i + batch_size]
+        for i in range(0, len(texts), BATCH_SIZE):
+            batch = texts[i:i + BATCH_SIZE]
             
             for attempt in range(self._max_retries):
                 try:
-                    # 批次前的延迟
-                    if i > 0 or attempt > 0:  # 第一个批次第一次尝试不需要延迟
-                        time.sleep(self._request_delay * 2)  # 批次间使用更长的延迟
+                    if i > 0 or attempt > 0:
+                        time.sleep(self._request_delay)
                     
-                    # 处理单个批次
-                    batch_results = []
-                    for text in batch:
-                        # 复用 _get_text_embedding，它已经包含了信号量锁
-                        embedding = self._get_text_embedding(text)
-                        batch_results.append(embedding)
-                    
+                    batch_results = self._call_api(batch)
                     results.extend(batch_results)
-                    break  # 成功处理批次，跳出重试循环
+                    break
                     
                 except Exception as e:
                     logger.error(f"批量嵌入失败: {type(e).__name__}: {e} (尝试 {attempt + 1}/{self._max_retries})")
@@ -303,26 +539,25 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
         return results
 
     async def _aget_text_embedding(self, text: str) -> List[float]:
-        """异步获取文本嵌入，带增强的重试机制和并发控制"""
+        """异步获取文本嵌入"""
         import asyncio
         semaphore = _get_global_async_semaphore()
         
         async with semaphore:
             for attempt in range(self._max_retries):
                 try:
-                    # 每次请求前都等待，即使是第一次，确保完全串行且有间隔
                     await asyncio.sleep(self._request_delay)
                     
-                    result = await super()._aget_text_embedding(text)
-                    return result
+                    embeddings = await self._acall_api([text])
+                    if not embeddings:
+                        raise ValueError("No embedding returned")
+                    return embeddings[0]
                     
                 except Exception as e:
                     error_str = str(e)
-                    # 检查是否为速率限制或权限错误 (403/429)
                     if "403" in error_str or "429" in error_str:
-                        # 使用较长的重试延迟
                         wait_time = RETRY_DELAY * (2 ** attempt)
-                        logger.warning(f"异步API限制错误 (403/429): {e}，等待 {wait_time:.1f} 秒后重试 (尝试 {attempt + 1}/{self._max_retries})")
+                        logger.warning(f"异步API限制错误 (403/429): {e}，等待 {wait_time:.1f} 秒后重试")
                         if attempt < self._max_retries - 1:
                             await asyncio.sleep(wait_time)
                             continue

@@ -5,7 +5,7 @@
 import logging
 from typing import Optional, Dict, Any
 
-from config import API_CONFIG, EMBEDDING_CONFIG, NEO4J_CONFIG, EXTRACTOR_CONFIG, RATE_LIMIT_CONFIG, RERANK_CONFIG
+from config import API_CONFIG, EMBEDDING_CONFIG, NEO4J_CONFIG, EXTRACTOR_CONFIG, RATE_LIMIT_CONFIG, RERANK_CONFIG, DOCUMENT_CONFIG
 from entity_extractor import parse_dynamic_triplets, MultiStageLLMExtractor
 from custom_siliconflow_rerank import CustomSiliconFlowRerank
 
@@ -67,6 +67,8 @@ class ModelFactory:
             )
             # 配置全局设置
             modules['Settings'].llm = llm
+            # 使用配置中的分块大小，与文档分块策略保持一致
+            modules['Settings'].chunk_size = DOCUMENT_CONFIG.get('chunk_size', 600)
             return llm
         except Exception as e:
             logger.error(f"创建 LLM 失败: {e}")
@@ -159,13 +161,30 @@ class ExtractorFactory:
             # 获取图存储实例用于流式写入
             graph_store = GraphStoreFactory.create_graph_store()
             
+            # 创建轻量级LLM (如果配置)
+            lightweight_llm = None
+            lightweight_model_name = API_CONFIG["siliconflow"].get("lightweight_model")
+            if lightweight_model_name:
+                try:
+                    logger.info(f"初始化轻量级LLM: {lightweight_model_name}")
+                    lightweight_llm = modules['SiliconFlow'](
+                        api_key=API_CONFIG["siliconflow"]["api_key"],
+                        model=lightweight_model_name,
+                        timeout=API_CONFIG["siliconflow"]["timeout"],
+                        max_tokens=API_CONFIG["siliconflow"]["max_tokens"],
+                        temperature=API_CONFIG["siliconflow"]["temperature"]
+                    )
+                except Exception as le:
+                    logger.warning(f"轻量级LLM初始化失败: {le}，将使用主模型")
+
             return MultiStageLLMExtractor(
                 llm=llm,
                 entity_prompt=entity_prompt,
                 relation_prompt=relation_prompt,
                 num_workers=num_workers,
                 max_triplets_per_chunk=EXTRACTOR_CONFIG['max_triplets_per_chunk'],
-                graph_store=graph_store
+                graph_store=graph_store,
+                lightweight_llm=lightweight_llm
             )
         except Exception as e:
             logger.error(f"创建提取器失败: {e}")

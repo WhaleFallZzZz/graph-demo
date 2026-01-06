@@ -19,6 +19,16 @@ from llama_index.core.graph_stores.types import EntityNode, Relation
 from llama_index.core.schema import BaseNode
 from llama_index.core.indices.property_graph import DynamicLLMPathExtractor
 
+try:
+    from enhanced_entity_extractor import StandardTermMapper
+except ImportError:
+    # Fallback if file not found or circular import
+    logger.warning("StandardTermMapper not found in enhanced_entity_extractor.py")
+    class StandardTermMapper:
+        @classmethod
+        def process_triplets(cls, triplets):
+            return triplets
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -81,6 +91,9 @@ class EnhancedEntityExtractor:
                     
                     logger.debug(f"提取LLM语义三元组: {head}({head_type}) - {relation} - {tail}({tail_type})")
         
+        # 应用术语映射标准化
+        enhanced_triplets = StandardTermMapper.process_triplets(enhanced_triplets)
+        
         if not enhanced_triplets:
             logger.warning("未能从LLM输出中提取到任何有效的三元组")
              
@@ -107,7 +120,9 @@ class EnhancedEntityExtractor:
 
 # 修改 parse_llm_output_to_enhanced_triplets 函数以返回 EntityNode, Relation 对象
 def parse_llm_output_to_enhanced_triplets(llm_output: str) -> List[Tuple[EntityNode, Relation, EntityNode]]:
-    """增强的解析函数，完全信任LLM的语义分析结果"""
+    """增强的解析函数，完全信任LLM的语义分析结果，并清理特殊字符"""
+    from neo4j_text_sanitizer import Neo4jTextSanitizer
+    
     enhanced_triplets_dicts = EnhancedEntityExtractor.extract_enhanced_triplets(llm_output)
     
     # 验证LLM返回的实体类型 - 完全信任模式
@@ -122,7 +137,7 @@ def parse_llm_output_to_enhanced_triplets(llm_output: str) -> List[Tuple[EntityN
         tail_type = triplet_dict.get("tail_type", "概念")
         
         if head_name and relation_type and tail_name:
-            # 清理名称
+            # 清理名称(基本清理)
             head_name = str(head_name).strip()
             tail_name = str(tail_name).strip()
             relation_type = str(relation_type).strip()
@@ -138,6 +153,42 @@ def parse_llm_output_to_enhanced_triplets(llm_output: str) -> List[Tuple[EntityN
             if is_invalid(head_name) or is_invalid(tail_name) or is_invalid(relation_type):
                 logger.warning(f"跳过无效实体/关系: '{head_name}' - '{relation_type}' - '{tail_name}'")
                 continue
+            
+            # ===== 新增：Neo4j特殊字符清理 =====
+            # 记录清理前的值(用于日志对比)
+            original_head = head_name
+            original_tail = tail_name
+            original_relation = relation_type
+            original_head_type = head_type
+            original_tail_type = tail_type
+            
+            # 清理节点名称
+            head_name = Neo4jTextSanitizer.sanitize_node_name(head_name)
+            tail_name = Neo4jTextSanitizer.sanitize_node_name(tail_name)
+            
+            # 清理关系标签
+            relation_type = Neo4jTextSanitizer.sanitize_relation_label(relation_type)
+            
+            # 清理实体类型(Label)
+            head_type = Neo4jTextSanitizer.sanitize_entity_type(head_type)
+            tail_type = Neo4jTextSanitizer.sanitize_entity_type(tail_type)
+            
+            # 如果清理后发生了变化，记录日志
+            if (original_head != head_name or original_tail != tail_name or 
+                original_relation != relation_type or original_head_type != head_type or 
+                original_tail_type != tail_type):
+                logger.info(
+                    f"🧹 字符清理: "
+                    f"[{original_head}({original_head_type})] -> [{head_name}({head_type})], "
+                    f"[{original_relation}] -> [{relation_type}], "
+                    f"[{original_tail}({original_tail_type})] -> [{tail_name}({tail_type})]"
+                )
+            
+            # 再次验证清理后不为空
+            if not head_name or not tail_name or not relation_type:
+                logger.error(f"清理后实体/关系为空，跳过: {head_name} - {relation_type} - {tail_name}")
+                continue
+            # ===== 清理结束 =====
 
             logger.info(f"创建语义三元组: {head_name}({head_type}) - {relation_type} - {tail_name}({tail_type})")
                 
@@ -170,8 +221,9 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
         entity_prompt: str,
         relation_prompt: str,
         num_workers: int = 4,
-        max_triplets_per_chunk: int = 10,
+        max_triplets_per_chunk: int = 15,
         graph_store: Optional[Any] = None,
+        lightweight_llm: Optional[Any] = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(
@@ -187,6 +239,7 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
         object.__setattr__(self, "relation_prompt", relation_prompt)
         object.__setattr__(self, "real_num_workers", num_workers)
         object.__setattr__(self, "graph_store", graph_store)
+        object.__setattr__(self, "lightweight_llm", lightweight_llm or llm)
         
         # Memory monitoring config
         object.__setattr__(self, "memory_threshold_mb", 100)
@@ -195,20 +248,66 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
         # File write lock for saving JSON output
         object.__setattr__(self, "_file_lock", threading.Lock())
 
-    def _safe_llm_call(self, prompt: str, max_retries: int = 3) -> str:
-        """Call LLM with retry mechanism"""
+    def _safe_llm_call(self, prompt: str, max_retries: int = 3, llm_instance: Any = None) -> str:
+        """Call LLM with enhanced retry mechanism and caching"""
         import time
+        from llm_cache_manager import get_global_cache
+        
+        target_llm = llm_instance or self.llm
+        
+        # 尝试从缓存获取
+        cache = get_global_cache()
+        cached_result = cache.get(prompt, model_params={
+            "temperature": 0.0,
+            "model": getattr(target_llm, "model", "unknown")
+        })
+        
+        if cached_result:
+            logger.debug("使用缓存的LLM响应")
+            return cached_result
+        
         last_error = None
         for attempt in range(max_retries):
             try:
-                response = self.llm.complete(prompt)
-                return response.text
+                response = target_llm.complete(prompt)
+                result = response.text
+                
+                # 缓存成功的结果
+                cache.put(prompt, result, model_params={
+                    "temperature": 0.0,
+                    "model": getattr(target_llm, "model", "unknown")
+                })
+                
+                return result
+                
             except Exception as e:
                 last_error = e
-                logger.warning(f"LLM call failed (attempt {attempt+1}/{max_retries}): {e}")
-                if attempt < max_retries - 1:
-                    time.sleep(1 * (attempt + 1))
+                error_type = type(e).__name__
+                
+                # 根据错误类型采用不同的重试策略
+                if "RateLimitError" in error_type or "429" in str(e):
+                    # 速率限制错误,使用指数退避
+                    wait_time = min(60, (2 ** attempt) * 5)
+                    logger.warning(f"速率限制错误,等待 {wait_time}秒后重试 (attempt {attempt+1}/{max_retries})")
+                    time.sleep(wait_time)
+                elif "Timeout" in error_type or "timeout" in str(e).lower():
+                    # 超时错误,短暂等待
+                    wait_time = 5 * (attempt + 1)
+                    logger.warning(f"超时错误,等待 {wait_time}秒后重试 (attempt {attempt+1}/{max_retries})")
+                    time.sleep(wait_time)
+                elif "ConnectionError" in error_type or "NetworkError" in error_type:
+                    # 网络错误,等待较长时间
+                    wait_time = 10 * (attempt + 1)
+                    logger.warning(f"网络错误,等待 {wait_time}秒后重试 (attempt {attempt+1}/{max_retries})")
+                    time.sleep(wait_time)
+                else:
+                    # 其他错误,标准退避
+                    wait_time = 2 * (attempt + 1)
+                    logger.warning(f"LLM调用失败: {error_type}, 等待 {wait_time}秒后重试 (attempt {attempt+1}/{max_retries})")
+                    time.sleep(wait_time)
         
+        # 所有重试都失败
+        logger.error(f"LLM调用失败,已达到最大重试次数: {last_error}")
         raise last_error
 
     def _save_json_output(self, node: BaseNode, triplets: List[Tuple]) -> None:
@@ -280,6 +379,10 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
                         time.sleep(0.1)
                     else:
                         raise write_err
+            
+            # Monitoring Log
+            process_time = time.time() - start_time
+            logger.info(f"Performance: Node {node.node_id[:8]} processed in {process_time:.4f}s. Extracted {len(triplets)} triplets.")
                         
         except Exception as e:
             logger.error(f"Failed to save JSON output for node {node.node_id}: {e}")
@@ -311,7 +414,8 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
         def entity_producer(node_idx, node):
             try:
                 prompt = self.entity_prompt.format(text=node.text)
-                output = self._safe_llm_call(prompt)
+                # Use lightweight LLM for initial entity recognition
+                output = self._safe_llm_call(prompt, llm_instance=self.lightweight_llm)
                 entities = self._parse_entities(output)
                 relation_queue.put((node_idx, node, entities))
                 logger.debug(f"Stage 1 (Entity) done for node {node_idx}, found {len(entities)} entities")

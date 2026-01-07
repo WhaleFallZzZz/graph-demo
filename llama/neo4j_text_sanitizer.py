@@ -44,6 +44,7 @@ class Neo4jTextSanitizer:
         ':': '',       # 半角冒号移除
         '：': '',      # 全角冒号移除
         '*': '',       # 星号移除
+        '_': '',       # 下划线移除（去除 _用于_、_发展为_ 等包裹符号）
     }
     
     # 需要完全移除的字符(通常是控制字符)
@@ -88,6 +89,8 @@ class Neo4jTextSanitizer:
         
         # 3. 先移除单双引号和反引号（保持名称简洁）
         text = text.replace("'", '').replace('"', '').replace('`', '')
+        # 3.1 去除下划线（防止 _检查信息_ 之类的包裹符号）
+        text = text.replace('_', '')
         
         # 4. 替换其他特殊字符为全角字符(保持语义)
         for char, replacement in cls.SPECIAL_CHARS.items():
@@ -98,8 +101,10 @@ class Neo4jTextSanitizer:
         # 5. 多个空格合并为一个
         text = re.sub(r'\s+', ' ', text)
         
-        # 6. 去除首尾空格
+        # 6. 去除首尾空格与首尾标点（: ： - * 等）
         text = text.strip()
+        text = re.sub(r'^[\s:\-＊*：]+', '', text)
+        text = re.sub(r'[\s:\-＊*：]+$', '', text)
         
         # 7. 检查是否是Cypher关键字,如果是则添加前缀
         if text.upper() in cls.CYPHER_KEYWORDS:

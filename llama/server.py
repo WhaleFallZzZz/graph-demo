@@ -55,28 +55,10 @@ def build_graph_with_progress(file_url: str, client_id: str, custom_file_name: O
     """
     start_time = datetime.now()
     temp_dir = None
-    import threading
-    periodic_stop = threading.Event()
-    def _periodic_update():
-        while not periodic_stop.wait(30):
-            try:
-                metrics = getattr(builder, "metrics", {})
-                details = {
-                    'processed_docs': metrics.get('processed_docs', 0),
-                    'total_docs': metrics.get('total_docs', 0),
-                    'entities_count': metrics.get('entities_count', 0),
-                    'relationships_count': metrics.get('relationships_count', 0)
-                }
-                event = create_progress_event("knowledge_graph", "周期性进度更新", None, details)
-                progress_manager.broadcast_progress(event)
-            except Exception:
-                pass
     
     try:
         # 创建进度跟踪器
         progress_tracker = ProgressTracker(client_id, total_steps=8)
-        updater_thread = threading.Thread(target=_periodic_update, daemon=True)
-        updater_thread.start()
         
         # 阶段1：初始化
         progress_tracker.update_stage("initialization", "正在初始化构建器...", 10)
@@ -198,11 +180,6 @@ def build_graph_with_progress(file_url: str, client_id: str, custom_file_name: O
             return {'success': False, 'error': error_msg}
             
         logger.info("builder.build_knowledge_graph 调用成功")
-        try:
-            progress_tracker.update_stage("entity_resolution", "正在进行实体对齐与去重...", 90)
-            builder._perform_entity_resolution(index, progress_tracker)
-        except Exception as e:
-            logger.warning(f"实体对齐阶段发生错误: {e}")
         
         # 阶段5：完成
         processing_time = (datetime.now() - start_time).total_seconds()
@@ -232,7 +209,6 @@ def build_graph_with_progress(file_url: str, client_id: str, custom_file_name: O
         }
         
         progress_tracker.complete(result)
-        periodic_stop.set()
         return result
         
     except Exception as e:
@@ -245,7 +221,6 @@ def build_graph_with_progress(file_url: str, client_id: str, custom_file_name: O
         return {'success': False, 'error': error_msg}
         
     finally:
-        periodic_stop.set()
         # 恢复原始配置
         if 'original_path' in locals():
             DOCUMENT_CONFIG['path'] = original_path

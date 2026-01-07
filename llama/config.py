@@ -113,7 +113,7 @@ DOCUMENT_CONFIG = {
     "max_paths_per_chunk": int(os.getenv("MAX_PATHS_PER_CHUNK", "2")),
     "num_workers": int(os.getenv("DOCUMENT_NUM_WORKERS", "1")),
     "chunk_size": int(os.getenv("DOC_CHUNK_SIZE", "1024")),
-    "chunk_overlap": int(os.getenv("DOC_CHUNK_OVERLAP", "120")),
+    "CHUNK_OVERLAP": int(os.getenv("DOC_CHUNK_OVERLAP", "120")),
     "max_chunk_length": int(os.getenv("DOC_MAX_CHUNK_LENGTH", "1400")),
     "min_chunk_length": int(os.getenv("DOC_MIN_CHUNK_LENGTH", "600")),
     "dynamic_chunking": os.getenv("DOC_DYNAMIC_CHUNKING", "true").lower() == "true",
@@ -122,7 +122,9 @@ DOCUMENT_CONFIG = {
     "log_chunk_metrics": os.getenv("DOC_LOG_CHUNK_METRICS", "true").lower() == "true",
     "sentence_splitter": os.getenv("DOC_SENTENCE_SPLITTER", "。！？!?"),
     "semantic_separator": os.getenv("DOC_SEMANTIC_SEPARATOR", "\n\n"),
-    "incremental_processing": os.getenv("INCREMENTAL_PROCESSING", "true").lower() == "true"
+    "incremental_processing": os.getenv("INCREMENTAL_PROCESSING", "true").lower() == "true",
+    "batch_size": int(os.getenv("DOC_BATCH_SIZE", "5")),
+    "progress_update_every_batches": int(os.getenv("PROGRESS_UPDATE_EVERY_BATCHES", "3")),
 }
 
 # 提取器配置
@@ -138,6 +140,22 @@ EXTRACTOR_CONFIG = {
 - 错误示例："导致视网膜脱落的高风险因素" (13字) -> 应拆解或简化
 - 正确示例："视网膜脱落" (5字)
 - 任何超过8个字的实体将被视为无效提取。
+
+## 【实体修饰语消除】
+**提取实体时必须剔除不必要的描述性修饰语！**
+- 输入："严重的病理性近视" -> 输出："病理性近视"
+- 输入："早期的视网膜萎缩" -> 输出："视网膜萎缩"
+- 输入："明显的视物模糊" -> 输出："视物模糊"
+- 去除如"严重的"、"轻度的"、"早期的"、"明显的"等形容词前缀。
+
+## 【负向约束：禁止提取内容】
+**严禁提取以下非医学专业名词：**
+1. **人群/角色**：如 "青少年"、"家长"、"儿童"、"学生"、"医生"、"专家"
+2. **通用场所/机构**：如 "学校"、"医院"、"机构"、"中心"、"门诊"、"科室"、"研究所"、"学院"、"实验室"、"公司"、"集团"
+3. **泛指代词**：如 "我们"、"你们"、"他们"、"患者"
+4. **机构后缀或机构名**：凡以"中心/门诊/科室/研究所/学院/实验室/公司/集团/医院"结尾或包含"眼视光中心/视光中心/眼科中心"的词语，一律不作为医学实体。
+   - 示例：输入包含 "眼视光中心"、"某某医院门诊部" 等，不提取为实体。
+5. **系统/平台/软件**：如 "电子病历系统"、"医院信息系统(HIS)"、"检验信息系统(LIS)"、"影像归档与通信系统(PACS)"、"预约平台"、"挂号系统"、"管理系统"、"应用软件"、"客户端"、"APP" 等，均不作为医学实体。
 
 ## 【权重调整：重点提取领域】
 请特别关注并加大对以下两类信息的提取权重（目前提取率较低）：

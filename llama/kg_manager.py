@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 import logging
+import time
 from concurrent.futures import ThreadPoolExecutor
 
 # 添加项目根目录到Python路径
@@ -56,6 +57,7 @@ class ProcessedFileManager:
     def __init__(self, record_file: str = "processed_files.json"):
         self.record_file = Path(os.getcwd()) / record_file
         self.processed_files = self._load_records()
+        self._dirty = False
         
     def _load_records(self) -> Dict[str, str]:
         if self.record_file.exists():
@@ -71,6 +73,7 @@ class ProcessedFileManager:
         try:
             with open(self.record_file, 'w', encoding='utf-8') as f:
                 json.dump(self.processed_files, f, ensure_ascii=False, indent=2)
+            self._dirty = False
         except Exception as e:
             logger.error(f"保存处理记录失败: {e}")
             
@@ -98,7 +101,7 @@ class ProcessedFileManager:
         current_hash = self.get_file_hash(abs_path)
         if current_hash:
             self.processed_files[abs_path] = current_hash
-            self.save_records()
+            self._dirty = True
 
 class KnowledgeGraphManager:
     """知识图谱管理器 - 核心Facade"""
@@ -321,10 +324,27 @@ class KnowledgeGraphManager:
         min_chunk_length = DOCUMENT_CONFIG.get('min_chunk_length', 500)
         target_chars = DOCUMENT_CONFIG.get('dynamic_target_chars_per_chunk', base_chunk_size)
         if dyn and text_len > 0:
+            target_chars = DOCUMENT_CONFIG.get('dynamic_target_chars_per_chunk', base_chunk_size)
             chunk_size = max(min_chunk_length, min(max_chunk_length, target_chars))
+            
+            # 2. 实体密度检测
+            # 简单估算实体密度：检查高频医学关键词出现的频率
+            medical_keywords = ["近视", "远视", "散光", "眼轴", "角膜", "视网膜", "脉络膜", "眼压", "调节", "屈光"]
+            doc_text = getattr(document, "text", "")
+            if len(doc_text) > 0:
+                keyword_count = sum(doc_text.count(k) for k in medical_keywords)
+                density = keyword_count / len(doc_text)
+                
+                # 如果密度高（例如 > 0.5%），减小 chunk_size 以提高提取精度
+                if density > 0.005:
+                    logger.info(f"检测到高密度医学文本 (密度: {density:.2%})，自动缩小分块大小")
+                    chunk_size = int(chunk_size * 0.8) # 缩小 20%
+                    chunk_size = max(chunk_size, min_chunk_length)
         else:
             chunk_size = base_chunk_size
-        chunk_overlap = max(0, min(int(chunk_size * 0.1), 200, DOCUMENT_CONFIG.get('chunk_overlap', 80)))
+            
+        # 调整 overlap 为 20%
+        chunk_overlap = max(0, min(int(chunk_size * 0.2), 200, DOCUMENT_CONFIG.get('CHUNK_OVERLAP', int(chunk_size * 0.2))))
         
         # 创建句子分隔符
         sentence_splitter = DOCUMENT_CONFIG.get('sentence_splitter', '。！？!?')
@@ -452,36 +472,44 @@ class KnowledgeGraphManager:
     
     def _ensure_medical_terminology_integrity(self, node) -> Any:
         """确保医学术语完整性
-        
-        Args:
-            node: 节点对象
-            
-        Returns:
-            处理后的节点
+        增加边界检测：确保每个实体的首尾都出现在同一chunk中
         """
         text = node.text
         
-        # 医学术语模式 - 避免在这些术语中间分割
-        # 例如：角膜塑形镜(OK镜), 低浓度阿托品, 眼轴长度等
-        medical_terms = [
-            r'角膜塑形镜\\([^)]*\\)',  # 角膜塑形镜(OK镜) 等
-            r'低浓度阿托品[^\\s]*',    # 低浓度阿托品相关
-            r'眼轴长度',               # 眼轴长度
-            r'屈光度',                # 屈光度
-            r'调节幅度',              # 调节幅度
-            r'RGP镜片',               # RGP镜片
-            r'OK镜',                 # OK镜
-            r'LASIK',                # LASIK手术
-            r'SMILE',                # SMILE手术
-            r'ICL',                  # ICL手术
-            r'LogMAR视力表',          # LogMAR视力表
-            r'五分记录法',            # 五分记录法
+        # 关键医学术语列表，用于检查边界截断
+        critical_terms = [
+            "角膜塑形镜", "低浓度阿托品", "眼轴长度", "病理性近视", "视网膜脱落",
+            "调节幅度", "LogMAR视力表", "全飞秒激光手术", "准分子激光手术"
         ]
         
-        # 这里可以添加逻辑来检查是否在医学术语中间分割
-        # 目前我们只是返回原始节点，但可以在此处添加更复杂的逻辑
+        # 常见的有效子术语（如果截断在这个位置，是可以接受的，或者是独立的实体）
+        valid_subterms = ["角膜", "视网膜", "近视", "调节", "眼轴", "手术", "激光"]
         
-        # 保留节点的原始内容，但可以在此处进行医学术语完整性检查
+        # 检查末尾截断
+        # 如果文本以某个术语的前缀结尾（但不是完整术语），且该前缀本身不是有效术语，则截断它
+        # 依靠 overlap 在下一个 chunk 中完整读取
+        for term in critical_terms:
+            # 检查长度至少为2的前缀
+            for i in range(2, len(term)):
+                prefix = term[:i]
+                if text.endswith(prefix):
+                    # 检查是否已经是完整术语（通过是否能匹配更长的前缀来判断 - 循环会继续）
+                    # 但在这里我们只看当前 prefix。如果 text 以 prefix 结尾，
+                    # 我们需要确认它不是完整 term 的一部分（即 text 结尾就是 prefix，而不是 prefix + ...）
+                    # text.endswith(prefix) 已经是确认了。
+                    
+                    # 只要长度不等于 term 的长度，就是部分匹配
+                    if len(prefix) < len(term):
+                        # 检查这个前缀是否本身就是有效词
+                        if prefix in valid_subterms:
+                            continue
+                            
+                        # 这是一个不完整的截断，例如 "角膜塑"
+                        # 我们将其移除，让下一个 chunk (有 overlap) 来处理完整的 "角膜塑形镜"
+                        logger.debug(f"边界检测: 发现末尾截断的术语片段 '{prefix}' (原词: {term})，已自动修剪")
+                        node.text = text[:-len(prefix)]
+                        return node
+        
         return node
     
     def _chunk_with_params(self, document, chunk_size: int, chunk_overlap: int, max_chunk_length: int, min_chunk_length: int) -> List[Any]:
@@ -592,10 +620,34 @@ class KnowledgeGraphManager:
             start_time = time.time()
             
             logger.info(f"开始并行处理 {len(documents)} 个文档块...")
-            if progress_tracker:
-                progress_tracker.update_stage("knowledge_graph", f"正在并行处理 {len(documents)} 个文档块...")
             
-            index.insert_nodes(documents)
+            # 使用批处理以支持细粒度进度更新
+            total_docs = len(documents)
+            batch_size = DOCUMENT_CONFIG.get("batch_size", 5)
+            
+            # 进度范围: 30% -> 90%
+            start_pct = 30
+            end_pct = 90
+            
+            for i in range(0, total_docs, batch_size):
+                batch = documents[i:i + batch_size]
+                current_batch_end = min(i + batch_size, total_docs)
+                
+                progress = start_pct + ((current_batch_end / total_docs) * (end_pct - start_pct))
+                msg = f"正在处理文档块 {i + 1}-{current_batch_end}/{total_docs}"
+                update_every = max(1, int(DOCUMENT_CONFIG.get("progress_update_every_batches", 1)))
+                batch_index = i // batch_size
+                should_update = (batch_index % update_every == 0) or (current_batch_end == total_docs)
+                if should_update:
+                    if progress_tracker:
+                        progress_tracker.update_stage("knowledge_graph", msg, progress)
+                    else:
+                        if i % (batch_size * 2) == 0:
+                            logger.info(f"{msg} ({progress:.1f}%)")
+                
+                # 插入节点
+                index.insert_nodes(batch)
+            
             self.metrics["processed_docs"] = total_docs
             e_count, r_count = self._get_graph_counts(self.graph_store)
             self.metrics["entities_count"] = e_count
@@ -609,6 +661,8 @@ class KnowledgeGraphManager:
             
             if processed_count > 0:
                 logger.info(f"已标记 {processed_count} 个文件为已处理")
+            if getattr(self.processed_file_manager, "_dirty", False):
+                self.processed_file_manager.save_records()
 
             # 实体对齐
             self._perform_entity_resolution(index, progress_tracker)
@@ -727,10 +781,11 @@ class KnowledgeGraphManager:
         count = 0
         try:
             with graph_store._driver.session() as session:
+                tx = session.begin_transaction()
                 for source, target in merge_map.items():
-                    if source == target: continue
+                    if source == target:
+                        continue
                     try:
-                        # 尝试使用 APOC
                         query = """
                         MATCH (s:Entity {name: $source})
                         MATCH (t:Entity {name: $target})
@@ -739,9 +794,8 @@ class KnowledgeGraphManager:
                         RETURN count(node)
                         """
                         try:
-                            session.run(query, source=source, target=target)
+                            tx.run(query, source=source, target=target)
                         except Exception:
-                            # 回退到手动合并
                             manual_query = """
                             MATCH (s:Entity {name: $source})
                             MATCH (t:Entity {name: $target})
@@ -757,10 +811,14 @@ class KnowledgeGraphManager:
                             DELETE r
                             DETACH DELETE s
                             """
-                            session.run(manual_query, source=source, target=target)
+                            tx.run(manual_query, source=source, target=target)
                         count += 1
                     except Exception as e:
                         logger.warning(f"合并实体 {source}->{target} 失败: {e}")
+                try:
+                    tx.commit()
+                except Exception as e:
+                    logger.warning(f"Neo4j 批量事务提交失败: {e}")
         except Exception as e:
              logger.error(f"Neo4j 合并会话失败: {e}")
         logger.info(f"Neo4j: 成功合并 {count} 对实体")

@@ -85,20 +85,26 @@ class ModelFactory:
             
         try:
             if EMBEDDING_CONFIG.get('use_local_model', False):
-                logger.info(f"使用本地嵌入模型: {EMBEDDING_CONFIG.get('local_fallback_model')}")
                 return modules['HuggingFaceEmbedding'](
                     model_name=EMBEDDING_CONFIG.get('local_fallback_model', 'BAAI/bge-m3'),
                     device=EMBEDDING_CONFIG.get('local_device', 'cpu'),
                     trust_remote_code=True
                 )
-            else:
-                logger.info("使用在线嵌入模型: BAAI/bge-m3 via SiliconFlow")
-                from custom_siliconflow_embedding import CustomSiliconFlowEmbedding
+            from custom_siliconflow_embedding import CustomSiliconFlowEmbedding
+            try:
+                logger.info("尝试使用在线嵌入模型 via SiliconFlow")
                 return CustomSiliconFlowEmbedding(
                     model=API_CONFIG["siliconflow"]["embedding_model"],
                     api_key=API_CONFIG["siliconflow"]["api_key"],
                     max_retries=RATE_LIMIT_CONFIG['max_retries'],
                     request_delay=RATE_LIMIT_CONFIG['request_delay']
+                )
+            except Exception as e:
+                logger.warning(f"在线嵌入模型不可用，回退到本地模型: {e}")
+                return modules['HuggingFaceEmbedding'](
+                    model_name=EMBEDDING_CONFIG.get('local_fallback_model', 'BAAI/bge-m3'),
+                    device=EMBEDDING_CONFIG.get('local_device', 'cpu'),
+                    trust_remote_code=True
                 )
         except Exception as e:
             logger.error(f"创建 Embedding 模型失败: {e}")

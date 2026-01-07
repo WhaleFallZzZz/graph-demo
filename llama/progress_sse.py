@@ -117,19 +117,33 @@ class ProgressTracker:
         self.current_step = 0
         self.start_time = datetime.now()
         self.stage_times = {}
+        self.last_percentage = 0.0
         
     def update_progress(self, stage: str, message: str, step: Optional[int] = None, percentage: Optional[float] = None):
         """更新进度"""
         if step is not None:
             self.current_step = step
         elif percentage is None:
-            # Only increment step if percentage is NOT provided (assuming step-based tracking)
-            # Or if we want to mix them, we should probably just increment anyway if step is missing?
-            # Let's keep it simple: if percentage is provided, we trust it. If not, we calculate from step.
             self.current_step += 1
             
         if percentage is None:
             percentage = (self.current_step / self.total_steps) * 100
+            
+        # 误差补偿机制：确保进度不回退
+        if percentage < self.last_percentage:
+            # 只有当阶段改变时才允许进度"重置"（虽然通常也不应该），或者我们忽略小的回退
+            # 这里简单处理：取最大值，除非是完成阶段
+            if stage != 'complete':
+                percentage = self.last_percentage
+        
+        self.last_percentage = percentage
+        
+        # 计算剩余时间预估
+        elapsed = (datetime.now() - self.start_time).total_seconds()
+        remaining_seconds = 0
+        if percentage > 0:
+            estimated_total = elapsed / (percentage / 100)
+            remaining_seconds = max(0, estimated_total - elapsed)
         
         # 记录阶段时间
         self.stage_times[stage] = {
@@ -146,14 +160,16 @@ class ProgressTracker:
             details={
                 'step': self.current_step,
                 'total_steps': self.total_steps,
-                'stage_times': self.stage_times
+                'stage_times': self.stage_times,
+                'elapsed_seconds': round(elapsed, 1),
+                'remaining_seconds': round(remaining_seconds, 1)
             }
         )
         
         # 发送进度
         progress_manager.send_progress(self.client_id, event)
         
-        logger.info(f"进度更新: {stage} - {message} ({percentage:.1f}%)")
+        logger.info(f"进度更新: {stage} - {message} ({percentage:.1f}%) [剩余约 {remaining_seconds:.0f}s]")
         
     def update_stage(self, stage: str, message: str, percentage: Optional[float] = None):
         """更新阶段"""

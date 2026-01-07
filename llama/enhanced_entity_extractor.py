@@ -29,6 +29,50 @@ class StandardTermMapper:
     }
     
     # 静态映射表
+    # 负向约束列表：禁止提取的非医学名词
+    FORBIDDEN_TERMS = {
+        "青少年", "家长", "儿童", "学生", "患者", "医生", "专家", 
+        "老师", "学校", "医院", "机构", "我们", "你们", "他们",
+        "眼睛", "眼部", "眼球", "视力表", "检查", "治疗", "手术", # 过于宽泛的词
+        "问题", "原因", "方法", "措施", "情况", "结果", "影响",
+        "建议", "提示", "注意", "可能", "可以", "需要","Entity","type"
+    }
+
+    # 无效字符集合 - 包含这些字符的实体将被直接过滤
+    INVALID_CHARS = {'/', '\\', '{', '}', '[', ']', '<', '>', '|', '`', '~'}
+    
+    # 无效前缀 - 以这些开头的实体将被过滤
+    INVALID_PREFIXES = ('http', 'https', 'ftp', 'www', 'file:', 'mailto:')
+    
+    # 无效后缀 - 以这些结尾的实体将被过滤 (主要是文件扩展名)
+    INVALID_SUFFIXES = ('.pdf', '.txt', '.doc', '.docx', '.jpg', '.png', '.json', '.xml', '.html')
+
+    # 实体最大长度
+    MAX_ENTITY_LENGTH = 50
+    
+    # 机构/场所后缀与关键词，用于剔除非医学实体
+    INSTITUTION_SUFFIXES = ("中心", "医院", "门诊", "科室", "机构", "公司", "集团", "学校", "大学", "学院", "研究所", "实验室")
+    INSTITUTION_KEYWORDS = {"视光中心", "眼视光中心", "眼科中心", "眼视光机构"}
+    ALLOW_MEDICAL_CENTER_TERMS = {"中心凹", "黄斑中心凹"}
+    
+    # 系统/平台/软件后缀与关键词，用于剔除技术/系统类非医学实体
+    SYSTEM_SUFFIXES = ("系统", "平台", "软件", "客户端", "服务端", "APP")
+    SYSTEM_KEYWORDS = {
+        "电子病历系统", "EMR", "HIS", "LIS", "PACS", "RIS",
+        "挂号系统", "收费系统", "就诊平台", "预约平台", "管理系统",
+        "医院信息系统", "医疗信息系统"
+    }
+    ALLOW_MEDICAL_SYSTEM_TERMS = set()
+
+    # 修饰语正则列表
+    MODIFIER_PATTERNS = [
+        r"^严重的", r"^轻度的", r"^早期的", r"^晚期的", r"^急性的", r"^慢性的",
+        r"^原发性", r"^继发性", r"^先天性", r"^后天性", r"^进行性",
+        r"^明显的", r"^显著的", r"^可能的", r"^疑似的", r"^高度的", r"^低度的",
+        r"^伴有", r"^合并", r"^引起", r"^导致",
+        r"的$", # 结尾的'的'
+    ]
+
     SYNONYM_MAP = {
     # 眼轴长度相关 (扩展)
     "眼球长度": "眼轴长度", "AL": "眼轴长度", "轴长": "眼轴长度", "眼轴": "眼轴长度", "AL长度": "眼轴长度",
@@ -185,23 +229,51 @@ class StandardTermMapper:
 }
     
     @classmethod
+    def remove_modifiers(cls, entity_name: str) -> str:
+        """移除实体修饰语"""
+        if not entity_name:
+            return entity_name
+            
+        import re
+        clean_name = entity_name.strip()
+        
+        # 迭代应用正则规则
+        for pattern in cls.MODIFIER_PATTERNS:
+            prev_name = clean_name
+            clean_name = re.sub(pattern, "", clean_name).strip()
+            if prev_name != clean_name:
+                logger.debug(f"修饰语消除: '{prev_name}' -> '{clean_name}'")
+                
+        return clean_name
+
+    @classmethod
     def standardize(cls, entity_name: str) -> str:
         """
         标准化实体名称
         """
+        if not hasattr(cls, "_lru_cache"):
+            from collections import OrderedDict
+            cls._lru_cache = OrderedDict()
+            cls._lru_max = 2048
         if not entity_name:
             return entity_name
             
-        # 1. 基础清理
-        clean_name = entity_name.strip()
-        
-        # 2. 查表映射
+        key = entity_name.strip()
+        cached = cls._lru_cache.get(key)
+        if cached is not None:
+            cls._lru_cache.move_to_end(key)
+            return cached
+        clean_name = key
+        clean_name = cls.remove_modifiers(clean_name)
         if clean_name in cls.SYNONYM_MAP:
             standard_name = cls.SYNONYM_MAP[clean_name]
-            logger.debug(f"术语标准化: '{clean_name}' -> '{standard_name}'")
-            return standard_name
-            
-        return clean_name
+            result = standard_name
+        else:
+            result = clean_name
+        cls._lru_cache[key] = result
+        if len(cls._lru_cache) > cls._lru_max:
+            cls._lru_cache.popitem(last=False)
+        return result
 
     @classmethod
     def validate_batch(cls, triplets: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -236,12 +308,58 @@ class StandardTermMapper:
     def _is_valid_entity(cls, text: str) -> bool:
         if not text or len(text) < 1:
             return False
-        # 过滤纯数字
+        
+        # 0. 长度检查
+        if len(text) > cls.MAX_ENTITY_LENGTH:
+            logger.warning(f"实体被长度限制拦截 (长度 {len(text)} > {cls.MAX_ENTITY_LENGTH}): '{text[:20]}...'")
+            return False
+
+        # 1. 负向约束检查
+        if text in cls.FORBIDDEN_TERMS:
+            logger.debug(f"实体被负向约束拦截: '{text}'")
+            return False
+        
+        # 2. 无效字符检查 (包含路径分隔符等)
+        for char in cls.INVALID_CHARS:
+            if char in text:
+                logger.warning(f"实体被无效字符拦截 ('{char}'): '{text}'")
+                return False
+
+        # 3. 无效前缀检查 (URL, file协议等)
+        if text.lower().startswith(cls.INVALID_PREFIXES):
+            logger.warning(f"实体被无效前缀拦截: '{text}'")
+            return False
+
+        # 4. 无效后缀检查 (文件扩展名等)
+        if text.lower().endswith(cls.INVALID_SUFFIXES):
+            logger.warning(f"实体被无效后缀拦截: '{text}'")
+            return False
+
+        # 5. 过滤纯数字
         if text.replace(".", "").isdigit():
             return False
-        # 过滤纯标点
+            
+        # 6. 过滤纯标点
         if all(char in ",./<>?;':\"[]\\{}|`~!@#$%^&*()-_=+" for char in text):
             return False
+        
+        # 7. 机构/场所剔除：以机构后缀结尾或包含机构关键词，且不在医学允许术语例外列表
+        try:
+            clean = text.strip()
+            if clean not in cls.ALLOW_MEDICAL_CENTER_TERMS:
+                if any(clean.endswith(suf) for suf in cls.INSTITUTION_SUFFIXES):
+                    return False
+                if any(kw in clean for kw in cls.INSTITUTION_KEYWORDS):
+                    return False
+            # 8. 系统/平台/软件剔除：以系统类后缀结尾或包含典型系统关键词
+            if clean not in cls.ALLOW_MEDICAL_SYSTEM_TERMS:
+                if any(clean.endswith(suf) for suf in cls.SYSTEM_SUFFIXES):
+                    return False
+                if any(kw in clean for kw in cls.SYSTEM_KEYWORDS):
+                    return False
+        except Exception:
+            pass
+            
         return True
 
     @classmethod

@@ -94,7 +94,7 @@ class DeepSeekOCRParser(BaseReader):
             # CPU core based dynamic adjustment, but capped to avoid excessive API calls
             # Target < 80% resource utilization
             cpu_count = os.cpu_count() or 4
-            max_workers = min(int(cpu_count * 0.8), 10)
+            max_workers = min(int(cpu_count * 0.8*2), 10)
             max_workers = max(1, max_workers) # Ensure at least 1 worker
             logger.info(f"Using {max_workers} threads for OCR processing (CPU count: {cpu_count}).")
             

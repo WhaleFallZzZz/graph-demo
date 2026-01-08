@@ -1,0 +1,7760 @@
+/* 处理时间: 2026-01-07 17:39:06 */
+{
+  "node_id": "da32066d-ff72-45b1-9eb8-3d2137ba582a",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:06.404922",
+  "triplets": [
+    {
+      "head": "青少年的近视防治",
+      "head_type": "disease",
+      "relation": "主题",
+      "tail": "近视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "易虹",
+      "head_type": "person",
+      "relation": "编写",
+      "tail": "青少年的近视防治",
+      "tail_type": "disease"
+    },
+    {
+      "head": "易虹",
+      "head_type": "person",
+      "relation": "担任",
+      "tail": "中华眼科学会常委",
+      "tail_type": "position"
+    },
+    {
+      "head": "易虹",
+      "head_type": "person",
+      "relation": "担任",
+      "tail": "国家卫计委近视眼重点实验室主任",
+      "tail_type": "position"
+    },
+    {
+      "head": "易虹",
+      "head_type": "person",
+      "relation": "担任",
+      "tail": "复旦大学眼科学系教授博士生导师",
+      "tail_type": "position"
+    },
+    {
+      "head": "易虹",
+      "head_type": "person",
+      "relation": "担任",
+      "tail": "上海眼科学会前任主任委员",
+      "tail_type": "概念"
+    },
+    {
+      "head": "褚仁远",
+      "head_type": "person",
+      "relation": "评价",
+      "tail": "易虹",
+      "tail_type": "person"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:06 */
+{
+  "node_id": "eb23760a-810b-4594-bf14-ff2d3b42c8b0",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:06.890834",
+  "triplets": [
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "发病率",
+      "tail": "50%",
+      "tail_type": "百分比"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "发病率",
+      "tail": "9.5%",
+      "tail_type": "百分比"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "人数",
+      "tail": "9亿人",
+      "tail_type": "人数"
+    },
+    {
+      "head": "中国",
+      "head_type": "国家",
+      "relation": "拥有",
+      "tail": "近视人口",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "近视人口",
+      "head_type": "疾病",
+      "relation": "数量",
+      "tail": "4.5亿",
+      "tail_type": "人数"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "数量",
+      "tail": "1000万",
+      "tail_type": "人数"
+    },
+    {
+      "head": "初中生",
+      "head_type": "人群",
+      "relation": "发病率",
+      "tail": "67.3%",
+      "tail_type": "百分比"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:11 */
+{
+  "node_id": "2a35356b-b2e8-44c8-816f-4f095371babb",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:11.245831",
+  "triplets": [
+    {
+      "head": "全军医学科学技术委员会眼科专委会",
+      "head_type": "机构",
+      "relation": "主任委员",
+      "tail": "叶 剑",
+      "tail_type": "人名"
+    },
+    {
+      "head": "遗传",
+      "head_type": "学科",
+      "relation": "相关",
+      "tail": "表观遗传学",
+      "tail_type": "学科"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:12 */
+{
+  "node_id": "b1946280-6830-4857-b50c-6392cecf4543",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:12.730511",
+  "triplets": [
+    {
+      "head": "本书",
+      "head_type": "book",
+      "relation": "指导",
+      "tail": "褚仁远教授",
+      "tail_type": "person"
+    },
+    {
+      "head": "本书",
+      "head_type": "book",
+      "relation": "指导",
+      "tail": "陈伟民教授",
+      "tail_type": "person"
+    },
+    {
+      "head": "本书",
+      "head_type": "book",
+      "relation": "指导",
+      "tail": "阴正勤教授",
+      "tail_type": "person"
+    },
+    {
+      "head": "本书",
+      "head_type": "book",
+      "relation": "指导",
+      "tail": "王传主任",
+      "tail_type": "person"
+    },
+    {
+      "head": "本书",
+      "head_type": "book",
+      "relation": "指导",
+      "tail": "赵敏",
+      "tail_type": "person"
+    },
+    {
+      "head": "本书",
+      "head_type": "book",
+      "relation": "提供数据",
+      "tail": "金延滨老师",
+      "tail_type": "person"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:16 */
+{
+  "node_id": "e673bb15-dcbc-43ef-9d4d-9458410d7e2a",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:16.898859",
+  "triplets": [
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "可能由",
+      "tail": "遗传物质——基因变异",
+      "tail_type": "现象"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "影响因素",
+      "tail": "环境因素",
+      "tail_type": "因素"
+    },
+    {
+      "head": "表观遗传学",
+      "head_type": "学科",
+      "relation": "证实",
+      "tail": "环境因素可影响基因表达改变",
+      "tail_type": "现象"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "属于",
+      "tail": "眼屈光相关性疾病",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "属于",
+      "tail": "眼屈光相关性疾病",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "属于",
+      "tail": "眼屈光相关性疾病",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:20 */
+{
+  "node_id": "e5b28d52-bca1-4ab5-8e7b-b3b2d9d38dd8",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:20.805150",
+  "triplets": [
+    {
+      "head": "瞳孔",
+      "head_type": "AnatomicalStructure",
+      "relation": "调节",
+      "tail": "光线",
+      "tail_type": "PhysicalEntity"
+    },
+    {
+      "head": "晶状体",
+      "head_type": "AnatomicalStructure",
+      "relation": "调节",
+      "tail": "光线",
+      "tail_type": "PhysicalEntity"
+    },
+    {
+      "head": "视网膜",
+      "head_type": "AnatomicalStructure",
+      "relation": "成像于",
+      "tail": "光线",
+      "tail_type": "PhysicalEntity"
+    },
+    {
+      "head": "屈光",
+      "head_type": "MedicalCondition",
+      "relation": "代表",
+      "tail": "屈光度",
+      "tail_type": "Measure"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "MedicalCondition",
+      "relation": "包含",
+      "tail": "近视",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "MedicalCondition",
+      "relation": "包含",
+      "tail": "远视",
+      "tail_type": "概念"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "MedicalCondition",
+      "relation": "包含",
+      "tail": "散光",
+      "tail_type": "概念"
+    },
+    {
+      "head": "屈光手术",
+      "head_type": "Procedure",
+      "relation": "矫正",
+      "tail": "近视",
+      "tail_type": "概念"
+    },
+    {
+      "head": "屈光手术",
+      "head_type": "Procedure",
+      "relation": "矫正",
+      "tail": "远视",
+      "tail_type": "概念"
+    },
+    {
+      "head": "屈光手术",
+      "head_type": "Procedure",
+      "relation": "矫正",
+      "tail": "散光",
+      "tail_type": "概念"
+    },
+    {
+      "head": "屈光学",
+      "head_type": "MedicalField",
+      "relation": "统称",
+      "tail": "视光学",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:25 */
+{
+  "node_id": "32213e03-5119-4b13-95f3-2eb20091f6ff",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:25.650932",
+  "triplets": [
+    {
+      "head": "克雷格·W·诺曼",
+      "head_type": "Person",
+      "relation": "介绍",
+      "tail": "视力及其产生原理",
+      "tail_type": "Concept"
+    },
+    {
+      "head": "中国台湾",
+      "head_type": "Region",
+      "relation": "近视率",
+      "tail": "83%",
+      "tail_type": "Percentage"
+    },
+    {
+      "head": "中国香港地区",
+      "head_type": "Region",
+      "relation": "近视率",
+      "tail": "80%",
+      "tail_type": "Percentage"
+    },
+    {
+      "head": "欧美等发达地区",
+      "head_type": "Region",
+      "relation": "近视率",
+      "tail": "20%～40%",
+      "tail_type": "Percentage"
+    },
+    {
+      "head": "印度",
+      "head_type": "Region",
+      "relation": "近视率",
+      "tail": "19%",
+      "tail_type": "Percentage"
+    },
+    {
+      "head": "非洲地区",
+      "head_type": "Region",
+      "relation": "近视率",
+      "tail": "10%",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:26 */
+{
+  "node_id": "8602f0ed-cbbe-4b0d-8b10-0f7a449981c2",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:26.357543",
+  "triplets": [
+    {
+      "head": "中心视力",
+      "head_type": "医学概念",
+      "relation": "定义为",
+      "tail": "视网膜黄斑中心凹的视力功能",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "别称",
+      "tail": "视敏度",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "黄斑病变",
+      "head_type": "病理状态",
+      "relation": "导致",
+      "tail": "注视中心有黑影遮挡",
+      "tail_type": "症状"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:30 */
+{
+  "node_id": "300c6287-e748-4a4f-8501-ea5e5e31e2f6",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:30.897307",
+  "triplets": [
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "涉及",
+      "tail": "角膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "涉及",
+      "tail": "晶状体",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "涉及",
+      "tail": "视网膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "传递到",
+      "tail": "大脑视中枢",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视锥细胞",
+      "head_type": "细胞类型",
+      "relation": "分布于",
+      "tail": "黄斑区",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:35 */
+{
+  "node_id": "cbdd1415-4581-43f1-90df-3688a8d8e47c",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:35.471092",
+  "triplets": [
+    {
+      "head": "缪天荣",
+      "head_type": "Person",
+      "relation": "发明",
+      "tail": "标准对数视力表",
+      "tail_type": "MedicalDevice"
+    },
+    {
+      "head": "缪天荣",
+      "head_type": "Person",
+      "relation": "使用方法",
+      "tail": "五分记录法",
+      "tail_type": "MedicalMethod"
+    },
+    {
+      "head": "标准对数视力表",
+      "head_type": "MedicalDevice",
+      "relation": "优点",
+      "tail": "调整距离换算得出相同视力",
+      "tail_type": "MedicalConcept"
+    },
+    {
+      "head": "标准对数视力表",
+      "head_type": "MedicalDevice",
+      "relation": "优点",
+      "tail": "每两行视标比例一致",
+      "tail_type": "MedicalConcept"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:36 */
+{
+  "node_id": "b0a3b052-2cc4-426b-a6d6-08d51b07053b",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:36.472456",
+  "triplets": [
+    {
+      "head": "视力检查",
+      "head_type": "检查项目",
+      "relation": "涉及",
+      "tail": "视功能",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "视力检查",
+      "head_type": "检查项目",
+      "relation": "涉及",
+      "tail": "视觉调节",
+      "tail_type": "生理功能"
+    },
+    {
+      "head": "视力检查",
+      "head_type": "检查项目",
+      "relation": "涉及",
+      "tail": "视觉疲劳",
+      "tail_type": "症状"
+    },
+    {
+      "head": "屈光度",
+      "head_type": "医学概念",
+      "relation": "相关于",
+      "tail": "正常儿童视力发育",
+      "tail_type": "发育过程"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "疾病分类",
+      "relation": "包含于",
+      "tail": "近视",
+      "tail_type": "疾病类型"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:44 */
+{
+  "node_id": "26372aa1-18a1-4c75-83d6-99f2a6188a04",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:44.399629",
+  "triplets": [
+    {
+      "head": "虹膜",
+      "head_type": "解剖结构",
+      "relation": "位于",
+      "tail": "角膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "虹膜",
+      "head_type": "解剖结构",
+      "relation": "位于",
+      "tail": "瞳孔",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "晶状体",
+      "head_type": "解剖结构",
+      "relation": "位于",
+      "tail": "虹膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "瞳孔",
+      "head_type": "功能",
+      "relation": "由",
+      "tail": "虹膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "瞳孔",
+      "head_type": "功能",
+      "relation": "由",
+      "tail": "睫状肌",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "晶状体",
+      "head_type": "解剖结构",
+      "relation": "由",
+      "tail": "睫状肌",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "晶状体",
+      "head_type": "解剖结构",
+      "relation": "由",
+      "tail": "悬韧带",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:45 */
+{
+  "node_id": "1e8c6bb2-8a5c-4b74-910e-49f8e241266b",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:45.673200",
+  "triplets": [
+    {
+      "head": "裸眼视力",
+      "head_type": "医学概念",
+      "relation": "相关",
+      "tail": "视力检查",
+      "tail_type": "行为"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:39:50 */
+{
+  "node_id": "4bcffdfb-63fd-4cc0-a251-4c4051bd1319",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:39:50.588750",
+  "triplets": [
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "担任",
+      "tail": "副院长",
+      "tail_type": "Position"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "担任",
+      "tail": "眼科主任",
+      "tail_type": "Position"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "担任",
+      "tail": "全国眼科学会",
+      "tail_type": "Organization"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "担任",
+      "tail": "副主任委员",
+      "tail_type": "Position"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "担任",
+      "tail": "免疫病学组组长",
+      "tail_type": "概念"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "拥有",
+      "tail": "长江学者",
+      "tail_type": "Title"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "拥有",
+      "tail": "博士生导师",
+      "tail_type": "Title"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "拥有",
+      "tail": "教授",
+      "tail_type": "Title"
+    },
+    {
+      "head": "易虹主任",
+      "head_type": "Person",
+      "relation": "编写",
+      "tail": "本书",
+      "tail_type": "Book"
+    },
+    {
+      "head": "易虹主任",
+      "head_type": "Person",
+      "relation": "倡导",
+      "tail": "近视防控意识",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:07 */
+{
+  "node_id": "a070a0a5-98fd-4cc4-a7e3-e6496cdfcbb4",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:07.245693",
+  "triplets": [
+    {
+      "head": "调节幅度",
+      "head_type": "医学概念",
+      "relation": "定义",
+      "tail": "眼所能产生的最大调节力",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "最小调节幅度",
+      "head_type": "医学概念",
+      "relation": "公式",
+      "tail": "15－0.25×年龄",
+      "tail_type": "医学公式"
+    },
+    {
+      "head": "调节灵敏度",
+      "head_type": "医学概念",
+      "relation": "定义",
+      "tail": "调节刺激在不同水平变化时所做出的反应速度",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "调节灵敏度",
+      "head_type": "医学概念",
+      "relation": "描述",
+      "tail": "眼睛在交替看远处和近处时均能较快地看清楚物体的能力",
+      "tail_type": "医学描述"
+    },
+    {
+      "head": "视觉训练",
+      "head_type": "医学方法",
+      "relation": "作用对象",
+      "tail": "调节幅度",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "视觉训练",
+      "head_type": "医学方法",
+      "relation": "作用对象",
+      "tail": "调节灵敏度",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:08 */
+{
+  "node_id": "b686c0d1-5f0b-4016-a44b-ed884b62812f",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:08.537550",
+  "triplets": [
+    {
+      "head": "视功能",
+      "head_type": "医学相关实体",
+      "relation": "包含",
+      "tail": "光觉",
+      "tail_type": "医学相关实体"
+    },
+    {
+      "head": "视功能",
+      "head_type": "医学相关实体",
+      "relation": "包含",
+      "tail": "色觉",
+      "tail_type": "医学相关实体"
+    },
+    {
+      "head": "视功能",
+      "head_type": "医学相关实体",
+      "relation": "包含",
+      "tail": "形觉",
+      "tail_type": "医学相关实体"
+    },
+    {
+      "head": "视功能",
+      "head_type": "医学相关实体",
+      "relation": "包含",
+      "tail": "立体觉",
+      "tail_type": "医学相关实体"
+    },
+    {
+      "head": "视功能",
+      "head_type": "医学相关实体",
+      "relation": "包含",
+      "tail": "对比觉",
+      "tail_type": "医学相关实体"
+    },
+    {
+      "head": "视觉的形成",
+      "head_type": "医学相关实体",
+      "relation": "涉及",
+      "tail": "眼角膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视觉的形成",
+      "head_type": "医学相关实体",
+      "relation": "涉及",
+      "tail": "视网膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视觉的形成",
+      "head_type": "医学相关实体",
+      "relation": "涉及",
+      "tail": "视神经",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视觉的形成",
+      "head_type": "医学相关实体",
+      "relation": "涉及",
+      "tail": "视放射",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视觉的形成",
+      "head_type": "医学相关实体",
+      "relation": "涉及",
+      "tail": "视中枢",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视觉的形成",
+      "head_type": "医学相关实体",
+      "relation": "涉及",
+      "tail": "大脑皮层",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:10 */
+{
+  "node_id": "4884dabb-7563-4384-b9d1-2a2ec0978738",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:10.204468",
+  "triplets": [
+    {
+      "head": "中华医学会眼科学分会斜视弱视学组",
+      "head_type": "组织",
+      "relation": "提出",
+      "tail": "将不同年龄组儿童的正常视力参考值下限定为",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "6岁以上",
+      "head_type": "年龄组",
+      "relation": "对应",
+      "tail": "裸眼视力低于小数视力0.5",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "LogMAR 视力",
+      "head_type": "医学概念",
+      "relation": "等于",
+      "tail": "小数视力0.5",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "裸眼视力低于同年龄正常儿童的视力下限",
+      "head_type": "医学概念",
+      "relation": "怀疑",
+      "tail": "屈光不正（近视、远视、散光）甚至弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "晶状体",
+      "head_type": "解剖结构",
+      "relation": "参与",
+      "tail": "视觉调节",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "睫状体（肌）",
+      "head_type": "解剖结构",
+      "relation": "参与",
+      "tail": "视觉调节",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "视觉疲劳",
+      "head_type": "疾病",
+      "relation": "属于",
+      "tail": "视觉调节",
+      "tail_type": "医学概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:13 */
+{
+  "node_id": "943338e9-83fd-4ee6-9012-c1169ac99f01",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:13.772257",
+  "triplets": [
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "眼轴长度",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "角膜屈光力",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "影响部位",
+      "tail": "视网膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "相关因素",
+      "tail": "用眼卫生习惯",
+      "tail_type": "环境因素"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "相关因素",
+      "tail": "遗传因素",
+      "tail_type": "遗传因素"
+    },
+    {
+      "head": "表观遗传学",
+      "head_type": "研究领域",
+      "relation": "涉及领域",
+      "tail": "遗传因素",
+      "tail_type": "遗传因素"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:21 */
+{
+  "node_id": "957a70f9-5c8a-4af8-b547-4ad866467896",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:21.952222",
+  "triplets": [
+    {
+      "head": "顺轨散光",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "角膜地形图",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "逆轨散光",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "角膜地形图",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "角膜地形图",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "圆锥角膜疾病",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "准分子激光近视矫正手术",
+      "tail_type": "手术"
+    },
+    {
+      "head": "准分子激光近视矫正手术",
+      "head_type": "手术",
+      "relation": "导致",
+      "tail": "圆锥角膜疾病",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:22 */
+{
+  "node_id": "2eec8afe-71a9-455f-b05f-d536d39a8b82",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:22.631155",
+  "triplets": [
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "具有",
+      "tail": "遗传因素",
+      "tail_type": "病因"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "具有",
+      "tail": "体质",
+      "tail_type": "病因"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "预防方法",
+      "tail": "眼保健操",
+      "tail_type": "治疗方法"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "诱因",
+      "tail": "近距离学习或工作",
+      "tail_type": "诱因"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "相关因素",
+      "tail": "光线",
+      "tail_type": "环境因素"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "并发症",
+      "tail": "视网膜脱离",
+      "tail_type": "概念"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "并发症",
+      "tail": "视网膜裂孔",
+      "tail_type": "并发症"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "并发症",
+      "tail": "黄斑出血",
+      "tail_type": "并发症"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "并发症",
+      "tail": "新生血管",
+      "tail_type": "并发症"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "并发症",
+      "tail": "开角型青光眼",
+      "tail_type": "并发症"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "病理特征",
+      "tail": "眼球前后径变长",
+      "tail_type": "病理特征"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:29 */
+{
+  "node_id": "e13db503-767d-46b2-a2dd-69da0d0c758e",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:29.306382",
+  "triplets": [
+    {
+      "head": "屈光",
+      "head_type": "医学概念",
+      "relation": "定义",
+      "tail": "光线屈折",
+      "tail_type": "物理现象"
+    },
+    {
+      "head": "屈光",
+      "head_type": "医学概念",
+      "relation": "属于",
+      "tail": "几何光学",
+      "tail_type": "学科"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "医学概念",
+      "relation": "包含",
+      "tail": "近视",
+      "tail_type": "医学疾病"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "医学概念",
+      "relation": "包含",
+      "tail": "远视",
+      "tail_type": "医学疾病"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "医学概念",
+      "relation": "包含",
+      "tail": "散光",
+      "tail_type": "医学疾病"
+    },
+    {
+      "head": "凸透镜",
+      "head_type": "光学仪器",
+      "relation": "导致",
+      "tail": "光线折射汇聚",
+      "tail_type": "物理现象"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:29 */
+{
+  "node_id": "998297f6-a763-40f9-a9dd-2b514a2c02d9",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:29.762412",
+  "triplets": [
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "属于",
+      "tail": "遗传因素患病",
+      "tail_type": "病因"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "具有",
+      "tail": "视网膜病变",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "具有",
+      "tail": "黄斑病变",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "单纯性近视",
+      "head_type": "疾病",
+      "relation": "与",
+      "tail": "病理性近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "与",
+      "tail": "普通高度近视",
+      "tail_type": "疾病分类"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病分类",
+      "relation": "属于",
+      "tail": "病理性近视",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:39 */
+{
+  "node_id": "7245eeaa-6108-4888-89e6-5beaa26b6189",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:39.133804",
+  "triplets": [
+    {
+      "head": "眼轴长度",
+      "head_type": "医学实体",
+      "relation": "增长过快",
+      "tail": "近视",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "眼轴长度",
+      "head_type": "医学实体",
+      "relation": "生长速度",
+      "tail": "正视眼",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "眼轴长度",
+      "head_type": "医学实体",
+      "relation": "达到水平",
+      "tail": "成人水平",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "眼轴长度",
+      "head_type": "医学实体",
+      "relation": "达到长度",
+      "tail": "24 毫米",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "视网膜",
+      "head_type": "医学实体",
+      "relation": "病变类型",
+      "tail": "豹纹状",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "视网膜",
+      "head_type": "医学实体",
+      "relation": "病变类型",
+      "tail": "弧形斑",
+      "tail_type": "概念"
+    },
+    {
+      "head": "视网膜",
+      "head_type": "医学实体",
+      "relation": "病变类型",
+      "tail": "黄斑区萎缩",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "视网膜",
+      "head_type": "医学实体",
+      "relation": "病变类型",
+      "tail": "Fuchs 斑",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "后巩膜葡萄肿",
+      "head_type": "医学实体",
+      "relation": "形态特征",
+      "tail": "眼球后部形态呈锥状向后延伸",
+      "tail_type": "描述性文本"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:39 */
+{
+  "node_id": "09aecc84-704a-4736-b7fb-59f12c38625d",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:39.706603",
+  "triplets": [
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "重影",
+      "tail_type": "症状"
+    },
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "视力下降",
+      "tail_type": "症状"
+    },
+    {
+      "head": "高度散光",
+      "head_type": "散光类型",
+      "relation": "导致",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "睑板",
+      "head_type": "解剖结构",
+      "relation": "影响",
+      "tail": "角膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "眼轮匝肌",
+      "head_type": "解剖结构",
+      "relation": "影响",
+      "tail": "角膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "内外眦韧带",
+      "head_type": "解剖结构",
+      "relation": "影响",
+      "tail": "角膜",
+      "tail_type": "概念"
+    },
+    {
+      "head": "顺轨散光",
+      "head_type": "散光类型",
+      "relation": "属于",
+      "tail": "散光",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "近视散光",
+      "head_type": "散光类型",
+      "relation": "属于",
+      "tail": "散光",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "焦点",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "焦点",
+      "head_type": "医学概念",
+      "relation": "位于",
+      "tail": "视网膜",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:42 */
+{
+  "node_id": "80ad12b9-a5eb-4dbb-98f7-d60bc494a817",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:42.284459",
+  "triplets": [
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "具有",
+      "tail": "后巩膜葡萄肿",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "相关检查",
+      "tail": "B 超图",
+      "tail_type": "影像检查"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "相关检查",
+      "tail": "B 超图",
+      "tail_type": "影像检查"
+    },
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "相关检查",
+      "tail": "B 超图",
+      "tail_type": "影像检查"
+    },
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "涉及结构",
+      "tail": "角膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "涉及结构",
+      "tail": "视网膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "涉及结构",
+      "tail": "眼轴长度",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:46 */
+{
+  "node_id": "8a088bda-61f3-4ddf-9e63-304de0c9d06b",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:46.473725",
+  "triplets": [
+    {
+      "head": "黄斑区",
+      "head_type": "解剖结构",
+      "relation": "形成",
+      "tail": "清晰像",
+      "tail_type": "功能"
+    },
+    {
+      "head": "黄斑区",
+      "head_type": "解剖结构",
+      "relation": "位于",
+      "tail": "视网膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "眼外肌",
+      "head_type": "解剖结构",
+      "relation": "控制",
+      "tail": "眼球位置",
+      "tail_type": "功能"
+    },
+    {
+      "head": "眼外肌",
+      "head_type": "解剖结构",
+      "relation": "维持",
+      "tail": "注视物体的像",
+      "tail_type": "功能"
+    },
+    {
+      "head": "眼外肌",
+      "head_type": "解剖结构",
+      "relation": "位于",
+      "tail": "每个眼球",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:46 */
+{
+  "node_id": "13e0a526-c49e-4220-aecd-75419d2e5b89",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:46.559661",
+  "triplets": [
+    {
+      "head": "视网膜黄斑区",
+      "head_type": "医学实体",
+      "relation": "聚焦位置",
+      "tail": "理想聚焦面",
+      "tail_type": "医学实体"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:40:59 */
+{
+  "node_id": "964fd387-fce2-4b92-ab80-e7dc332b8bc4",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:40:59.074501",
+  "triplets": [
+    {
+      "head": "双眼",
+      "head_type": "解剖结构",
+      "relation": "比喻为",
+      "tail": "摄像机",
+      "tail_type": "比喻"
+    },
+    {
+      "head": "双眼",
+      "head_type": "解剖结构",
+      "relation": "进行",
+      "tail": "摄像工作",
+      "tail_type": "功能_能力"
+    },
+    {
+      "head": "视觉形成过程",
+      "head_type": "生理过程",
+      "relation": "描述",
+      "tail": "两张相片",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "大脑皮层",
+      "head_type": "解剖结构",
+      "relation": "融合成",
+      "tail": "彩色的、立体的像",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "同时知觉",
+      "head_type": "功能_能力",
+      "relation": "是产生",
+      "tail": "双眼视觉的基础",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "融像",
+      "head_type": "功能_能力",
+      "relation": "综合来自",
+      "tail": "双眼的相同物象",
+      "tail_type": "概念"
+    },
+    {
+      "head": "融像",
+      "head_type": "功能_能力",
+      "relation": "形成",
+      "tail": "完整印象",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "立体知觉",
+      "head_type": "功能_能力",
+      "relation": "具有",
+      "tail": "三维空间的立体感",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "屈光度",
+      "head_type": "医学概念",
+      "relation": "又称",
+      "tail": "焦度",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "屈光度",
+      "head_type": "医学概念",
+      "relation": "用于矫正",
+      "tail": "远视",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "屈光度",
+      "head_type": "医学概念",
+      "relation": "用于矫正",
+      "tail": "近视",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "正透镜",
+      "head_type": "医学概念",
+      "relation": "用于矫正",
+      "tail": "远视",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "负透镜",
+      "head_type": "医学概念",
+      "relation": "用于矫正",
+      "tail": "近视",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:02 */
+{
+  "node_id": "a4793356-5785-43c8-8e93-b929d3cf8d8d",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:02.803450",
+  "triplets": []
+}
+
+/* 处理时间: 2026-01-07 17:41:12 */
+{
+  "node_id": "5b1d02a5-707b-49e1-8846-0ceeae70ab45",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:12.753477",
+  "triplets": [
+    {
+      "head": "屈光参差性视觉障碍",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "屈光参差",
+      "tail_type": "症状"
+    },
+    {
+      "head": "屈光参差性视觉障碍",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "视力下降",
+      "tail_type": "症状"
+    },
+    {
+      "head": "屈光参差性视觉障碍",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "视力下降",
+      "tail_type": "症状"
+    },
+    {
+      "head": "屈光参差性视觉障碍",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "交替视力",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "屈光参差性视觉障碍",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "单眼视力",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "夜盲",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:15 */
+{
+  "node_id": "a320a2ba-f56f-472c-8db3-42a9584719d0",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:15.861859",
+  "triplets": [
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "影响",
+      "tail": "视皮质中枢",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:19 */
+{
+  "node_id": "aab3c6ff-edeb-4254-b2b9-0b1d4b5ff810",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:19.806156",
+  "triplets": [
+    {
+      "head": "框架眼镜",
+      "head_type": "医疗器械",
+      "relation": "引起",
+      "tail": "旁中心离焦",
+      "tail_type": "病理现象"
+    },
+    {
+      "head": "框架眼镜",
+      "head_type": "医疗器械",
+      "relation": "引起",
+      "tail": "黄斑中心离焦",
+      "tail_type": "病理现象"
+    },
+    {
+      "head": "旁中心离焦",
+      "head_type": "病理现象",
+      "relation": "发生于",
+      "tail": "视网膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "医疗器械",
+      "relation": "减缓",
+      "tail": "近视发展速度",
+      "tail_type": "病理现象"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:23 */
+{
+  "node_id": "c93149d4-d102-4828-b626-75f56332ad82",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:23.906310",
+  "triplets": [
+    {
+      "head": "Zernike标准7阶像差图",
+      "head_type": "医学影像",
+      "relation": "描述",
+      "tail": "图2-17",
+      "tail_type": "图片编号"
+    },
+    {
+      "head": "高阶像差",
+      "head_type": "医学概念",
+      "relation": "描述",
+      "tail": "图2-18",
+      "tail_type": "图片编号"
+    },
+    {
+      "head": "波前像差引导的LASIK",
+      "head_type": "手术名称",
+      "relation": "依据",
+      "tail": "像差仪",
+      "tail_type": "检查设备"
+    },
+    {
+      "head": "波前像差引导的LASIK",
+      "head_type": "手术名称",
+      "relation": "应用",
+      "tail": "近视矫正",
+      "tail_type": "医学治疗"
+    },
+    {
+      "head": "屈光参差性视觉障碍",
+      "head_type": "医学疾病",
+      "relation": "相关概念",
+      "tail": "屈光参差",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "屈光参差",
+      "head_type": "医学概念",
+      "relation": "包含类型",
+      "tail": "远视",
+      "tail_type": "屈光不正类型"
+    },
+    {
+      "head": "准分子激光手术（LASIK）",
+      "head_type": "手术名称",
+      "relation": "别称",
+      "tail": "准分子激光角膜磨镶术",
+      "tail_type": "手术名称"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:24 */
+{
+  "node_id": "16b558e0-9143-4e80-821f-ffb38527f1b2",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:24.741881",
+  "triplets": [
+    {
+      "head": "视力低于正常值",
+      "head_type": "症状",
+      "relation": "导致",
+      "tail": "就诊",
+      "tail_type": "行为"
+    },
+    {
+      "head": "若一眼视力多次均低于同年龄段孩子的正常值",
+      "head_type": "条件",
+      "relation": "导致",
+      "tail": "带孩子到医院做进一步检查",
+      "tail_type": "行为"
+    },
+    {
+      "head": "遮盖一只眼后哭闹、撕拉遮盖物",
+      "head_type": "表现",
+      "relation": "提示",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "婴幼儿不会描述也不能配合视力检查",
+      "head_type": "情况",
+      "relation": "涉及",
+      "tail": "遮盖试验",
+      "tail_type": "方法"
+    },
+    {
+      "head": "家长可以有意遮盖孩子的一只眼",
+      "head_type": "行为",
+      "relation": "目的",
+      "tail": "了解孩子双眼的视力情况",
+      "tail_type": "目的"
+    },
+    {
+      "head": "如果遮盖后孩子很安静,而遮盖另一只眼睛时却哭闹不安或撕抓遮盖物",
+      "head_type": "表现",
+      "relation": "提示",
+      "tail": "孩子的未遮盖的眼的视力很差",
+      "tail_type": "状态"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:31 */
+{
+  "node_id": "236b12fd-740f-4d28-ae7a-6da042f926ae",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:31.475992",
+  "triplets": [
+    {
+      "head": "假性近视",
+      "head_type": "疾病",
+      "relation": "治疗方法",
+      "tail": "阿托品眼膏",
+      "tail_type": "药物"
+    },
+    {
+      "head": "假性近视",
+      "head_type": "疾病",
+      "relation": "治疗方法",
+      "tail": "阿托品眼液",
+      "tail_type": "药物"
+    },
+    {
+      "head": "假性近视",
+      "head_type": "疾病",
+      "relation": "治疗方法",
+      "tail": "睫状肌麻痹眼液",
+      "tail_type": "药物"
+    },
+    {
+      "head": "散瞳查视力法",
+      "head_type": "检查方法",
+      "relation": "用于鉴别",
+      "tail": "假性近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "散瞳查视力法",
+      "head_type": "检查方法",
+      "relation": "用于鉴别",
+      "tail": "真性近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "裸眼视力",
+      "head_type": "检查方法",
+      "relation": "属于",
+      "tail": "散瞳查视力法",
+      "tail_type": "检查方法"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:32 */
+{
+  "node_id": "7f5513ea-a8b4-4e94-8f97-ef8cf97471d2",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:32.565043",
+  "triplets": [
+    {
+      "head": "弱视",
+      "head_type": "疾病类型",
+      "relation": "病因",
+      "tail": "屈光不正",
+      "tail_type": "病因"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病类型",
+      "relation": "病因",
+      "tail": "高度远视",
+      "tail_type": "病因"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病类型",
+      "relation": "相关症状/体征",
+      "tail": "斜视",
+      "tail_type": "症状_体征"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病类型",
+      "relation": "相关症状/体征",
+      "tail": "眼球震颤",
+      "tail_type": "症状_体征"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病类型",
+      "relation": "涉及解剖结构",
+      "tail": "黄斑区",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:35 */
+{
+  "node_id": "7bdb371a-016f-4cd0-acaa-eb41efa6c130",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:35.644225",
+  "triplets": [
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "共同性斜视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "隐斜视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "显斜视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "共同性斜视",
+      "head_type": "疾病类型",
+      "relation": "病因",
+      "tail": "屈光原因",
+      "tail_type": "病因"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病类型",
+      "relation": "导致",
+      "tail": "内斜视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病类型",
+      "relation": "导致",
+      "tail": "外斜视",
+      "tail_type": "疾病类型"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:37 */
+{
+  "node_id": "2c5875ba-234e-4d68-928e-22023bd287ca",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:37.904670",
+  "triplets": [
+    {
+      "head": "角膜",
+      "head_type": "AnatomicalStructure",
+      "relation": "被检测",
+      "tail": "角膜地形图仪",
+      "tail_type": "MedicalDevice"
+    },
+    {
+      "head": "角膜地形图仪",
+      "head_type": "MedicalDevice",
+      "relation": "显示",
+      "tail": "角膜表面地形图",
+      "tail_type": "Image"
+    },
+    {
+      "head": "角膜地形图仪",
+      "head_type": "MedicalDevice",
+      "relation": "显示",
+      "tail": "高低不平、山峦起伏的图像",
+      "tail_type": "Image"
+    },
+    {
+      "head": "像差",
+      "head_type": "MedicalCondition",
+      "relation": "分为",
+      "tail": "低阶像差",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "像差",
+      "head_type": "MedicalCondition",
+      "relation": "分为",
+      "tail": "高阶像差",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "低阶像差",
+      "head_type": "MedicalCondition",
+      "relation": "包含",
+      "tail": "近视",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "低阶像差",
+      "head_type": "MedicalCondition",
+      "relation": "包含",
+      "tail": "远视",
+      "tail_type": "概念"
+    },
+    {
+      "head": "高阶像差",
+      "head_type": "MedicalCondition",
+      "relation": "包含",
+      "tail": "三叶草",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "高阶像差",
+      "head_type": "MedicalCondition",
+      "relation": "包含",
+      "tail": "四叶草",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "高阶像差",
+      "head_type": "MedicalCondition",
+      "relation": "影响",
+      "tail": "屈光手术",
+      "tail_type": "Procedure"
+    },
+    {
+      "head": "高阶像差",
+      "head_type": "MedicalCondition",
+      "relation": "影响",
+      "tail": "白内障",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "Zernike 标准7 阶像差图",
+      "head_type": "Image",
+      "relation": "展示",
+      "tail": "高阶像差",
+      "tail_type": "MedicalCondition"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:50 */
+{
+  "node_id": "d6dc3e2f-3412-451d-bf3a-50cbb888a464",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:50.258918",
+  "triplets": [
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "维生素A 缺乏",
+      "tail_type": "病因"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "视网膜色素变性",
+      "tail_type": "病因"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "白点状视网膜炎",
+      "tail_type": "病因"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "视网膜脉络病变",
+      "tail_type": "病因"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "视神经萎缩",
+      "tail_type": "病因"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "周边性白内障",
+      "tail_type": "概念"
+    },
+    {
+      "head": "昼盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "视网膜黄斑营养不良",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "昼盲",
+      "head_type": "疾病",
+      "relation": "相关结构",
+      "tail": "锥细胞",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病分类",
+      "relation": "相关疾病",
+      "tail": "视网膜色素变性",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:52 */
+{
+  "node_id": "1cbbe543-3c6d-40cf-8a3f-6f85f34ceb4f",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:52.920262",
+  "triplets": [
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "医疗器械",
+      "relation": "解决",
+      "tail": "近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "医疗器械",
+      "relation": "解决",
+      "tail": "远视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "医疗器械",
+      "relation": "解决",
+      "tail": "散光",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "主动离焦",
+      "head_type": "生理现象",
+      "relation": "导致",
+      "tail": "近视发展加快",
+      "tail_type": "结果"
+    },
+    {
+      "head": "医学验光配镜",
+      "head_type": "医疗过程",
+      "relation": "区别于",
+      "tail": "普通验光配镜",
+      "tail_type": "医疗过程"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:53 */
+{
+  "node_id": "1d22ab54-7e1e-4c5e-ae8f-bfd9008032a1",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:53.395149",
+  "triplets": [
+    {
+      "head": "核准散光轴向",
+      "head_type": "医学术语",
+      "relation": "涉及",
+      "tail": "顺规散光",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "核准散光轴向",
+      "head_type": "医学术语",
+      "relation": "涉及",
+      "tail": "逆规散光",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "配镜后的双眼调节",
+      "head_type": "医学术语",
+      "relation": "保持",
+      "tail": "调节平衡",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "医学配镜",
+      "head_type": "医学术语",
+      "relation": "需要",
+      "tail": "验光处方",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "人工智能识别技术",
+      "head_type": "技术方法",
+      "relation": "基于",
+      "tail": "屈光度",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "人工智能识别技术",
+      "head_type": "技术方法",
+      "relation": "基于",
+      "tail": "散瞳后视觉感受",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "散瞳剂",
+      "head_type": "医学术语",
+      "relation": "具有",
+      "tail": "散大瞳孔",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "散瞳剂",
+      "head_type": "医学术语",
+      "relation": "具有",
+      "tail": "麻痹睫状肌以放松调节",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "新福林滴眼液",
+      "head_type": "药物名称",
+      "relation": "具有",
+      "tail": "散大瞳孔",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "中华医学会",
+      "head_type": "组织机构",
+      "relation": "建议",
+      "tail": "睫状肌麻痹验光",
+      "tail_type": "医学检查方法"
+    },
+    {
+      "head": "12岁以下儿童",
+      "head_type": "人群特征",
+      "relation": "需要进行",
+      "tail": "睫状肌麻痹验光",
+      "tail_type": "医学检查方法"
+    },
+    {
+      "head": "初次验光儿童或有远视、斜弱视和较大散光儿童",
+      "head_type": "人群特征",
+      "relation": "需要进行",
+      "tail": "睫状肌麻痹验光",
+      "tail_type": "医学检查方法"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:53 */
+{
+  "node_id": "76b155ec-0bd9-417a-b3fa-309105b8a76a",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:53.870766",
+  "triplets": [
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "影响",
+      "tail": "调节灵敏度",
+      "tail_type": "生理功能"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "遗传",
+      "tail_type": "病因"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "环境因素",
+      "tail_type": "病因"
+    },
+    {
+      "head": "环境因素",
+      "head_type": "病因",
+      "relation": "通过",
+      "tail": "表观遗传",
+      "tail_type": "机制"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "影响",
+      "tail": "调节灵敏度",
+      "tail_type": "生理功能"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:41:56 */
+{
+  "node_id": "6b31f798-820a-4278-8eba-1b727ce9bf02",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:41:56.294752",
+  "triplets": [
+    {
+      "head": "中华医学会",
+      "head_type": "机构",
+      "relation": "建议",
+      "tail": "睫状肌麻痹验光",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "中华医学会",
+      "head_type": "机构",
+      "relation": "建议",
+      "tail": "定期复查验光",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "睫状肌麻痹验光",
+      "head_type": "检查方法",
+      "relation": "用于",
+      "tail": "确诊近视需要配镜的儿童",
+      "tail_type": "人群"
+    },
+    {
+      "head": "阿托品眼膏",
+      "head_type": "药物",
+      "relation": "属于",
+      "tail": "阿托品眼用凝胶",
+      "tail_type": "药物"
+    },
+    {
+      "head": "1%阿托品眼用凝胶",
+      "head_type": "药物",
+      "relation": "适用于",
+      "tail": "7岁以下的近视儿童",
+      "tail_type": "人群"
+    },
+    {
+      "head": "1%阿托品眼用凝胶",
+      "head_type": "药物",
+      "relation": "适用于",
+      "tail": "远视和斜弱视的患者",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:04 */
+{
+  "node_id": "5a390612-7f87-4b68-9bf2-eeef970576e3",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:04.123193",
+  "triplets": [
+    {
+      "head": "OK 镜",
+      "head_type": "医疗器械",
+      "relation": "属于",
+      "tail": "角膜塑形镜（OK镜）",
+      "tail_type": "医疗器械"
+    },
+    {
+      "head": "卫健委",
+      "head_type": "组织机构",
+      "relation": "出台政策",
+      "tail": "2001年",
+      "tail_type": "时间"
+    },
+    {
+      "head": "卫健委",
+      "head_type": "组织机构",
+      "relation": "规定",
+      "tail": "医疗技术",
+      "tail_type": "技术类别"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:14 */
+{
+  "node_id": "e9b4a1af-5786-4090-abf1-ccc9649cfe34",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:14.815241",
+  "triplets": [
+    {
+      "head": "视网膜黄斑",
+      "head_type": "anatomical_structure",
+      "relation": "影响",
+      "tail": "近视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "物像",
+      "head_type": "anatomical_structure",
+      "relation": "位于",
+      "tail": "黄斑后",
+      "tail_type": "location"
+    },
+    {
+      "head": "眼轴长度",
+      "head_type": "anatomical_structure",
+      "relation": "影响",
+      "tail": "近视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "验光配镜",
+      "head_type": "behavior",
+      "relation": "导致",
+      "tail": "近视过度矫正",
+      "tail_type": "disease"
+    },
+    {
+      "head": "乒乓球",
+      "head_type": "sport",
+      "relation": "防控",
+      "tail": "近视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "羽毛球",
+      "head_type": "sport",
+      "relation": "防控",
+      "tail": "近视",
+      "tail_type": "disease"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:14 */
+{
+  "node_id": "26b49024-2396-4b30-a73d-884e16507f5c",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:14.909874",
+  "triplets": [
+    {
+      "head": "隐形眼镜",
+      "head_type": "医学设备",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "医学设备"
+    },
+    {
+      "head": "隐形眼镜",
+      "head_type": "医学设备",
+      "relation": "用于治疗",
+      "tail": "屈光参差",
+      "tail_type": "疾病或症状"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "医学设备",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "医学设备"
+    },
+    {
+      "head": "OK 镜",
+      "head_type": "医学设备",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "医学设备"
+    },
+    {
+      "head": "隐形眼镜",
+      "head_type": "医学设备",
+      "relation": "用于矫正",
+      "tail": "屈光不正",
+      "tail_type": "疾病或症状"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:15 */
+{
+  "node_id": "1e7bf518-2531-4fc7-959c-b3db861331a4",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:15.800036",
+  "triplets": [
+    {
+      "head": "RGP镜片",
+      "head_type": "医疗器械",
+      "relation": "用于矫正",
+      "tail": "散光",
+      "tail_type": "疾病或症状"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "医疗器械",
+      "relation": "用于矫正",
+      "tail": "近视",
+      "tail_type": "疾病或症状"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "医疗器械",
+      "relation": "具有特性",
+      "tail": "内表面曲率与角膜表面曲率配适",
+      "tail_type": "特性"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "医疗器械",
+      "relation": "具有特性",
+      "tail": "泪液循环良好",
+      "tail_type": "特性"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "医疗器械",
+      "relation": "具有特性",
+      "tail": "视觉质量更佳且安全性更高",
+      "tail_type": "特性"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:16 */
+{
+  "node_id": "36caf13d-2012-48c6-b268-746a63ef0c73",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:16.641509",
+  "triplets": [
+    {
+      "head": "角膜接触镜",
+      "head_type": "medical_treatment",
+      "relation": "弊端",
+      "tail": "眼压",
+      "tail_type": "symptom"
+    },
+    {
+      "head": "角膜接触镜",
+      "head_type": "medical_treatment",
+      "relation": "弊端",
+      "tail": "外斜",
+      "tail_type": "symptom"
+    },
+    {
+      "head": "角膜接触镜",
+      "head_type": "medical_treatment",
+      "relation": "弊端",
+      "tail": "瞳孔放大",
+      "tail_type": "symptom"
+    },
+    {
+      "head": "低浓度阿托品",
+      "head_type": "drug",
+      "relation": "治疗与防控对象",
+      "tail": "近视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "托吡卡胺滴眼液",
+      "head_type": "drug",
+      "relation": "治疗与防控对象",
+      "tail": "近视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "低浓度阿托品",
+      "head_type": "drug",
+      "relation": "不良反应",
+      "tail": "眼压",
+      "tail_type": "symptom"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:20 */
+{
+  "node_id": "06c88700-23aa-4bac-a177-cc09829fa69f",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:20.976460",
+  "triplets": [
+    {
+      "head": "屈光参差",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "普通的眼镜",
+      "tail_type": "医疗器械"
+    },
+    {
+      "head": "屈光参差",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "镜片",
+      "tail_type": "医疗器械"
+    },
+    {
+      "head": "屈光参差",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "角膜接触镜",
+      "tail_type": "医疗器械"
+    },
+    {
+      "head": "屈光参差",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "准分子激光手术",
+      "tail_type": "治疗方法"
+    },
+    {
+      "head": "准分子激光手术",
+      "head_type": "治疗方法",
+      "relation": "预防和治疗",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:22 */
+{
+  "node_id": "7dc52573-9964-4bb1-bb8b-8a091622db33",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:22.841048",
+  "triplets": [
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "治疗",
+      "tail": "配镜治疗",
+      "tail_type": "治疗方式"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "使用",
+      "tail": "低浓度阿托品",
+      "tail_type": "药物"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "检查",
+      "tail": "阿托品散瞳检查",
+      "tail_type": "检查方式"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "症状",
+      "tail": "调节疲劳",
+      "tail_type": "症状"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "症状",
+      "tail": "眼外肌肌力不平衡",
+      "tail_type": "症状"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "生理性的",
+      "tail_type": "属性"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:23 */
+{
+  "node_id": "ebbc2928-dcda-4b6b-808e-60e0b203ab45",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:23.017160",
+  "triplets": [
+    {
+      "head": "泪液镜",
+      "head_type": "MedicalTerm",
+      "relation": "形成于",
+      "tail": "RGP镜片",
+      "tail_type": "MedicalTerm"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "MedicalTerm",
+      "relation": "矫正",
+      "tail": "散光",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "MedicalTerm",
+      "relation": "矫正",
+      "tail": "圆锥角膜",
+      "tail_type": "MedicalCondition"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:25 */
+{
+  "node_id": "4f659590-0b9c-477d-bdff-7c2b0ed253b2",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:25.800863",
+  "triplets": [
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "MedicalDevice",
+      "relation": "用于治疗",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "阿托品眼液",
+      "head_type": "Drug",
+      "relation": "用于治疗",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "手术治疗",
+      "head_type": "Treatment",
+      "relation": "属于",
+      "tail": "激光",
+      "tail_type": "MedicalProcedure"
+    },
+    {
+      "head": "手术治疗",
+      "head_type": "Treatment",
+      "relation": "属于",
+      "tail": "人工晶体",
+      "tail_type": "MedicalDevice"
+    },
+    {
+      "head": "框架眼镜",
+      "head_type": "MedicalDevice",
+      "relation": "用于治疗",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "假性近视",
+      "head_type": "Disease",
+      "relation": "属于",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "真性近视",
+      "head_type": "Disease",
+      "relation": "属于",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "隐形眼镜",
+      "head_type": "MedicalDevice",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "MedicalDevice"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "MedicalDevice",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "MedicalDevice"
+    },
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "MedicalDevice",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "MedicalDevice"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:29 */
+{
+  "node_id": "c2c05f71-f996-406d-aa76-4defa45ca37f",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:29.005645",
+  "triplets": [
+    {
+      "head": "弱视",
+      "head_type": "disease",
+      "relation": "治疗方法",
+      "tail": "多媒体训练",
+      "tail_type": "treatment"
+    },
+    {
+      "head": "弱视",
+      "head_type": "disease",
+      "relation": "治疗方法",
+      "tail": "眼罩遮盖疗法",
+      "tail_type": "treatment"
+    },
+    {
+      "head": "弱视",
+      "head_type": "disease",
+      "relation": "治疗方法",
+      "tail": "眼贴遮盖法",
+      "tail_type": "treatment"
+    },
+    {
+      "head": "远视",
+      "head_type": "disease",
+      "relation": "导致疾病",
+      "tail": "弱视",
+      "tail_type": "disease"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:38 */
+{
+  "node_id": "be677f3e-4a04-42f8-8bc6-29df5d0568f2",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:38.938645",
+  "triplets": [
+    {
+      "head": "穿珠训练",
+      "head_type": "医学相关方法",
+      "relation": "属于",
+      "tail": "弱视治疗仪",
+      "tail_type": "医学相关设备"
+    },
+    {
+      "head": "穿珠训练",
+      "head_type": "医学相关方法",
+      "relation": "属于",
+      "tail": "医学相关方法",
+      "tail_type": "医学相关方法"
+    },
+    {
+      "head": "描画训练",
+      "head_type": "医学相关方法",
+      "relation": "属于",
+      "tail": "弱视治疗仪",
+      "tail_type": "医学相关设备"
+    },
+    {
+      "head": "描画训练",
+      "head_type": "医学相关方法",
+      "relation": "属于",
+      "tail": "医学相关方法",
+      "tail_type": "医学相关方法"
+    },
+    {
+      "head": "红光治疗",
+      "head_type": "医学相关方法",
+      "relation": "属于",
+      "tail": "弱视治疗仪",
+      "tail_type": "医学相关设备"
+    },
+    {
+      "head": "红光治疗",
+      "head_type": "医学相关方法",
+      "relation": "属于",
+      "tail": "医学相关方法",
+      "tail_type": "概念"
+    },
+    {
+      "head": "海丁格光刷",
+      "head_type": "医学相关设备",
+      "relation": "属于",
+      "tail": "弱视治疗仪",
+      "tail_type": "医学相关设备"
+    },
+    {
+      "head": "后像治疗",
+      "head_type": "医学相关方法",
+      "relation": "属于",
+      "tail": "弱视治疗仪",
+      "tail_type": "医学相关设备"
+    },
+    {
+      "head": "压贴膜",
+      "head_type": "医学相关设备",
+      "relation": "属于",
+      "tail": "弱视治疗仪",
+      "tail_type": "医学相关设备"
+    },
+    {
+      "head": "网络视功能训练",
+      "head_type": "医学相关方法",
+      "relation": "属于",
+      "tail": "弱视治疗仪",
+      "tail_type": "医学相关设备"
+    },
+    {
+      "head": "验光配镜",
+      "head_type": "医学相关方法",
+      "relation": "用于",
+      "tail": "遮盖治疗",
+      "tail_type": "医学相关方法"
+    },
+    {
+      "head": "网络视功能训练",
+      "head_type": "医学相关方法",
+      "relation": "不适用于",
+      "tail": "近视的孩子",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:44 */
+{
+  "node_id": "f771079c-67d1-4f4f-a4da-7a45c3de8eae",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:44.041816",
+  "triplets": [
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "治疗建议",
+      "tail": "散瞳验光",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "涉及",
+      "tail": "屈光状态",
+      "tail_type": "检查指标"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "需要",
+      "tail": "眼镜",
+      "tail_type": "治疗工具"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "涉及",
+      "tail": "屈光不正",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "涉及",
+      "tail": "屈光参差",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "需要处理原发疾病",
+      "tail": "斜视",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:45 */
+{
+  "node_id": "7fee054b-f73d-4eb0-829b-d75003bb8ed1",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:45.130436",
+  "triplets": [
+    {
+      "head": "硬性角膜接触镜（RGP）",
+      "head_type": "治疗手段",
+      "relation": "具有作用",
+      "tail": "泪液",
+      "tail_type": "生理结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:42:51 */
+{
+  "node_id": "f95af475-c7f0-4a20-a982-2ddc94bfd0f7",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:42:51.195138",
+  "triplets": [
+    {
+      "head": "屈光不正",
+      "head_type": "疾病",
+      "relation": "引起",
+      "tail": "内斜视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "疾病",
+      "relation": "治疗原则",
+      "tail": "医学验光配镜",
+      "tail_type": "治疗方法"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "疾病",
+      "relation": "使用工具",
+      "tail": "眼镜",
+      "tail_type": "医疗器械"
+    },
+    {
+      "head": "完全调节性内斜视",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "眼镜",
+      "tail_type": "医疗器械"
+    },
+    {
+      "head": "部分显斜视",
+      "head_type": "疾病",
+      "relation": "出现症状",
+      "tail": "视疲劳不适感或复视",
+      "tail_type": "症状"
+    },
+    {
+      "head": "部分显斜视",
+      "head_type": "疾病",
+      "relation": "处理方式",
+      "tail": "三棱镜矫正",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:11 */
+{
+  "node_id": "29d3fb92-c475-4545-908f-0715f6331611",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:11.115737",
+  "triplets": [
+    {
+      "head": "视力下降",
+      "head_type": "疾病",
+      "relation": "引起",
+      "tail": "睫状肌痉挛",
+      "tail_type": "症状"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "视力下降",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "视力下降",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "视力下降",
+      "head_type": "疾病",
+      "relation": "表现为",
+      "tail": "视物模糊",
+      "tail_type": "症状"
+    },
+    {
+      "head": "视力下降",
+      "head_type": "疾病",
+      "relation": "表现为",
+      "tail": "复视",
+      "tail_type": "症状"
+    },
+    {
+      "head": "视力下降",
+      "head_type": "疾病",
+      "relation": "表现为",
+      "tail": "串行",
+      "tail_type": "症状"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:17 */
+{
+  "node_id": "9862e080-e91f-494a-9ac6-0b9494ee9635",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:17.899579",
+  "triplets": [
+    {
+      "head": "准分子激光",
+      "head_type": "激光类型",
+      "relation": "用于",
+      "tail": "PRK",
+      "tail_type": "手术类型"
+    },
+    {
+      "head": "飞秒激光",
+      "head_type": "激光类型",
+      "relation": "用于",
+      "tail": "PRK",
+      "tail_type": "手术类型"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:22 */
+{
+  "node_id": "3d9622d3-42ff-459e-848d-93a7bcfd1bc4",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:22.020795",
+  "triplets": [
+    {
+      "head": "眼贴",
+      "head_type": "medical_device",
+      "relation": "遮盖方法",
+      "tail": "压抑膜遮盖法",
+      "tail_type": "therapy"
+    },
+    {
+      "head": "压抑膜遮盖法",
+      "head_type": "therapy",
+      "relation": "使用设备",
+      "tail": "压抑膜",
+      "tail_type": "medical_device"
+    },
+    {
+      "head": "弱视压抑膜",
+      "head_type": "medical_device",
+      "relation": "属于",
+      "tail": "压抑膜遮盖法",
+      "tail_type": "therapy"
+    },
+    {
+      "head": "三色光闪烁治疗仪",
+      "head_type": "medical_device",
+      "relation": "用于治疗",
+      "tail": "弱视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "后像疗法",
+      "head_type": "therapy",
+      "relation": "属于",
+      "tail": "增视疗法",
+      "tail_type": "therapy"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:22 */
+{
+  "node_id": "135c8767-5ab8-419e-8bb3-7eaadc55baa0",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:22.877782",
+  "triplets": [
+    {
+      "head": "红光闪烁治疗仪",
+      "head_type": "设备",
+      "relation": "用于治疗",
+      "tail": "旁中心注视性弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "红光闪烁治疗仪",
+      "head_type": "设备",
+      "relation": "具有",
+      "tail": "后像",
+      "tail_type": "功能"
+    },
+    {
+      "head": "红光闪烁治疗仪",
+      "head_type": "设备",
+      "relation": "具有",
+      "tail": "光刷",
+      "tail_type": "功能"
+    },
+    {
+      "head": "红光闪烁治疗仪",
+      "head_type": "设备",
+      "relation": "具有",
+      "tail": "红光闪烁",
+      "tail_type": "功能"
+    },
+    {
+      "head": "后像疗法",
+      "head_type": "治疗方法",
+      "relation": "也被称为",
+      "tail": "增视疗法",
+      "tail_type": "治疗方法"
+    },
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "属于",
+      "tail": "后像疗法",
+      "tail_type": "治疗方法"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:25 */
+{
+  "node_id": "a4f296e0-01f1-4c8d-be24-c7e2e497895f",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:25.443270",
+  "triplets": [
+    {
+      "head": "光刷训练仪",
+      "head_type": "设备",
+      "relation": "具备",
+      "tail": "后像训练",
+      "tail_type": "技术"
+    },
+    {
+      "head": "光刷训练仪",
+      "head_type": "设备",
+      "relation": "具备",
+      "tail": "后像训练",
+      "tail_type": "技术"
+    },
+    {
+      "head": "感知觉学习网络训练",
+      "head_type": "技术",
+      "relation": "治疗",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "感知觉学习网络训练",
+      "head_type": "技术",
+      "relation": "使用",
+      "tail": "红绿眼镜",
+      "tail_type": "设备"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:35 */
+{
+  "node_id": "56e24c9d-8cbc-491d-81d9-4509b3084802",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:35.865355",
+  "triplets": [
+    {
+      "head": "眼屈光手术",
+      "head_type": "疾病_手术",
+      "relation": "包含",
+      "tail": "激光类手术",
+      "tail_type": "手术类型"
+    },
+    {
+      "head": "眼屈光手术",
+      "head_type": "疾病_手术",
+      "relation": "包含",
+      "tail": "非激光类手术",
+      "tail_type": "手术类型"
+    },
+    {
+      "head": "激光类手术",
+      "head_type": "手术类型",
+      "relation": "包含",
+      "tail": "准分子激光手术",
+      "tail_type": "手术类型"
+    },
+    {
+      "head": "激光类手术",
+      "head_type": "手术类型",
+      "relation": "包含",
+      "tail": "飞秒激光手术",
+      "tail_type": "手术类型"
+    },
+    {
+      "head": "激光类手术",
+      "head_type": "手术类型",
+      "relation": "包含",
+      "tail": "两者混合手术方式",
+      "tail_type": "手术类型"
+    },
+    {
+      "head": "激光类手术",
+      "head_type": "手术类型",
+      "relation": "使用技术",
+      "tail": "飞秒激光",
+      "tail_type": "设备_技术"
+    },
+    {
+      "head": "激光类手术",
+      "head_type": "疾病_手术",
+      "relation": "属于",
+      "tail": "眼屈光手术",
+      "tail_type": "疾病_手术"
+    },
+    {
+      "head": "准分子激光",
+      "head_type": "设备_技术",
+      "relation": "用于矫正",
+      "tail": "近视",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:36 */
+{
+  "node_id": "11ed36c8-a6fc-499a-85a2-9d47056d66e2",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:36.201752",
+  "triplets": [
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "别名",
+      "tail": "准分子激光屈光性角膜切削术",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "别名",
+      "tail": "角膜表层切削术",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "治疗对象",
+      "tail": "角膜上皮",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "涉及结构",
+      "tail": "角膜创面",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "引发过程",
+      "tail": "角膜反应",
+      "tail_type": "病理过程"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "引发症状",
+      "tail": "畏光流泪",
+      "tail_type": "概念"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "引发症状",
+      "tail": "卡痛",
+      "tail_type": "症状"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "引发症状",
+      "tail": "异物感",
+      "tail_type": "症状"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "导致现象",
+      "tail": "上皮下雾状混浊（Haze）",
+      "tail_type": "病理现象"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "导致现象",
+      "tail": "屈光回退",
+      "tail_type": "病理现象"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "被替代者",
+      "tail": "Lasik",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术名称",
+      "relation": "全称",
+      "tail": "基质层切削术",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术名称",
+      "relation": "简称",
+      "tail": "I-K",
+      "tail_type": "手术简称"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:40 */
+{
+  "node_id": "9c45aa94-a6a8-4abc-9169-1a85abe61d06",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:40.509771",
+  "triplets": [
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "利用",
+      "tail": "海丁格尔现象",
+      "tail_type": "现象"
+    },
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "由",
+      "tail": "匀速旋转的偏光板",
+      "tail_type": "现象"
+    },
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "由",
+      "tail": "蓝色光背景",
+      "tail_type": "现象"
+    },
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "刺激",
+      "tail": "视锥细胞",
+      "tail_type": "细胞"
+    },
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "传导至",
+      "tail": "视中枢",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:42 */
+{
+  "node_id": "92c0e40b-4af8-4639-816c-a9d1b5122008",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:42.409286",
+  "triplets": [
+    {
+      "head": "VR治疗法",
+      "head_type": "治疗方法",
+      "relation": "使用",
+      "tail": "增强现实",
+      "tail_type": "技术"
+    },
+    {
+      "head": "双眼分视训练",
+      "head_type": "治疗方法",
+      "relation": "应用",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "双眼分视训练",
+      "head_type": "治疗方法",
+      "relation": "涉及",
+      "tail": "健眼",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "双眼分视训练",
+      "head_type": "治疗方法",
+      "relation": "使用",
+      "tail": "头戴式显示器",
+      "tail_type": "设备"
+    },
+    {
+      "head": "头戴式显示器",
+      "head_type": "设备",
+      "relation": "包含",
+      "tail": "双镜头",
+      "tail_type": "设备部件"
+    },
+    {
+      "head": "头戴式显示器",
+      "head_type": "设备",
+      "relation": "包含",
+      "tail": "处理器",
+      "tail_type": "设备部件"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:48 */
+{
+  "node_id": "eb87d37d-535c-4f31-8ae6-466ce8981b2f",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:48.121344",
+  "triplets": [
+    {
+      "head": "Lasik",
+      "head_type": "手术",
+      "relation": "是",
+      "tail": "基质层切削术",
+      "tail_type": "手术"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术",
+      "relation": "基于",
+      "tail": "PRK",
+      "tail_type": "手术"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术",
+      "relation": "属于",
+      "tail": "屈光性角膜手术",
+      "tail_type": "手术"
+    },
+    {
+      "head": "角膜瓣",
+      "head_type": "解剖结构",
+      "relation": "由",
+      "tail": "角膜上皮",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "角膜瓣",
+      "head_type": "解剖结构",
+      "relation": "由",
+      "tail": "前弹力层",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术",
+      "relation": "使用",
+      "tail": "自动板层刀",
+      "tail_type": "设备"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术",
+      "relation": "作用于",
+      "tail": "基质层",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术",
+      "relation": "依据",
+      "tail": "屈光度数据",
+      "tail_type": "测量指标"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术",
+      "relation": "需要测量",
+      "tail": "角膜厚度",
+      "tail_type": "测量指标"
+    },
+    {
+      "head": "准分子激光扫描刀",
+      "head_type": "设备",
+      "relation": "用于",
+      "tail": "Lasik",
+      "tail_type": "手术"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:48 */
+{
+  "node_id": "8e1e9982-0e31-4bf8-af13-346603e58e08",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:48.810573",
+  "triplets": [
+    {
+      "head": "半飞秒手术",
+      "head_type": "手术名称",
+      "relation": "使用",
+      "tail": "飞秒激光刀",
+      "tail_type": "设备"
+    },
+    {
+      "head": "半飞秒手术",
+      "head_type": "手术名称",
+      "relation": "别称",
+      "tail": "FS-Lasik",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "半飞秒手术",
+      "head_type": "手术名称",
+      "relation": "别称",
+      "tail": "Femtosecond Laser",
+      "tail_type": "设备"
+    },
+    {
+      "head": "全飞秒激光手术",
+      "head_type": "手术名称",
+      "relation": "别称",
+      "tail": "全飞秒激光手术（SMILE）",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "全飞秒激光手术",
+      "head_type": "手术名称",
+      "relation": "使用",
+      "tail": "准分子激光",
+      "tail_type": "设备"
+    },
+    {
+      "head": "Lasek",
+      "head_type": "手术名称",
+      "relation": "简称",
+      "tail": "E-K",
+      "tail_type": "概念"
+    },
+    {
+      "head": "Epi-lasik",
+      "head_type": "手术名称",
+      "relation": "全称",
+      "tail": "准分子激光角膜上皮瓣下磨镶术",
+      "tail_type": "手术名称"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:51 */
+{
+  "node_id": "5ebb1cd6-da1d-40f5-85ef-136b3e5f729d",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:51.081876",
+  "triplets": [
+    {
+      "head": "Lasek",
+      "head_type": "手术方法",
+      "relation": "属于",
+      "tail": "PRK",
+      "tail_type": "手术方法"
+    },
+    {
+      "head": "Lasek",
+      "head_type": "手术方法",
+      "relation": "属于",
+      "tail": "Lasik",
+      "tail_type": "手术方法"
+    },
+    {
+      "head": "Lasek",
+      "head_type": "手术方法",
+      "relation": "是",
+      "tail": "准分子激光角膜上皮瓣下磨镶术",
+      "tail_type": "手术方法"
+    },
+    {
+      "head": "Epi-lasik",
+      "head_type": "手术方法",
+      "relation": "是",
+      "tail": "准分子激光角膜上皮瓣下磨镶术",
+      "tail_type": "手术方法"
+    },
+    {
+      "head": "Lasek",
+      "head_type": "手术方法",
+      "relation": "与",
+      "tail": "Epi-lasik",
+      "tail_type": "手术方法"
+    },
+    {
+      "head": "Lasek",
+      "head_type": "手术方法",
+      "relation": "制作方式依赖于",
+      "tail": "自动上皮刀",
+      "tail_type": "设备或工具"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:43:58 */
+{
+  "node_id": "5f95f7c7-b641-4064-a7f7-42e0c923dd8a",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:43:58.122845",
+  "triplets": [
+    {
+      "head": "角膜地形图引导的Lasik",
+      "head_type": "手术",
+      "relation": "属于",
+      "tail": "个性化手术",
+      "tail_type": "类别"
+    },
+    {
+      "head": "角膜地形图引导的Lasik",
+      "head_type": "手术",
+      "relation": "可更精确地矫治",
+      "tail": "近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "角膜地形图引导的Lasik",
+      "head_type": "手术",
+      "relation": "可更精确地矫治",
+      "tail": "远视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "角膜地形图引导的Lasik",
+      "head_type": "手术",
+      "relation": "可更精确地矫治",
+      "tail": "散光",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "角膜地形图引导的Lasik",
+      "head_type": "手术",
+      "relation": "采用",
+      "tail": "角膜地形图仪检查数据",
+      "tail_type": "数据"
+    },
+    {
+      "head": "角膜地形图引导的Lasik",
+      "head_type": "手术",
+      "relation": "进行的针对性手术",
+      "tail": "Lasik",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:44:07 */
+{
+  "node_id": "a6b1e3b7-b669-42b1-9cdd-1c91179cdbd3",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:44:07.882947",
+  "triplets": [
+    {
+      "head": "波前像差引导的Lasik",
+      "head_type": "手术方法",
+      "relation": "使用",
+      "tail": "波前像差仪",
+      "tail_type": "设备"
+    },
+    {
+      "head": "波前像差引导的Lasik",
+      "head_type": "手术方法",
+      "relation": "使用",
+      "tail": "激光机",
+      "tail_type": "设备"
+    },
+    {
+      "head": "波前像差引导的Lasik",
+      "head_type": "手术方法",
+      "relation": "包含",
+      "tail": "Lasik",
+      "tail_type": "手术方法"
+    },
+    {
+      "head": "波前像差引导的Lasik",
+      "head_type": "手术方法",
+      "relation": "包含",
+      "tail": "Epi-Lasik",
+      "tail_type": "手术方法"
+    },
+    {
+      "head": "准分子激光角膜原位磨镶术",
+      "head_type": "手术方法",
+      "relation": "属于",
+      "tail": "准分子激光",
+      "tail_type": "设备"
+    },
+    {
+      "head": "准分子激光角膜原位磨镶术",
+      "head_type": "手术方法",
+      "relation": "与",
+      "tail": "飞秒激光",
+      "tail_type": "设备"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:44:31 */
+{
+  "node_id": "ae880800-595d-4fbe-816b-a2c81fcb1be3",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:44:31.317945",
+  "triplets": [
+    {
+      "head": "屈光性透明晶体置换术",
+      "head_type": "手术名称",
+      "relation": "用于治疗",
+      "tail": "屈光不正",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "屈光性透明晶体置换术",
+      "head_type": "手术名称",
+      "relation": "需要停戴",
+      "tail": "隐形眼镜",
+      "tail_type": "医疗器械"
+    },
+    {
+      "head": "屈光性透明晶体置换术",
+      "head_type": "手术名称",
+      "relation": "使用",
+      "tail": "人工晶体",
+      "tail_type": "医疗器械"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术名称",
+      "relation": "用于治疗",
+      "tail": "病理性近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术名称",
+      "relation": "后续进行",
+      "tail": "屈光矫正手术",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "角膜激光手术",
+      "head_type": "手术名称",
+      "relation": "与ICL手术并列",
+      "tail": "眼内接触镜植入（ICL）",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "隐形眼镜",
+      "head_type": "医疗器械",
+      "relation": "需停戴",
+      "tail": "RGP镜片",
+      "tail_type": "医疗器械"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:44:34 */
+{
+  "node_id": "a68e106e-b522-40a8-bc44-56e5552897d8",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:44:34.120987",
+  "triplets": [
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "医学设备",
+      "relation": "属于",
+      "tail": "人工晶体",
+      "tail_type": "医学设备"
+    },
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "医学设备",
+      "relation": "位于",
+      "tail": "瞳孔之后与晶状体前表面之间",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "医学设备",
+      "relation": "避免接触",
+      "tail": "角膜内皮",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "医学设备",
+      "relation": "可能导致并发症",
+      "tail": "青光眼",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "医学设备",
+      "relation": "可能导致并发症",
+      "tail": "白内障",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "医学设备",
+      "relation": "属于",
+      "tail": "软性隐形眼镜",
+      "tail_type": "医学设备"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:44:35 */
+{
+  "node_id": "d2886d0f-52a2-4ab0-b646-0dde3d51c6e6",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:44:35.974698",
+  "triplets": [
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术",
+      "relation": "治疗",
+      "tail": "病理性近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术",
+      "relation": "作用于",
+      "tail": "巩膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术",
+      "relation": "使用材料",
+      "tail": "异体巩膜",
+      "tail_type": "材料"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术",
+      "relation": "使用材料",
+      "tail": "自体阔筋膜组织",
+      "tail_type": "材料"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术",
+      "relation": "预防",
+      "tail": "近视度数加深",
+      "tail_type": "病理过程"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术",
+      "relation": "-预防-",
+      "tail": "视网膜脱离",
+      "tail_type": "并发症"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:44:39 */
+{
+  "node_id": "a79cab15-166b-4466-8a27-f17c83cf4a70",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:44:39.053004",
+  "triplets": [
+    {
+      "head": "褚仁远",
+      "head_type": "author",
+      "relation": "撰写",
+      "tail": "眼病学",
+      "tail_type": "book"
+    },
+    {
+      "head": "瞿佳",
+      "head_type": "author",
+      "relation": "撰写",
+      "tail": "眼视光学理论和方法",
+      "tail_type": "book"
+    },
+    {
+      "head": "李鸣凤",
+      "head_type": "author",
+      "relation": "撰写",
+      "tail": "眼科全书",
+      "tail_type": "book"
+    },
+    {
+      "head": "王增源",
+      "head_type": "author",
+      "relation": "撰写",
+      "tail": "认识近视防控近视",
+      "tail_type": "book"
+    },
+    {
+      "head": "眼病学",
+      "head_type": "book",
+      "relation": "出版者",
+      "tail": "人民卫生出版社",
+      "tail_type": "publisher"
+    },
+    {
+      "head": "眼视光学理论和方法",
+      "head_type": "book",
+      "relation": "出版者",
+      "tail": "人民卫生出版社",
+      "tail_type": "publisher"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:44:51 */
+{
+  "node_id": "7faf5bea-6e1e-4f45-bd0a-8f512696e448",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:44:51.107528",
+  "triplets": [
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术",
+      "relation": "治疗",
+      "tail": "视网膜脱离",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术",
+      "relation": "治疗",
+      "tail": "病理性近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术",
+      "relation": "控制",
+      "tail": "眼球前后扩张",
+      "tail_type": "症状"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术",
+      "relation": "控制",
+      "tail": "后巩膜葡萄膜肿",
+      "tail_type": "症状"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术",
+      "relation": "改善或治疗",
+      "tail": "眼底退行性病变",
+      "tail_type": "病变"
+    },
+    {
+      "head": "视网膜复位手术",
+      "head_type": "手术",
+      "relation": "同时进行",
+      "tail": "后巩膜加固术",
+      "tail_type": "手术"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "控制眼轴扩张",
+      "tail": "眼轴长度",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:03 */
+{
+  "node_id": "b0d6f4eb-f893-4360-8e9f-a86547100e37",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:03.340076",
+  "triplets": [
+    {
+      "head": "本书",
+      "head_type": "book",
+      "relation": "指导",
+      "tail": "褚仁远",
+      "tail_type": "person"
+    },
+    {
+      "head": "本书",
+      "head_type": "book",
+      "relation": "指导",
+      "tail": "陈伟民",
+      "tail_type": "person"
+    },
+    {
+      "head": "本书",
+      "head_type": "book",
+      "relation": "指导",
+      "tail": "阴正勤",
+      "tail_type": "person"
+    },
+    {
+      "head": "本书",
+      "head_type": "book",
+      "relation": "指导",
+      "tail": "王传",
+      "tail_type": "person"
+    },
+    {
+      "head": "本书",
+      "head_type": "book",
+      "relation": "指导",
+      "tail": "赵敏",
+      "tail_type": "person"
+    },
+    {
+      "head": "近视",
+      "head_type": "disease",
+      "relation": "相关",
+      "tail": "屈光矫正手术",
+      "tail_type": "procedure"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:04 */
+{
+  "node_id": "ca99603b-31da-4cf2-9b68-fe69e9115254",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:04.904176",
+  "triplets": [
+    {
+      "head": "青少年的近视防治",
+      "head_type": "disease",
+      "relation": "主题",
+      "tail": "近视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "易虹",
+      "head_type": "person",
+      "relation": "编写",
+      "tail": "青少年的近视防治",
+      "tail_type": "disease"
+    },
+    {
+      "head": "易虹",
+      "head_type": "person",
+      "relation": "担任",
+      "tail": "国家卫计委近视眼重点实验室主任",
+      "tail_type": "position"
+    },
+    {
+      "head": "易虹",
+      "head_type": "person",
+      "relation": "担任",
+      "tail": "复旦大学眼科学系教授博士生导师",
+      "tail_type": "position"
+    },
+    {
+      "head": "褚仁远",
+      "head_type": "person",
+      "relation": "担任",
+      "tail": "中华眼科学会常委",
+      "tail_type": "position"
+    },
+    {
+      "head": "褚仁远",
+      "head_type": "person",
+      "relation": "担任",
+      "tail": "上海眼科学会前任主任委员",
+      "tail_type": "position"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:07 */
+{
+  "node_id": "affc191d-2322-4eef-8cd3-2f7991d201f7",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:07.088697",
+  "triplets": [
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "可能由",
+      "tail": "遗传物质——基因变异",
+      "tail_type": "现象"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "影响",
+      "tail": "基因表达改变",
+      "tail_type": "现象"
+    },
+    {
+      "head": "表观遗传学",
+      "head_type": "学科",
+      "relation": "证实",
+      "tail": "基因表达改变",
+      "tail_type": "现象"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "属于",
+      "tail": "眼屈光相关性疾病",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "属于",
+      "tail": "眼屈光相关性疾病",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "可能由",
+      "tail": "环境因素长期刺激",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:16 */
+{
+  "node_id": "675ad0e8-47f6-4d3e-8e72-31e1ebd0f562",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:16.378067",
+  "triplets": [
+    {
+      "head": "全军医学科学技术委员会眼科专委会",
+      "head_type": "组织机构",
+      "relation": "主任委员",
+      "tail": "叶 剑",
+      "tail_type": "人名"
+    },
+    {
+      "head": "叶 剑",
+      "head_type": "人名",
+      "relation": "职称",
+      "tail": "博士生导师",
+      "tail_type": "职称"
+    },
+    {
+      "head": "叶 剑",
+      "head_type": "人名",
+      "relation": "职称",
+      "tail": "主任医师",
+      "tail_type": "职称"
+    },
+    {
+      "head": "叶 剑",
+      "head_type": "人名",
+      "relation": "职称",
+      "tail": "教授",
+      "tail_type": "职称"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "相关疾病",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:25 */
+{
+  "node_id": "68e85685-c09a-46d3-bcd5-81f300399103",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:25.315368",
+  "triplets": [
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "发病率",
+      "tail": "50%",
+      "tail_type": "比例"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "发病率",
+      "tail": "9.5%",
+      "tail_type": "比例"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "人数",
+      "tail": "9亿人",
+      "tail_type": "数量"
+    },
+    {
+      "head": "中国",
+      "head_type": "国家",
+      "relation": "患有",
+      "tail": "近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "中国",
+      "head_type": "国家",
+      "relation": "人数",
+      "tail": "4.5亿人",
+      "tail_type": "数量"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:29 */
+{
+  "node_id": "e68731a1-e3c4-4c74-85fb-5dc14d8929de",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:29.557751",
+  "triplets": [
+    {
+      "head": "瞳孔",
+      "head_type": "AnatomicalStructure",
+      "relation": "调节",
+      "tail": "光线屈折",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "晶状体",
+      "head_type": "AnatomicalStructure",
+      "relation": "调节",
+      "tail": "光线屈折",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "视网膜",
+      "head_type": "AnatomicalStructure",
+      "relation": "成像于",
+      "tail": "光线屈折",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "MedicalCondition",
+      "relation": "包含",
+      "tail": "近视",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "MedicalCondition",
+      "relation": "包含",
+      "tail": "远视",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "MedicalCondition",
+      "relation": "包含",
+      "tail": "散光",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:31 */
+{
+  "node_id": "d71f7aef-0265-4387-9b95-5dcfd3164574",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:31.392353",
+  "triplets": [
+    {
+      "head": "克雷格·W·诺曼",
+      "head_type": "Person",
+      "relation": "介绍",
+      "tail": "视力及其产生原理",
+      "tail_type": "Concept"
+    },
+    {
+      "head": "中国台湾",
+      "head_type": "Region",
+      "relation": "近视率",
+      "tail": "83%",
+      "tail_type": "Percentage"
+    },
+    {
+      "head": "中国香港地区",
+      "head_type": "Region",
+      "relation": "近视率",
+      "tail": "80%",
+      "tail_type": "Percentage"
+    },
+    {
+      "head": "欧美等发达地区",
+      "head_type": "Region",
+      "relation": "近视率",
+      "tail": "20%～40%",
+      "tail_type": "Percentage"
+    },
+    {
+      "head": "印度",
+      "head_type": "Region",
+      "relation": "近视率",
+      "tail": "19%",
+      "tail_type": "Percentage"
+    },
+    {
+      "head": "非洲地区",
+      "head_type": "Region",
+      "relation": "近视率",
+      "tail": "10%",
+      "tail_type": "概念"
+    },
+    {
+      "head": "欧洲地区",
+      "head_type": "Region",
+      "relation": "近视眼发病率",
+      "tail": "20%～30%",
+      "tail_type": "Percentage"
+    },
+    {
+      "head": "视神经",
+      "head_type": "Anatomy",
+      "relation": "传输目的地",
+      "tail": "视中枢",
+      "tail_type": "Anatomy"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:35 */
+{
+  "node_id": "143264ec-2b9c-4691-86c1-4b0dd1beba1b",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:35.155012",
+  "triplets": [
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "定义为",
+      "tail": "视敏度",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "包含",
+      "tail": "中心视力",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "包含",
+      "tail": "周边视力",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "中心视力",
+      "head_type": "医学概念",
+      "relation": "形成于",
+      "tail": "黄斑区",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "中心视力",
+      "head_type": "医学概念",
+      "relation": "沿用",
+      "tail": "视轴",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:40 */
+{
+  "node_id": "6a178507-9453-4a19-aedf-b8df930ffee9",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:40.399625",
+  "triplets": [
+    {
+      "head": "视力检查",
+      "head_type": "检查方法",
+      "relation": "涉及",
+      "tail": "视网膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视力检查",
+      "head_type": "检查方法",
+      "relation": "涉及",
+      "tail": "屈光度",
+      "tail_type": "生理参数"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "疾病分类",
+      "relation": "包含",
+      "tail": "近视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "疾病分类",
+      "relation": "包含",
+      "tail": "远视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "疾病分类",
+      "relation": "包含",
+      "tail": "散光",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "疾病分类",
+      "relation": "相关联",
+      "tail": "屈光参差性视觉障碍",
+      "tail_type": "疾病类型"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:41 */
+{
+  "node_id": "f33a1369-6d46-433b-a546-af34a5b22dac",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:41.525298",
+  "triplets": [
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "涉及",
+      "tail": "角膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "涉及",
+      "tail": "晶状体",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "涉及",
+      "tail": "视网膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "视力",
+      "head_type": "医学概念",
+      "relation": "传递到",
+      "tail": "大脑视中枢",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:42 */
+{
+  "node_id": "75cef653-170e-4f0e-88e5-74a6178d13ca",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:42.201304",
+  "triplets": [
+    {
+      "head": "LogMAR视力表",
+      "head_type": "MedicalScale",
+      "relation": "基于概念",
+      "tail": "最小分辨视角",
+      "tail_type": "MedicalConcept"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:46 */
+{
+  "node_id": "479e00b8-63fc-4f34-9688-1602d23de532",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:46.767188",
+  "triplets": []
+}
+
+/* 处理时间: 2026-01-07 17:50:50 */
+{
+  "node_id": "41514a09-29f7-4f18-b6c7-c9b51305aceb",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:50.215034",
+  "triplets": [
+    {
+      "head": "裸眼视力",
+      "head_type": "医学概念",
+      "relation": "相关",
+      "tail": "视力检查",
+      "tail_type": "行为"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:50:53 */
+{
+  "node_id": "a9bb1a1a-fe9a-42a5-9e79-0f84d00fac62",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:50:53.968477",
+  "triplets": [
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "职位",
+      "tail": "副院长",
+      "tail_type": "Position"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "职位",
+      "tail": "眼科主任",
+      "tail_type": "Position"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "所属组织",
+      "tail": "全国眼科学会",
+      "tail_type": "Organization"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "职位",
+      "tail": "副主任委员",
+      "tail_type": "Position"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "职位",
+      "tail": "免疫病学组组长",
+      "tail_type": "概念"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "获得荣誉",
+      "tail": "长江学者",
+      "tail_type": "Award"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "职位",
+      "tail": "博士生导师",
+      "tail_type": "Position"
+    },
+    {
+      "head": "杨培增",
+      "head_type": "Person",
+      "relation": "职位",
+      "tail": "教授",
+      "tail_type": "Position"
+    },
+    {
+      "head": "2018年9月",
+      "head_type": "Date",
+      "relation": "时间",
+      "tail": "杨培增",
+      "tail_type": "Person"
+    },
+    {
+      "head": "我国",
+      "head_type": "Country",
+      "relation": "涉及疾病",
+      "tail": "近视发病率",
+      "tail_type": "Disease"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:03 */
+{
+  "node_id": "018b850d-11b7-4ffd-8394-89cd1e43c13a",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:03.499143",
+  "triplets": [
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "形成原因",
+      "tail": "眼轴长度",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "形成原因",
+      "tail": "角膜屈光力过大",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "导致结果",
+      "tail": "焦点落在视网膜前方",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "病因因素",
+      "tail": "遗传因素",
+      "tail_type": "遗传因素"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "病因因素",
+      "tail": "用眼卫生习惯",
+      "tail_type": "环境因素"
+    },
+    {
+      "head": "表观遗传学",
+      "head_type": "研究领域",
+      "relation": "证实内容",
+      "tail": "遗传因素与环境因素的相互作用",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:05 */
+{
+  "node_id": "b01179d0-90be-47ea-87d4-022bb615c43c",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:05.382021",
+  "triplets": [
+    {
+      "head": "调节幅度",
+      "head_type": "医学概念",
+      "relation": "定义",
+      "tail": "眼所能产生的最大调节力",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "最小调节幅度",
+      "head_type": "医学概念",
+      "relation": "计算公式",
+      "tail": "15－0.25×年龄",
+      "tail_type": "医学公式"
+    },
+    {
+      "head": "调节灵敏度",
+      "head_type": "医学概念",
+      "relation": "定义",
+      "tail": "调节刺激在不同水平变化时所做出的反应速度",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "翻转拍",
+      "head_type": "医学设备",
+      "relation": "用于检测",
+      "tail": "调节灵敏度",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "调节功能训练",
+      "head_type": "医学方法",
+      "relation": "改善",
+      "tail": "调节幅度及调节灵敏度",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "褚仁远教授",
+      "head_type": "人物",
+      "relation": "从事研究领域",
+      "tail": "视觉训练",
+      "tail_type": "医学方法"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "医学概念",
+      "relation": "章节提及",
+      "tail": "第二章",
+      "tail_type": "章节"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:12 */
+{
+  "node_id": "f8ae75b4-6ec5-45a9-ba2a-4f2663b15945",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:12.458744",
+  "triplets": [
+    {
+      "head": "屈光",
+      "head_type": "医学概念",
+      "relation": "定义",
+      "tail": "光线屈折",
+      "tail_type": "物理现象"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "医学概念",
+      "relation": "包含",
+      "tail": "近视",
+      "tail_type": "医学疾病"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "医学概念",
+      "relation": "包含",
+      "tail": "远视",
+      "tail_type": "医学疾病"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "医学概念",
+      "relation": "包含",
+      "tail": "散光",
+      "tail_type": "医学疾病"
+    },
+    {
+      "head": "凸透镜",
+      "head_type": "光学仪器",
+      "relation": "导致现象",
+      "tail": "光线折射汇聚",
+      "tail_type": "物理现象"
+    },
+    {
+      "head": "近视",
+      "head_type": "医学疾病",
+      "relation": "属于",
+      "tail": "屈光不正",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "远视",
+      "head_type": "医学疾病",
+      "relation": "属于",
+      "tail": "屈光不正",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "散光",
+      "head_type": "医学疾病",
+      "relation": "属于",
+      "tail": "屈光不正",
+      "tail_type": "医学概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:15 */
+{
+  "node_id": "5048906e-0655-4fe6-b726-2f3205a1bbc5",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:15.008701",
+  "triplets": [
+    {
+      "head": "视觉的形成",
+      "head_type": "过程",
+      "relation": "涉及",
+      "tail": "眼角膜",
+      "tail_type": "眼部结构"
+    },
+    {
+      "head": "视觉的形成",
+      "head_type": "过程",
+      "relation": "涉及",
+      "tail": "晶状体",
+      "tail_type": "眼部结构"
+    },
+    {
+      "head": "视觉的形成",
+      "head_type": "过程",
+      "relation": "涉及",
+      "tail": "视网膜",
+      "tail_type": "眼部结构"
+    },
+    {
+      "head": "视觉的形成",
+      "head_type": "过程",
+      "relation": "传导到",
+      "tail": "视中枢",
+      "tail_type": "大脑结构"
+    },
+    {
+      "head": "视觉的形成",
+      "head_type": "过程",
+      "relation": "传导到",
+      "tail": "大脑皮层",
+      "tail_type": "大脑结构"
+    },
+    {
+      "head": "光觉",
+      "head_type": "视功能",
+      "relation": "属于",
+      "tail": "视功能",
+      "tail_type": "视功能"
+    },
+    {
+      "head": "色觉",
+      "head_type": "视功能",
+      "relation": "属于",
+      "tail": "视功能",
+      "tail_type": "视功能"
+    },
+    {
+      "head": "形觉",
+      "head_type": "视功能",
+      "relation": "属于",
+      "tail": "视功能",
+      "tail_type": "视功能"
+    },
+    {
+      "head": "立体觉",
+      "head_type": "视功能",
+      "relation": "属于",
+      "tail": "视功能",
+      "tail_type": "视功能"
+    },
+    {
+      "head": "对比觉",
+      "head_type": "视功能",
+      "relation": "属于",
+      "tail": "视功能",
+      "tail_type": "视功能"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:21 */
+{
+  "node_id": "10a97709-6b74-487b-aada-504ae86e7448",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:21.729401",
+  "triplets": [
+    {
+      "head": "双眼",
+      "head_type": "解剖结构",
+      "relation": "比喻为",
+      "tail": "摄像机",
+      "tail_type": "比喻"
+    },
+    {
+      "head": "双眼",
+      "head_type": "解剖结构",
+      "relation": "具有",
+      "tail": "同时知觉",
+      "tail_type": "功能"
+    },
+    {
+      "head": "融像",
+      "head_type": "功能",
+      "relation": "属于",
+      "tail": "高级视功能",
+      "tail_type": "功能"
+    },
+    {
+      "head": "融像",
+      "head_type": "功能",
+      "relation": "作用于",
+      "tail": "大脑皮层",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "融像",
+      "head_type": "功能",
+      "relation": "基于",
+      "tail": "视觉形成过程",
+      "tail_type": "生理过程"
+    },
+    {
+      "head": "立体知觉",
+      "head_type": "功能",
+      "relation": "属于",
+      "tail": "高级视功能",
+      "tail_type": "功能"
+    },
+    {
+      "head": "屈光度",
+      "head_type": "医学概念",
+      "relation": "用于量度",
+      "tail": "眼睛屈光能力",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "屈光度",
+      "head_type": "医学概念",
+      "relation": "分为",
+      "tail": "正透镜",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "屈光度",
+      "head_type": "医学概念",
+      "relation": "分为",
+      "tail": "负透镜",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "正透镜",
+      "head_type": "医学概念",
+      "relation": "用于矫正",
+      "tail": "远视",
+      "tail_type": "疾病或症状"
+    },
+    {
+      "head": "负透镜",
+      "head_type": "医学概念",
+      "relation": "用于矫正",
+      "tail": "近视",
+      "tail_type": "疾病或症状"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:24 */
+{
+  "node_id": "a071075c-eb2a-4763-986e-59dcc908094b",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:24.043295",
+  "triplets": [
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "属于",
+      "tail": "遗传因素患病",
+      "tail_type": "病因"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "具有",
+      "tail": "视网膜病变",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "具有",
+      "tail": "黄斑病变",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "单纯性近视",
+      "head_type": "疾病",
+      "relation": "区别于",
+      "tail": "病理性近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "区别于",
+      "tail": "普通高度近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病分类",
+      "relation": "属于",
+      "tail": "病理性近视",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:25 */
+{
+  "node_id": "e2524d87-6a20-4656-ac90-67835d4cd0ff",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:25.018309",
+  "triplets": [
+    {
+      "head": "顺轨散光",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "角膜地形图",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "逆轨散光",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "角膜地形图",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "角膜地形图",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "圆锥角膜疾病",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "角膜锥形变形",
+      "tail_type": "症状"
+    },
+    {
+      "head": "准分子激光近视矫正手术",
+      "head_type": "手术",
+      "relation": "导致",
+      "tail": "散光程度过大",
+      "tail_type": "症状"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:32 */
+{
+  "node_id": "758dcf51-4c14-4b55-be8d-c1891e8f6bd6",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:32.782858",
+  "triplets": [
+    {
+      "head": "视网膜",
+      "head_type": "医学实体",
+      "relation": "位于",
+      "tail": "黄斑区",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "像差",
+      "head_type": "医学实体",
+      "relation": "导致",
+      "tail": "成像模糊",
+      "tail_type": "医学实体"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:35 */
+{
+  "node_id": "491d61e5-d79a-4fde-9154-2a8e1378c385",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:35.477641",
+  "triplets": [
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "重影",
+      "tail_type": "症状"
+    },
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "视力下降",
+      "tail_type": "症状"
+    },
+    {
+      "head": "高度散光",
+      "head_type": "散光类型",
+      "relation": "导致",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "睑板",
+      "head_type": "解剖结构",
+      "relation": "影响",
+      "tail": "角膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "眼轮匝肌",
+      "head_type": "解剖结构",
+      "relation": "影响",
+      "tail": "角膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "内外眦韧带",
+      "head_type": "解剖结构",
+      "relation": "影响",
+      "tail": "角膜",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:38 */
+{
+  "node_id": "1eba037d-8604-462b-88ee-8e3bd4fbd7a1",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:38.868757",
+  "triplets": [
+    {
+      "head": "中华医学会眼科学分会斜视弱视学组",
+      "head_type": "组织机构",
+      "relation": "提出",
+      "tail": "不同年龄组儿童的正常视力参考值下限",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "裸眼视力",
+      "head_type": "医学概念",
+      "relation": "低于",
+      "tail": "小数视力0.5",
+      "tail_type": "医学概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:45 */
+{
+  "node_id": "6a44cf00-630d-4206-8feb-2c91ce002073",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:45.145918",
+  "triplets": [
+    {
+      "head": "眼轴长度",
+      "head_type": "医学实体",
+      "relation": "达到成人水平",
+      "tail": "24 毫米",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "眼轴长度",
+      "head_type": "医学实体",
+      "relation": "出生时长度",
+      "tail": "16 毫米",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "眼轴长度",
+      "head_type": "医学实体",
+      "relation": "达到正视眼水平",
+      "tail": "23 毫米",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "视网膜",
+      "head_type": "医学实体",
+      "relation": "病变类型",
+      "tail": "豹纹状",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "视网膜",
+      "head_type": "医学实体",
+      "relation": "病变类型",
+      "tail": "弧形斑",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "Fuchs 斑",
+      "head_type": "医学实体",
+      "relation": "相关特征",
+      "tail": "后巩膜葡萄肿",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "黄斑漆样裂纹",
+      "head_type": "医学实体",
+      "relation": "相关特征",
+      "tail": "后巩膜葡萄肿",
+      "tail_type": "医学实体"
+    },
+    {
+      "head": "黄斑新生血管",
+      "head_type": "医学实体",
+      "relation": "相关特征",
+      "tail": "后巩膜葡萄肿",
+      "tail_type": "医学实体"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:53 */
+{
+  "node_id": "80e2e014-e6be-4353-99c9-c2c210d8c404",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:53.791514",
+  "triplets": [
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "使用",
+      "tail": "B 超图",
+      "tail_type": "影像检查"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "显示",
+      "tail": "眼球后部形态",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "眼球后部形态",
+      "head_type": "解剖结构",
+      "relation": "呈现",
+      "tail": "锥状向后延伸",
+      "tail_type": "生理属性"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "后巩膜葡萄肿",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "由于",
+      "tail": "眼球从角膜到视网膜的距离太短",
+      "tail_type": "生理属性"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "光线聚焦成像的位置在视网膜之后",
+      "tail_type": "生理属性"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:55 */
+{
+  "node_id": "0ae5113c-dd19-47ed-ad49-fade3d6aa00f",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:55.845344",
+  "triplets": [
+    {
+      "head": "近视",
+      "head_type": "Disease",
+      "relation": "具有易感性",
+      "tail": "遗传因素",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "近视",
+      "head_type": "Disease",
+      "relation": "具有易感性",
+      "tail": "体质",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "近视",
+      "head_type": "Disease",
+      "relation": "预防方法",
+      "tail": "眼保健操",
+      "tail_type": "MedicalProcedure"
+    },
+    {
+      "head": "近视",
+      "head_type": "Disease",
+      "relation": "预防方法",
+      "tail": "近距离学习或工作",
+      "tail_type": "MedicalBehavior"
+    },
+    {
+      "head": "近视",
+      "head_type": "Disease",
+      "relation": "预防方法",
+      "tail": "光线较好",
+      "tail_type": "MedicalBehavior"
+    },
+    {
+      "head": "单纯性近视",
+      "head_type": "DiseaseSubtype",
+      "relation": "属于",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "DiseaseSubtype",
+      "relation": "属于",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "DiseaseSubtype",
+      "relation": "导致",
+      "tail": "视功能受损",
+      "tail_type": "Symptom"
+    },
+    {
+      "head": "病理性近视",
+      "head_type": "DiseaseSubtype",
+      "relation": "导致",
+      "tail": "眼底病变",
+      "tail_type": "Symptom"
+    },
+    {
+      "head": "眼底病变",
+      "head_type": "Symptom",
+      "relation": "包含",
+      "tail": "近视弧形斑",
+      "tail_type": "AnatomicalStructure"
+    },
+    {
+      "head": "眼底病变",
+      "head_type": "Symptom",
+      "relation": "包含",
+      "tail": "豹纹状眼底",
+      "tail_type": "AnatomicalStructure"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:51:59 */
+{
+  "node_id": "eb08c382-2fc4-44b4-90d1-8345687a27eb",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:51:59.891216",
+  "triplets": []
+}
+
+/* 处理时间: 2026-01-07 17:52:06 */
+{
+  "node_id": "e8b18fcb-cb69-4763-bb53-642cc2256487",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:52:06.942570",
+  "triplets": [
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "影响",
+      "tail": "视皮质中枢",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "疾病",
+      "relation": "导致",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:52:07 */
+{
+  "node_id": "ed87d940-1cc2-4c05-a51f-a911e9dd585f",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:52:07.601373",
+  "triplets": [
+    {
+      "head": "屈光参差性视觉障碍",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "屈光参差",
+      "tail_type": "症状"
+    },
+    {
+      "head": "屈光参差性视觉障碍",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "视力下降",
+      "tail_type": "症状"
+    },
+    {
+      "head": "屈光参差性视觉障碍",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "视力下降",
+      "tail_type": "症状"
+    },
+    {
+      "head": "屈光参差性视觉障碍",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "交替视力",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "屈光参差性视觉障碍",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "单眼视力",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "眼外斜视",
+      "tail_type": "症状"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:52:10 */
+{
+  "node_id": "ab7727ca-d8cf-43f8-b6be-1e2b05e36b4a",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:52:10.208013",
+  "triplets": [
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "视力低于正常值",
+      "tail_type": "症状"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "遮盖试验",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "弱视的早期发现",
+      "head_type": "过程",
+      "relation": "依赖于",
+      "tail": "家长的细心观察和定期视力检查",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:52:15 */
+{
+  "node_id": "d9b872d6-af2b-40a7-bfdf-d081644dac4c",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:52:15.592634",
+  "triplets": [
+    {
+      "head": "假性近视",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "阿托品眼膏",
+      "tail_type": "药物"
+    },
+    {
+      "head": "假性近视",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "阿托品眼液",
+      "tail_type": "药物"
+    },
+    {
+      "head": "假性近视",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "睫状肌麻痹眼液",
+      "tail_type": "药物"
+    },
+    {
+      "head": "假性近视",
+      "head_type": "疾病",
+      "relation": "发展为",
+      "tail": "真性近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "框架眼镜",
+      "head_type": "医疗器械",
+      "relation": "相关性",
+      "tail": "近视",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:52:24 */
+{
+  "node_id": "1eb47340-380b-4989-957d-668408162c0e",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:52:24.938676",
+  "triplets": [
+    {
+      "head": "角膜混浊",
+      "head_type": "症状_体征",
+      "relation": "导致",
+      "tail": "弱视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "上睑下垂",
+      "head_type": "症状_体征",
+      "relation": "导致",
+      "tail": "弱视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "斜视",
+      "head_type": "症状_体征",
+      "relation": "导致",
+      "tail": "弱视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "眼球震颤",
+      "head_type": "症状_体征",
+      "relation": "合并",
+      "tail": "弱视",
+      "tail_type": "疾病类型"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:52:28 */
+{
+  "node_id": "782afe34-978c-4e9f-8f0a-6ded2a3ccae2",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:52:28.495583",
+  "triplets": [
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "维生素A 缺乏",
+      "tail_type": "病因"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "视网膜色素变性",
+      "tail_type": "病因"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "白点状视网膜炎",
+      "tail_type": "病因"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "视网膜脉络病变",
+      "tail_type": "病因"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "视神经萎缩",
+      "tail_type": "病因"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "周边性白内障",
+      "tail_type": "概念"
+    },
+    {
+      "head": "昼盲",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "视网膜黄斑营养不良",
+      "tail_type": "病因"
+    },
+    {
+      "head": "昼盲",
+      "head_type": "疾病",
+      "relation": "相关结构",
+      "tail": "锥细胞",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "夜盲",
+      "head_type": "疾病分类",
+      "relation": "相关疾病",
+      "tail": "视网膜色素变性",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:52:31 */
+{
+  "node_id": "4a90e28d-6243-4c92-b9eb-4a702c197dd5",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:52:31.547764",
+  "triplets": [
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "MedicalDevice",
+      "relation": "解决",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "MedicalDevice",
+      "relation": "解决",
+      "tail": "散光",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "主动离焦",
+      "head_type": "PhysiologicalFunction",
+      "relation": "导致",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "医学验光配镜",
+      "head_type": "MedicalProcedure",
+      "relation": "检查",
+      "tail": "主导眼",
+      "tail_type": "AnatomicalStructure"
+    },
+    {
+      "head": "医学验光配镜",
+      "head_type": "MedicalProcedure",
+      "relation": "检查",
+      "tail": "眼位",
+      "tail_type": "AnatomicalStructure"
+    },
+    {
+      "head": "医学验光配镜",
+      "head_type": "MedicalProcedure",
+      "relation": "检查",
+      "tail": "散光轴向",
+      "tail_type": "AnatomicalStructure"
+    },
+    {
+      "head": "医学验光配镜",
+      "head_type": "MedicalProcedure",
+      "relation": "要求",
+      "tail": "双眼调节平衡",
+      "tail_type": "PhysiologicalFunction"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:52:31 */
+{
+  "node_id": "7b99cbe4-4473-40d2-8e58-13a8736455c1",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:52:31.675191",
+  "triplets": [
+    {
+      "head": "框架眼镜",
+      "head_type": "医疗器械",
+      "relation": "引起",
+      "tail": "旁中心离焦",
+      "tail_type": "病理现象"
+    },
+    {
+      "head": "框架眼镜",
+      "head_type": "医疗器械",
+      "relation": "引起",
+      "tail": "黄斑中心离焦",
+      "tail_type": "病理现象"
+    },
+    {
+      "head": "旁中心离焦",
+      "head_type": "病理现象",
+      "relation": "发生于",
+      "tail": "视网膜",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "医疗器械",
+      "relation": "减缓",
+      "tail": "近视发展速度",
+      "tail_type": "病理现象"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:52:41 */
+{
+  "node_id": "909cc441-e6bd-4d3c-8b73-e5c41ff6b670",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:52:41.283839",
+  "triplets": [
+    {
+      "head": "角膜",
+      "head_type": "解剖结构",
+      "relation": "具有",
+      "tail": "像差",
+      "tail_type": "病理现象"
+    },
+    {
+      "head": "角膜地形图仪",
+      "head_type": "设备",
+      "relation": "检测",
+      "tail": "角膜表面地形图",
+      "tail_type": "图像"
+    },
+    {
+      "head": "角膜地形图仪",
+      "head_type": "设备",
+      "relation": "显示",
+      "tail": "角膜表面地形图",
+      "tail_type": "图像"
+    },
+    {
+      "head": "像差",
+      "head_type": "病理现象",
+      "relation": "分为",
+      "tail": "低阶像差",
+      "tail_type": "病理现象"
+    },
+    {
+      "head": "像差",
+      "head_type": "病理现象",
+      "relation": "分为",
+      "tail": "高阶像差",
+      "tail_type": "病理现象"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:52:44 */
+{
+  "node_id": "f7614074-6da1-4092-9e0a-1af0697581a0",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:52:44.878965",
+  "triplets": [
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "影响",
+      "tail": "调节灵敏度",
+      "tail_type": "生理功能"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "遗传",
+      "tail_type": "病因"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "相关",
+      "tail": "环境因素",
+      "tail_type": "病因"
+    },
+    {
+      "head": "环境因素",
+      "head_type": "病因",
+      "relation": "通过",
+      "tail": "表观遗传",
+      "tail_type": "机制"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "影响",
+      "tail": "调节灵敏度",
+      "tail_type": "生理功能"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:52:50 */
+{
+  "node_id": "2be497b4-e789-4ad4-b48d-f9568295f318",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:52:50.633977",
+  "triplets": [
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "共同性斜视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "隐斜视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "斜视",
+      "head_type": "疾病",
+      "relation": "包含",
+      "tail": "显斜视",
+      "tail_type": "疾病类型"
+    },
+    {
+      "head": "显斜视",
+      "head_type": "疾病类型",
+      "relation": "病因",
+      "tail": "眼肌不平衡",
+      "tail_type": "生理过程"
+    },
+    {
+      "head": "隐斜视",
+      "head_type": "疾病类型",
+      "relation": "病因",
+      "tail": "遮盖刺激取消",
+      "tail_type": "生理过程"
+    },
+    {
+      "head": "共同性斜视",
+      "head_type": "疾病类型",
+      "relation": "病因",
+      "tail": "屈光原因",
+      "tail_type": "病因"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:53:02 */
+{
+  "node_id": "28efe66c-cce8-4872-a20c-6695c50ad6da",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:53:02.186088",
+  "triplets": [
+    {
+      "head": "中华医学会",
+      "head_type": "机构",
+      "relation": "建议",
+      "tail": "睫状肌麻痹验光",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "中华医学会",
+      "head_type": "机构",
+      "relation": "建议",
+      "tail": "定期复查验光",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "近视",
+      "head_type": "疾病",
+      "relation": "需要",
+      "tail": "睫状肌麻痹验光",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "阿托品眼膏",
+      "head_type": "药物",
+      "relation": "属于",
+      "tail": "阿托品眼用凝胶",
+      "tail_type": "药物"
+    },
+    {
+      "head": "盐酸环喷托酯滴眼液",
+      "head_type": "药物",
+      "relation": "商品名是",
+      "tail": "赛飞杰",
+      "tail_type": "药品商品名"
+    },
+    {
+      "head": "1%阿托品眼用凝胶",
+      "head_type": "药物",
+      "relation": "适用于",
+      "tail": "7岁以下的近视儿童",
+      "tail_type": "人群"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:53:11 */
+{
+  "node_id": "f41c6bb9-23b2-49ae-b79c-18a34b89dbc2",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:53:11.137164",
+  "triplets": [
+    {
+      "head": "核准散光轴向",
+      "head_type": "医学术语",
+      "relation": "涉及",
+      "tail": "顺规散光",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "核准散光轴向",
+      "head_type": "医学术语",
+      "relation": "涉及",
+      "tail": "逆规散光",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "配镜后的双眼调节",
+      "head_type": "医学术语",
+      "relation": "保持",
+      "tail": "调节平衡",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "科学的验光处方",
+      "head_type": "医学术语",
+      "relation": "用于",
+      "tail": "医学配镜",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "人工智能识别技术",
+      "head_type": "技术方法",
+      "relation": "用于",
+      "tail": "验光处方",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "睫状肌麻痹验光",
+      "head_type": "医学检查方法",
+      "relation": "建议",
+      "tail": "12岁以下",
+      "tail_type": "人群"
+    },
+    {
+      "head": "睫状肌麻痹验光",
+      "head_type": "医学检查方法",
+      "relation": "建议",
+      "tail": "初次验光",
+      "tail_type": "检查类型"
+    },
+    {
+      "head": "睫状肌麻痹验光",
+      "head_type": "医学检查方法",
+      "relation": "建议",
+      "tail": "远视",
+      "tail_type": "疾病名称"
+    },
+    {
+      "head": "睫状肌麻痹验光",
+      "head_type": "医学检查方法",
+      "relation": "建议",
+      "tail": "斜弱视",
+      "tail_type": "疾病名称"
+    },
+    {
+      "head": "睫状肌麻痹验光",
+      "head_type": "医学检查方法",
+      "relation": "建议",
+      "tail": "较大散光",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "确诊近视需要配镜的儿童",
+      "head_type": "人群描述",
+      "relation": "需要定期复查",
+      "tail": "配镜后的双眼调节保持平衡",
+      "tail_type": "医学术语"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:54:33 */
+{
+  "node_id": "560e025f-2a86-4635-bcfe-12a7e59bbff7",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:54:33.789594",
+  "triplets": [
+    {
+      "head": "Zernike标准7阶像差图",
+      "head_type": "医学影像",
+      "relation": "描述",
+      "tail": "高阶像差",
+      "tail_type": "医学概念"
+    },
+    {
+      "head": "高阶像差",
+      "head_type": "医学概念",
+      "relation": "形象描述",
+      "tail": "三叶草",
+      "tail_type": "医学影像"
+    },
+    {
+      "head": "准分子激光手术（LASIK）",
+      "head_type": "手术名称",
+      "relation": "类型",
+      "tail": "准分子激光角膜磨镶术",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "准分子激光手术（LASIK）",
+      "head_type": "手术名称",
+      "relation": "依据",
+      "tail": "像差",
+      "tail_type": "医学指标"
+    },
+    {
+      "head": "波前像差引导的LASIK",
+      "head_type": "手术名称",
+      "relation": "别称",
+      "tail": "个性化LASIK",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "屈光度",
+      "head_type": "医学指标",
+      "relation": "参数",
+      "tail": "准分子激光手术（LASIK）",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "屈光度",
+      "head_type": "医学指标",
+      "relation": "结果",
+      "tail": "验光",
+      "tail_type": "检查方法"
+    },
+    {
+      "head": "屈光度数",
+      "head_type": "医学指标",
+      "relation": "相同",
+      "tail": "屈光参差",
+      "tail_type": "疾病名称"
+    },
+    {
+      "head": "像差",
+      "head_type": "医学指标",
+      "relation": "检查结果",
+      "tail": "像差仪",
+      "tail_type": "检查设备"
+    },
+    {
+      "head": "波前像差引导的LASIK",
+      "head_type": "手术名称",
+      "relation": "依据",
+      "tail": "像差仪的检查结果",
+      "tail_type": "检查结果"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:54:45 */
+{
+  "node_id": "57813a8e-82e4-4276-8103-a981c2886766",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:54:45.740798",
+  "triplets": [
+    {
+      "head": "隐形眼镜",
+      "head_type": "医学设备",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "医学设备"
+    },
+    {
+      "head": "隐形眼镜",
+      "head_type": "医学设备",
+      "relation": "用于治疗",
+      "tail": "屈光参差",
+      "tail_type": "医学病症"
+    },
+    {
+      "head": "隐形眼镜",
+      "head_type": "医学设备",
+      "relation": "用于矫正",
+      "tail": "屈光不正",
+      "tail_type": "医学病症"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "医学设备",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "医学设备"
+    },
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "医学设备",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "医学设备"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:54:47 */
+{
+  "node_id": "34088ae7-8c1d-49a2-8b6d-6f00368c6d6f",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:54:47.359302",
+  "triplets": [
+    {
+      "head": "泪液镜",
+      "head_type": "MedicalTerm",
+      "relation": "形成方式",
+      "tail": "泪液填充的小腔隙",
+      "tail_type": "MedicalTerm"
+    },
+    {
+      "head": "泪液镜",
+      "head_type": "MedicalTerm",
+      "relation": "作用对象",
+      "tail": "角膜表面",
+      "tail_type": "MedicalTerm"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "MedicalTerm",
+      "relation": "矫正对象",
+      "tail": "散光",
+      "tail_type": "MedicalCondition"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "MedicalTerm",
+      "relation": "矫正对象",
+      "tail": "圆锥角膜",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:54:49 */
+{
+  "node_id": "1d2fec4d-3786-4083-a065-4d866bff4f40",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:54:49.135033",
+  "triplets": [
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "MedicalDevice",
+      "relation": "用于治疗",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "阿托品眼液",
+      "head_type": "Drug",
+      "relation": "用于治疗",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "手术治疗",
+      "head_type": "Treatment",
+      "relation": "属于",
+      "tail": "激光",
+      "tail_type": "MedicalProcedure"
+    },
+    {
+      "head": "手术治疗",
+      "head_type": "Treatment",
+      "relation": "属于",
+      "tail": "人工晶体",
+      "tail_type": "MedicalDevice"
+    },
+    {
+      "head": "框架眼镜",
+      "head_type": "MedicalDevice",
+      "relation": "用于治疗",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "假性近视",
+      "head_type": "Disease",
+      "relation": "属于",
+      "tail": "近视",
+      "tail_type": "概念"
+    },
+    {
+      "head": "混合型近视",
+      "head_type": "Disease",
+      "relation": "属于",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "真性近视",
+      "head_type": "Disease",
+      "relation": "属于",
+      "tail": "近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "隐形眼镜",
+      "head_type": "MedicalDevice",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "MedicalDevice"
+    },
+    {
+      "head": "RGP镜片",
+      "head_type": "MedicalDevice",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "MedicalDevice"
+    },
+    {
+      "head": "角膜塑形镜（OK镜）",
+      "head_type": "MedicalDevice",
+      "relation": "属于",
+      "tail": "角膜接触镜",
+      "tail_type": "MedicalDevice"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:54:52 */
+{
+  "node_id": "5090f6bc-cca9-4667-b8cf-f50d8db92131",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:54:52.888883",
+  "triplets": [
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "治疗",
+      "tail": "配镜治疗",
+      "tail_type": "治疗方式"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "使用",
+      "tail": "低浓度阿托品",
+      "tail_type": "药物"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "检查",
+      "tail": "阿托品散瞳检查",
+      "tail_type": "检查方式"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "症状",
+      "tail": "调节疲劳",
+      "tail_type": "症状"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "症状",
+      "tail": "眼外肌肌力不平衡",
+      "tail_type": "症状"
+    },
+    {
+      "head": "远视",
+      "head_type": "疾病",
+      "relation": "症状",
+      "tail": "斜视",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:54:55 */
+{
+  "node_id": "199019d1-aef6-4383-8174-32d5f1b861ff",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:54:55.479334",
+  "triplets": [
+    {
+      "head": "视网膜黄斑",
+      "head_type": "anatomical_structure",
+      "relation": "位于",
+      "tail": "黄斑区",
+      "tail_type": "anatomical_structure"
+    },
+    {
+      "head": "物像",
+      "head_type": "object",
+      "relation": "位于",
+      "tail": "黄斑后",
+      "tail_type": "location"
+    },
+    {
+      "head": "近视",
+      "head_type": "disease",
+      "relation": "导致",
+      "tail": "眼轴拉长",
+      "tail_type": "anatomical_structure"
+    },
+    {
+      "head": "验光配镜",
+      "head_type": "action",
+      "relation": "影响",
+      "tail": "近视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "户外活动",
+      "head_type": "prevention_measure",
+      "relation": "有助于",
+      "tail": "防控近视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "乒乓球",
+      "head_type": "sport",
+      "relation": "属于",
+      "tail": "户外活动",
+      "tail_type": "prevention_measure"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:54:58 */
+{
+  "node_id": "4a884473-54e8-461b-ab74-388b5c3eb89a",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:54:58.556067",
+  "triplets": [
+    {
+      "head": "屈光参差",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "眼镜",
+      "tail_type": "治疗方式"
+    },
+    {
+      "head": "屈光参差",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "角膜接触镜",
+      "tail_type": "治疗方式"
+    },
+    {
+      "head": "屈光参差",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "准分子激光手术",
+      "tail_type": "治疗方式"
+    },
+    {
+      "head": "准分子激光手术",
+      "head_type": "治疗方式",
+      "relation": "治疗目标",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:01 */
+{
+  "node_id": "8a144777-ff4d-4fd9-b1f9-10280f391b2b",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:01.947272",
+  "triplets": [
+    {
+      "head": "OK 镜",
+      "head_type": "医疗器械",
+      "relation": "是",
+      "tail": "角膜塑形镜（OK镜）",
+      "tail_type": "医疗器械"
+    },
+    {
+      "head": "OK 镜",
+      "head_type": "医疗器械",
+      "relation": "用于",
+      "tail": "控制近视发展",
+      "tail_type": "医学作用"
+    },
+    {
+      "head": "卫健委",
+      "head_type": "组织机构",
+      "relation": "出台政策",
+      "tail": "严格规定",
+      "tail_type": "政策"
+    },
+    {
+      "head": "OK 镜",
+      "head_type": "医疗器械",
+      "relation": "影响",
+      "tail": "眼轴长度",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "OK 镜",
+      "head_type": "医疗器械",
+      "relation": "影响",
+      "tail": "视力增长速度",
+      "tail_type": "医学指标"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:05 */
+{
+  "node_id": "067b7ec2-0305-4b9f-a90e-0d87a672d903",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:05.754323",
+  "triplets": [
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "治疗建议",
+      "tail": "视觉训练",
+      "tail_type": "治疗方法"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "需要处理",
+      "tail": "屈光不正",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "需要处理",
+      "tail": "屈光参差",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "需要处理",
+      "tail": "斜视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病",
+      "relation": "需要处理",
+      "tail": "白内障",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "穿珠训练",
+      "head_type": "治疗方法",
+      "relation": "属于",
+      "tail": "视觉训练",
+      "tail_type": "治疗方法"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:08 */
+{
+  "node_id": "9b2c66bc-6778-447f-a7ca-0b3ee6d8469c",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:08.202572",
+  "triplets": [
+    {
+      "head": "多媒体训练",
+      "head_type": "治疗方法",
+      "relation": "用于治疗",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "遮盖疗法",
+      "head_type": "治疗方法",
+      "relation": "包含",
+      "tail": "眼罩遮盖疗法",
+      "tail_type": "治疗方法"
+    },
+    {
+      "head": "遮盖疗法",
+      "head_type": "治疗方法",
+      "relation": "包含",
+      "tail": "眼贴遮盖法",
+      "tail_type": "治疗方法"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:15 */
+{
+  "node_id": "a4882af1-e0d4-4859-91ee-1d89a6885747",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:15.990217",
+  "triplets": [
+    {
+      "head": "角膜接触镜",
+      "head_type": "medical_device",
+      "relation": "弊端",
+      "tail": "眼压",
+      "tail_type": "symptom"
+    },
+    {
+      "head": "角膜接触镜",
+      "head_type": "medical_device",
+      "relation": "弊端",
+      "tail": "外斜",
+      "tail_type": "disease"
+    },
+    {
+      "head": "角膜接触镜",
+      "head_type": "medical_device",
+      "relation": "弊端",
+      "tail": "瞳孔放大",
+      "tail_type": "symptom"
+    },
+    {
+      "head": "低浓度阿托品",
+      "head_type": "drug",
+      "relation": "治疗与防控对象",
+      "tail": "近视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "托吡卡胺滴眼液",
+      "head_type": "drug",
+      "relation": "治疗与防控对象",
+      "tail": "近视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "低浓度阿托品",
+      "head_type": "drug",
+      "relation": "不良反应",
+      "tail": "眼压",
+      "tail_type": "symptom"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:21 */
+{
+  "node_id": "37ed9921-fb8a-45e4-a139-aa9f94079512",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:21.927655",
+  "triplets": [
+    {
+      "head": "弱视",
+      "head_type": "疾病名称",
+      "relation": "治疗方法",
+      "tail": "穿珠训练",
+      "tail_type": "医学相关实体"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病名称",
+      "relation": "治疗方法",
+      "tail": "描画训练",
+      "tail_type": "医学相关实体"
+    },
+    {
+      "head": "弱视",
+      "head_type": "疾病名称",
+      "relation": "治疗方法",
+      "tail": "弱视治疗仪",
+      "tail_type": "医学相关实体"
+    },
+    {
+      "head": "弱视治疗仪",
+      "head_type": "医学相关实体",
+      "relation": "包含方法",
+      "tail": "红光治疗",
+      "tail_type": "医学相关实体"
+    },
+    {
+      "head": "弱视治疗仪",
+      "head_type": "医学相关实体",
+      "relation": "包含方法",
+      "tail": "光栅",
+      "tail_type": "医学相关实体"
+    },
+    {
+      "head": "弱视治疗仪",
+      "head_type": "医学相关实体",
+      "relation": "包含方法",
+      "tail": "海丁格光刷",
+      "tail_type": "医学相关实体"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:33 */
+{
+  "node_id": "e9f262bb-dfaa-4ae9-a3d7-2a2235ffded3",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:33.502041",
+  "triplets": [
+    {
+      "head": "视力下降",
+      "head_type": "疾病",
+      "relation": "别名",
+      "tail": "眼疲劳",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "视力下降",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "远视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "视力下降",
+      "head_type": "疾病",
+      "relation": "病因",
+      "tail": "近视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "视力下降",
+      "head_type": "疾病",
+      "relation": "症状",
+      "tail": "睫状肌痉挛",
+      "tail_type": "症状"
+    },
+    {
+      "head": "视力下降",
+      "head_type": "疾病",
+      "relation": "症状",
+      "tail": "视物模糊",
+      "tail_type": "症状"
+    },
+    {
+      "head": "视力下降",
+      "head_type": "疾病",
+      "relation": "症状",
+      "tail": "复视",
+      "tail_type": "症状"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:35 */
+{
+  "node_id": "af72883b-bcde-4826-8551-d501dfe067b7",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:35.605103",
+  "triplets": [
+    {
+      "head": "屈光不正",
+      "head_type": "疾病",
+      "relation": "引起",
+      "tail": "内斜视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "屈光不正",
+      "head_type": "疾病",
+      "relation": "治疗原则",
+      "tail": "医学验光配镜",
+      "tail_type": "治疗方法"
+    },
+    {
+      "head": "医学验光配镜",
+      "head_type": "治疗方法",
+      "relation": "使用工具",
+      "tail": "眼镜",
+      "tail_type": "治疗工具"
+    },
+    {
+      "head": "完全调节性内斜视",
+      "head_type": "疾病",
+      "relation": "治疗方式",
+      "tail": "眼镜",
+      "tail_type": "治疗工具"
+    },
+    {
+      "head": "部分显斜视",
+      "head_type": "疾病",
+      "relation": "出现症状",
+      "tail": "视疲劳不适感",
+      "tail_type": "症状"
+    },
+    {
+      "head": "部分显斜视",
+      "head_type": "疾病",
+      "relation": "出现症状",
+      "tail": "复视",
+      "tail_type": "症状"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:41 */
+{
+  "node_id": "7790d292-8b6a-4c6f-a398-b4bc33815e6b",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:41.656708",
+  "triplets": [
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "由",
+      "tail": "遗传因素",
+      "tail_type": "病因"
+    },
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "不能用",
+      "tail": "光学镜片",
+      "tail_type": "治疗手段"
+    },
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "可以用于矫正",
+      "tail": "硬性角膜接触镜（RGP）",
+      "tail_type": "治疗手段"
+    },
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "可以提高",
+      "tail": "视力",
+      "tail_type": "症状"
+    },
+    {
+      "head": "近视散光",
+      "head_type": "疾病",
+      "relation": "轴位在",
+      "tail": "180度",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "远视散光",
+      "head_type": "疾病",
+      "relation": "轴位在",
+      "tail": "90度",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "type",
+      "head_type": "概念",
+      "relation": "可被提高",
+      "tail": "矫正视力",
+      "tail_type": "治疗效果"
+    },
+    {
+      "head": "散光",
+      "head_type": "疾病",
+      "relation": "需要矫正",
+      "tail": "轴向",
+      "tail_type": "医学术语"
+    },
+    {
+      "head": "高度散光",
+      "head_type": "疾病",
+      "relation": "可防治",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:50 */
+{
+  "node_id": "401e4154-e4e6-4a45-83a7-553e68ab34c9",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:50.271645",
+  "triplets": [
+    {
+      "head": "准分子激光",
+      "head_type": "激光",
+      "relation": "用于",
+      "tail": "PRK",
+      "tail_type": "手术"
+    },
+    {
+      "head": "飞秒激光",
+      "head_type": "激光",
+      "relation": "用于",
+      "tail": "PRK",
+      "tail_type": "手术"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:54 */
+{
+  "node_id": "52d1a22f-fab1-4c82-a22c-39666fb7b80e",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:54.030003",
+  "triplets": [
+    {
+      "head": "红光闪烁治疗仪",
+      "head_type": "设备",
+      "relation": "用于治疗",
+      "tail": "旁中心注视性弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "红光闪烁治疗仪",
+      "head_type": "设备",
+      "relation": "用于治疗",
+      "tail": "中心注视性弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "后像疗法",
+      "head_type": "治疗方法",
+      "relation": "也被称为",
+      "tail": "增视疗法",
+      "tail_type": "治疗方法"
+    },
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "属于",
+      "tail": "后像疗法",
+      "tail_type": "治疗方法"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:54 */
+{
+  "node_id": "6de1df61-8e6e-4aef-b0f7-a60c4ee90ac9",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:54.971462",
+  "triplets": [
+    {
+      "head": "VR治疗法",
+      "head_type": "治疗方法",
+      "relation": "使用",
+      "tail": "增强现实",
+      "tail_type": "技术"
+    },
+    {
+      "head": "双眼分视训练",
+      "head_type": "治疗方法",
+      "relation": "应用",
+      "tail": "头戴式显示器",
+      "tail_type": "设备"
+    },
+    {
+      "head": "双眼分视训练",
+      "head_type": "治疗方法",
+      "relation": "包含",
+      "tail": "处理器",
+      "tail_type": "设备"
+    },
+    {
+      "head": "双眼分视训练",
+      "head_type": "治疗方法",
+      "relation": "作用于",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "双眼分视训练",
+      "head_type": "治疗方法",
+      "relation": "作用于",
+      "tail": "健眼",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "眼屈光手术",
+      "head_type": "手术类型",
+      "relation": "包含",
+      "tail": "准分子激光屈光性角膜手术",
+      "tail_type": "概念"
+    },
+    {
+      "head": "准分子激光屈光性角膜手术",
+      "head_type": "手术类型",
+      "relation": "治疗",
+      "tail": "屈光不正",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "准分子激光屈光性角膜手术",
+      "head_type": "手术类型",
+      "relation": "作用于",
+      "tail": "角膜",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:55:56 */
+{
+  "node_id": "fdae00bf-19d7-4621-90f0-81b32f4482f6",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:55:56.356171",
+  "triplets": [
+    {
+      "head": "光刷训练仪",
+      "head_type": "设备",
+      "relation": "具备",
+      "tail": "后像训练",
+      "tail_type": "技术"
+    },
+    {
+      "head": "光刷训练仪",
+      "head_type": "设备",
+      "relation": "具备",
+      "tail": "后像训练",
+      "tail_type": "技术"
+    },
+    {
+      "head": "感知觉学习网络训练",
+      "head_type": "技术",
+      "relation": "治疗",
+      "tail": "弱视",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "感知觉学习网络训练",
+      "head_type": "技术",
+      "relation": "使用",
+      "tail": "红绿眼镜",
+      "tail_type": "设备"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:56:01 */
+{
+  "node_id": "50df1527-d1a3-4b5e-bf91-b4f2688714a6",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:56:01.476268",
+  "triplets": [
+    {
+      "head": "半飞秒手术",
+      "head_type": "手术",
+      "relation": "是",
+      "tail": "FS-Lasik",
+      "tail_type": "手术"
+    },
+    {
+      "head": "半飞秒手术",
+      "head_type": "手术",
+      "relation": "使用",
+      "tail": "飞秒激光刀",
+      "tail_type": "设备"
+    },
+    {
+      "head": "半飞秒手术",
+      "head_type": "手术",
+      "relation": "替代",
+      "tail": "板层刀",
+      "tail_type": "设备"
+    },
+    {
+      "head": "全飞秒激光手术",
+      "head_type": "手术",
+      "relation": "简称",
+      "tail": "全飞秒激光手术（SMILE）",
+      "tail_type": "手术"
+    },
+    {
+      "head": "全飞秒激光手术",
+      "head_type": "手术",
+      "relation": "使用",
+      "tail": "飞秒激光刀",
+      "tail_type": "设备"
+    },
+    {
+      "head": "全飞秒激光手术",
+      "head_type": "手术",
+      "relation": "-不联合使用-",
+      "tail": "准分子激光",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:56:04 */
+{
+  "node_id": "85030cac-7688-44ca-be56-9769a9ef088b",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:56:04.075674",
+  "triplets": [
+    {
+      "head": "眼贴",
+      "head_type": "medical_device",
+      "relation": "遮盖方法",
+      "tail": "压抑膜遮盖法",
+      "tail_type": "therapy"
+    },
+    {
+      "head": "压抑膜遮盖法",
+      "head_type": "therapy",
+      "relation": "使用设备",
+      "tail": "压抑膜",
+      "tail_type": "medical_device"
+    },
+    {
+      "head": "弱视压抑膜",
+      "head_type": "medical_device",
+      "relation": "属于",
+      "tail": "压抑膜遮盖法",
+      "tail_type": "therapy"
+    },
+    {
+      "head": "三色光闪烁治疗仪",
+      "head_type": "medical_device",
+      "relation": "用于治疗",
+      "tail": "弱视",
+      "tail_type": "disease"
+    },
+    {
+      "head": "后像疗法",
+      "head_type": "therapy",
+      "relation": "属于",
+      "tail": "增视疗法",
+      "tail_type": "therapy_group"
+    },
+    {
+      "head": "多功能闪烁治疗仪",
+      "head_type": "medical_device",
+      "relation": "包含疗法",
+      "tail": "后像疗法",
+      "tail_type": "therapy"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:56:09 */
+{
+  "node_id": "a0bf94b4-0003-4cea-9e45-07358f2e3f3b",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:56:09.631504",
+  "triplets": [
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "利用",
+      "tail": "海丁格尔现象",
+      "tail_type": "现象"
+    },
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "由",
+      "tail": "匀速旋转的偏光板",
+      "tail_type": "现象"
+    },
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "由",
+      "tail": "蓝色光背景",
+      "tail_type": "现象"
+    },
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "刺激",
+      "tail": "视锥细胞",
+      "tail_type": "细胞"
+    },
+    {
+      "head": "海丁格尔光刷",
+      "head_type": "设备",
+      "relation": "传导至",
+      "tail": "视中枢",
+      "tail_type": "解剖结构"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:56:18 */
+{
+  "node_id": "525b238b-8b96-4660-bd24-10bcb990a9b5",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:56:18.666917",
+  "triplets": [
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "别名",
+      "tail": "准分子激光屈光性角膜切削术",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "别名",
+      "tail": "角膜表层切削术",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "涉及结构",
+      "tail": "角膜上皮",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "涉及结构",
+      "tail": "角膜创面",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "引发过程",
+      "tail": "角膜反应",
+      "tail_type": "病理过程"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "引发症状",
+      "tail": "畏光流泪",
+      "tail_type": "概念"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "引发症状",
+      "tail": "卡痛",
+      "tail_type": "症状"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "引发症状",
+      "tail": "异物感",
+      "tail_type": "症状"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "导致现象",
+      "tail": "上皮下雾状混浊（Haze）",
+      "tail_type": "病理现象"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "导致现象",
+      "tail": "屈光回退",
+      "tail_type": "病理现象"
+    },
+    {
+      "head": "PRK",
+      "head_type": "手术名称",
+      "relation": "被替代",
+      "tail": "Lasik",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术名称",
+      "relation": "别名",
+      "tail": "基质层切削术",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术名称",
+      "relation": "简称",
+      "tail": "I-K",
+      "tail_type": "手术简称"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:56:20 */
+{
+  "node_id": "6079fada-5cdd-4b66-98e3-466c553c90ee",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:56:20.208274",
+  "triplets": [
+    {
+      "head": "波前像差引导的Lasik",
+      "head_type": "手术方法",
+      "relation": "使用",
+      "tail": "波前像差仪",
+      "tail_type": "设备"
+    },
+    {
+      "head": "波前像差引导的Lasik",
+      "head_type": "手术方法",
+      "relation": "使用",
+      "tail": "激光机",
+      "tail_type": "设备"
+    },
+    {
+      "head": "波前像差引导的Lasik",
+      "head_type": "手术方法",
+      "relation": "包含",
+      "tail": "Lasik",
+      "tail_type": "手术方法"
+    },
+    {
+      "head": "波前像差引导的Lasik",
+      "head_type": "手术方法",
+      "relation": "包含",
+      "tail": "Epi-Lasik",
+      "tail_type": "手术方法"
+    },
+    {
+      "head": "准分子激光角膜原位磨镶术",
+      "head_type": "手术方法",
+      "relation": "属于",
+      "tail": "准分子激光",
+      "tail_type": "设备"
+    },
+    {
+      "head": "全飞秒激光手术（SMILE）",
+      "head_type": "手术方法",
+      "relation": "属于",
+      "tail": "飞秒激光",
+      "tail_type": "设备"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:56:25 */
+{
+  "node_id": "3b161856-e304-4293-adc2-5ebbf2adbfe6",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:56:25.317753",
+  "triplets": [
+    {
+      "head": "眼屈光手术",
+      "head_type": "疾病_手术",
+      "relation": "包含",
+      "tail": "激光类手术",
+      "tail_type": "手术类型"
+    },
+    {
+      "head": "眼屈光手术",
+      "head_type": "疾病_手术",
+      "relation": "包含",
+      "tail": "非激光类手术",
+      "tail_type": "手术类型"
+    },
+    {
+      "head": "激光类手术",
+      "head_type": "手术类型",
+      "relation": "包含",
+      "tail": "准分子激光手术",
+      "tail_type": "手术方式"
+    },
+    {
+      "head": "激光类手术",
+      "head_type": "手术类型",
+      "relation": "包含",
+      "tail": "飞秒激光手术",
+      "tail_type": "手术方式"
+    },
+    {
+      "head": "激光类手术",
+      "head_type": "手术类型",
+      "relation": "包含",
+      "tail": "两者混合手术方式",
+      "tail_type": "手术方式"
+    },
+    {
+      "head": "激光类手术",
+      "head_type": "手术类型",
+      "relation": "是",
+      "tail": "激光手术",
+      "tail_type": "概念"
+    },
+    {
+      "head": "准分子激光",
+      "head_type": "设备_技术",
+      "relation": "属于",
+      "tail": "激光类手术",
+      "tail_type": "施工类型"
+    },
+    {
+      "head": "飞秒激光",
+      "head_type": "设备_技术",
+      "relation": "属于",
+      "tail": "激光类手术",
+      "tail_type": "施工类型"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:56:25 */
+{
+  "node_id": "c8bd4028-ea06-4b63-b9df-0c378962e19c",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:56:25.735201",
+  "triplets": [
+    {
+      "head": "Lasek",
+      "head_type": "手术名称",
+      "relation": "属于",
+      "tail": "PRK",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "Lasek",
+      "head_type": "手术名称",
+      "relation": "属于",
+      "tail": "Lasik",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "Lasek",
+      "head_type": "手术名称",
+      "relation": "是",
+      "tail": "准分子激光角膜上皮瓣下磨镶术",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "Epi-lasik",
+      "head_type": "手术名称",
+      "relation": "是",
+      "tail": "准分子激光角膜上皮瓣下磨镶术",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "Lasek",
+      "head_type": "手术名称",
+      "relation": "制作方式涉及",
+      "tail": "角膜上皮瓣",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "Epi-lasik",
+      "head_type": "手术名称",
+      "relation": "制作方式涉及",
+      "tail": "角膜上皮瓣",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "Epi-lasik",
+      "head_type": "手术名称",
+      "relation": "使用方式为",
+      "tail": "自动上皮刀",
+      "tail_type": "工具"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:56:31 */
+{
+  "node_id": "e4f80f9a-d5ee-4b80-8f1c-182b9bf2194a",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:56:31.645758",
+  "triplets": [
+    {
+      "head": "角膜地形图引导的Lasik",
+      "head_type": "手术",
+      "relation": "属于",
+      "tail": "个性化手术",
+      "tail_type": "类别"
+    },
+    {
+      "head": "角膜地形图引导的Lasik",
+      "head_type": "手术",
+      "relation": "用于",
+      "tail": "矫治近视、远视、散光",
+      "tail_type": "病症"
+    },
+    {
+      "head": "角膜地形图引导的Lasik",
+      "head_type": "手术",
+      "relation": "改良自",
+      "tail": "传统Lasik手术",
+      "tail_type": "手术"
+    },
+    {
+      "head": "角膜地形图引导的Lasik",
+      "head_type": "手术",
+      "relation": "可减少",
+      "tail": "眩光、夜视力下降等现象发生的概率",
+      "tail_type": "现象"
+    },
+    {
+      "head": "角膜地形图引导的Lasik",
+      "head_type": "手术",
+      "relation": "采用数据检查",
+      "tail": "角膜地形图仪检查数据",
+      "tail_type": "数据"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:56:37 */
+{
+  "node_id": "ce526098-19fe-4c21-a88e-729d57da11da",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:56:37.256614",
+  "triplets": [
+    {
+      "head": "Lasik",
+      "head_type": "手术名称",
+      "relation": "是",
+      "tail": "基质层切削术",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术名称",
+      "relation": "属于",
+      "tail": "屈光性角膜手术",
+      "tail_type": "手术类型"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术名称",
+      "relation": "基于",
+      "tail": "PRK",
+      "tail_type": "手术名称"
+    },
+    {
+      "head": "角膜瓣",
+      "head_type": "解剖结构",
+      "relation": "由",
+      "tail": "角膜上皮",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "角膜瓣",
+      "head_type": "解剖结构",
+      "relation": "由",
+      "tail": "前弹力层",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "Lasik",
+      "head_type": "手术名称",
+      "relation": "治疗",
+      "tail": "远视",
+      "tail_type": "疾病_症状"
+    },
+    {
+      "head": "半飞秒手术",
+      "head_type": "手术名称",
+      "relation": "是",
+      "tail": "FS-Lasik",
+      "tail_type": "手术名称"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:56:53 */
+{
+  "node_id": "9e31d572-f40a-4383-b98d-a894acdda2b7",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:56:53.816221",
+  "triplets": [
+    {
+      "head": "Lasek",
+      "head_type": "Procedure",
+      "relation": "与",
+      "tail": "Epi-lasik",
+      "tail_type": "Procedure"
+    },
+    {
+      "head": "Lasek",
+      "head_type": "Procedure",
+      "relation": "与",
+      "tail": "Lasik",
+      "tail_type": "Procedure"
+    },
+    {
+      "head": "抗炎药物",
+      "head_type": "Drug",
+      "relation": "用于缓解",
+      "tail": "疼痛",
+      "tail_type": "Symptom"
+    },
+    {
+      "head": "抗炎药物",
+      "head_type": "Drug",
+      "relation": "用于缓解",
+      "tail": "流泪",
+      "tail_type": "Symptom"
+    },
+    {
+      "head": "抗炎药物",
+      "head_type": "Drug",
+      "relation": "用于缓解",
+      "tail": "眼卡",
+      "tail_type": "Symptom"
+    },
+    {
+      "head": "促进角膜上皮生长药物",
+      "head_type": "Drug",
+      "relation": "用于缓解",
+      "tail": "疼痛",
+      "tail_type": "Symptom"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:57:12 */
+{
+  "node_id": "f80c726a-6b4c-4e25-bce8-ae89b4a242d0",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:57:12.346455",
+  "triplets": [
+    {
+      "head": "屈光性透明晶体置换术",
+      "head_type": "手术方式",
+      "relation": "用于治疗",
+      "tail": "屈光不正",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "屈光性透明晶体置换术",
+      "head_type": "手术方式",
+      "relation": "使用",
+      "tail": "人工晶体",
+      "tail_type": "医疗器械"
+    },
+    {
+      "head": "屈光性透明晶体置换术",
+      "head_type": "手术方式",
+      "relation": "适用于",
+      "tail": "超高度近视患者",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "手术方式",
+      "relation": "后续进行",
+      "tail": "屈光矫正手术",
+      "tail_type": "手术方式"
+    },
+    {
+      "head": "角膜激光手术",
+      "head_type": "手术方式",
+      "relation": "与",
+      "tail": "眼内接触镜植入（ICL）",
+      "tail_type": "手术方式"
+    },
+    {
+      "head": "非激光类手术",
+      "head_type": "手术方式",
+      "relation": "包含",
+      "tail": "屈光性透明晶体置换术",
+      "tail_type": "概念"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:57:13 */
+{
+  "node_id": "3d53eeb3-f220-4800-a600-1efc77ab6016",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:57:13.308726",
+  "triplets": [
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "人工晶体",
+      "relation": "属于",
+      "tail": "虹膜爪型人工晶体",
+      "tail_type": "人工晶体"
+    },
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "人工晶体",
+      "relation": "与",
+      "tail": "晶状体",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "人工晶体",
+      "relation": "位于",
+      "tail": "瞳孔之后与晶状体前表面之间",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "人工晶体",
+      "relation": "避免影响",
+      "tail": "角膜内皮",
+      "tail_type": "解剖结构"
+    },
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "人工晶体",
+      "relation": "可能导致并发症",
+      "tail": "青光眼",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "眼内接触镜植入（ICL）",
+      "head_type": "人工晶体",
+      "relation": "可能导致并发症",
+      "tail": "白内障",
+      "tail_type": "疾病"
+    },
+    {
+      "head": "屈光手术",
+      "head_type": "手术",
+      "relation": "可逆性",
+      "tail": "置换人工晶体",
+      "tail_type": "手术"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:57:13 */
+{
+  "node_id": "79be25b7-67a9-4d62-8c38-2dadc32d1daf",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:57:13.939746",
+  "triplets": [
+    {
+      "head": "褚仁远",
+      "head_type": "author",
+      "relation": "撰写",
+      "tail": "眼病学",
+      "tail_type": "book"
+    },
+    {
+      "head": "瞿佳",
+      "head_type": "author",
+      "relation": "撰写",
+      "tail": "眼视光学理论和方法",
+      "tail_type": "book"
+    },
+    {
+      "head": "李鸣凤",
+      "head_type": "author",
+      "relation": "撰写",
+      "tail": "眼科全书",
+      "tail_type": "book"
+    },
+    {
+      "head": "王增源",
+      "head_type": "author",
+      "relation": "撰写",
+      "tail": "认识近视防控近视",
+      "tail_type": "book"
+    },
+    {
+      "head": "眼病学",
+      "head_type": "book",
+      "relation": "出版者",
+      "tail": "人民卫生出版社",
+      "tail_type": "publisher"
+    },
+    {
+      "head": "眼视光学理论和方法",
+      "head_type": "book",
+      "relation": "出版者",
+      "tail": "人民卫生出版社",
+      "tail_type": "publisher"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:57:20 */
+{
+  "node_id": "7f005d22-9c9a-402e-861f-33c4e757b611",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:57:20.680616",
+  "triplets": [
+    {
+      "head": "后巩膜加固术",
+      "head_type": "Procedure",
+      "relation": "用于治疗",
+      "tail": "病理性近视",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "Procedure",
+      "relation": "使用材料",
+      "tail": "异体巩膜",
+      "tail_type": "Material"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "Procedure",
+      "relation": "使用材料",
+      "tail": "硬脑膜",
+      "tail_type": "Material"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "Procedure",
+      "relation": "使用材料",
+      "tail": "心包膜",
+      "tail_type": "Material"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "Procedure",
+      "relation": "使用材料",
+      "tail": "自体的阔筋膜组织",
+      "tail_type": "Material"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "Procedure",
+      "relation": "预防疾病发展",
+      "tail": "黄斑变性",
+      "tail_type": "概念"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "Procedure",
+      "relation": "预防疾病发展",
+      "tail": "视网膜脱离",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "Procedure",
+      "relation": "作用对象",
+      "tail": "眼轴长度",
+      "tail_type": "AnatomicalStructure"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "Procedure",
+      "relation": "作用对象",
+      "tail": "后巩膜葡萄肿",
+      "tail_type": "Disease"
+    },
+    {
+      "head": "后巩膜加固术",
+      "head_type": "Procedure",
+      "relation": "作用对象",
+      "tail": "视网膜黄斑部",
+      "tail_type": "AnatomicalStructure"
+    }
+  ]
+}
+
+/* 处理时间: 2026-01-07 17:57:38 */
+{
+  "node_id": "592ede1f-3a51-4138-985a-d9f9e1222255",
+  "file_name": "青少年近视防控手册.txt",
+  "timestamp": "2026-01-07T17:57:38.581479",
+  "triplets": []
+}
+

@@ -4,11 +4,17 @@ services:
     build: .
     ports:
       - "8001:8001"
-    environment:
-      - SILICONFLOW_API_KEY=${SILICONFLOW_API_KEY}
-      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
-      - COS_SECRET_ID=${COS_SECRET_ID}
-      - COS_SECRET_KEY=${COS_SECRET_KEY}
+   environment:
+      - NEO4J_server_memory_heap_max__size=2G
+      - NEO4J_server_memory_pagecache_size=2G
+      # --- 关键配置：解除 APOC 沙箱限制 ---
+      # 1. 将 apoc 所有的过程放入“非受限”名单
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      # 2. 将 apoc 放入允许加载的名单
+      - NEO4J_dbms_security_procedures_allowlist=apoc.*
+      # 3. 允许 APOC 进行文件导入（如果你要处理 OCR 的 PDF 数据，这必开）
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_export_file_enabled=true
     volumes:
       - ./logs:/app/logs
     restart: unless-stopped

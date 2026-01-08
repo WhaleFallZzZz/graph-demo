@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Optional, Dict, Any, List
 import logging
 import time
-from concurrent.futures import ThreadPoolExecutor
 
 # 添加项目根目录到Python路径
 current_dir = Path(__file__).parent
@@ -22,9 +21,15 @@ from progress_sse import ProgressTracker, progress_callback
 from oss_uploader import COSUploader, OSSConfig
 from ocr_parser import DeepSeekOCRParser
 from enhanced_entity_extractor import StandardTermMapper
-import hashlib
 import json
 import collections
+
+# 导入 common 模块的工具
+from llama.common import (
+    get_file_hash,
+    DynamicThreadPool,
+    TaskManager
+)
 
 class DocumentIndex:
     """文档倒排索引 - 用于加速关键信息定位"""
@@ -77,18 +82,11 @@ class ProcessedFileManager:
         except Exception as e:
             logger.error(f"保存处理记录失败: {e}")
             
-    def get_file_hash(self, file_path: str) -> str:
-        """计算文件MD5"""
-        try:
-            with open(file_path, 'rb') as f:
-                return hashlib.md5(f.read()).hexdigest()
-        except Exception:
-            return ""
-            
     def is_processed(self, file_path: str) -> bool:
         """检查文件是否已处理且未修改"""
         abs_path = str(Path(file_path).absolute())
-        current_hash = self.get_file_hash(abs_path)
+        # 使用 common 模块的 get_file_hash
+        current_hash = get_file_hash(abs_path)
         if not current_hash:
             return False
             
@@ -98,7 +96,8 @@ class ProcessedFileManager:
     def mark_processed(self, file_path: str):
         """标记文件为已处理"""
         abs_path = str(Path(file_path).absolute())
-        current_hash = self.get_file_hash(abs_path)
+        # 使用 common 模块的 get_file_hash
+        current_hash = get_file_hash(abs_path)
         if current_hash:
             self.processed_files[abs_path] = current_hash
             self._dirty = True
@@ -112,7 +111,12 @@ class KnowledgeGraphManager:
         self.llm = None
         self.embed_model = None
         self.graph_store = None
-        self.executor = ThreadPoolExecutor(max_workers=DOCUMENT_CONFIG.get("num_workers", 4))
+        # 使用 common 模块的 DynamicThreadPool 替代 ThreadPoolExecutor
+        self.thread_pool = DynamicThreadPool(
+            min_workers=2,
+            max_workers=DOCUMENT_CONFIG.get("num_workers", 4),
+            idle_timeout=60.0
+        )
         self._initialized = False
         self.processed_file_manager = ProcessedFileManager()
         self.metrics = {
@@ -156,6 +160,13 @@ class KnowledgeGraphManager:
             if not self.graph_store:
                 progress_callback("initialization", "图存储初始化失败", 0)
                 return False
+            
+            # 检查图存储类型
+            store_type = type(self.graph_store).__name__
+            logger.info(f"图存储类型: {store_type}")
+            if "Neo4jPropertyGraphStore" not in store_type:
+                logger.warning(f"⚠️ 警告: 当前使用的是 {store_type} 而非 Neo4jPropertyGraphStore。数据将不会持久化到 Neo4j！")
+                progress_callback("initialization", f"⚠️ 警告: 未检测到Neo4j配置，数据将不会保存！", 60)
             
             # 测试连接
             progress_callback("initialization", "正在测试数据库连接...", 80)
@@ -226,7 +237,7 @@ class KnowledgeGraphManager:
                 for doc in raw_documents:
                     file_path = doc.metadata.get('file_path') or doc.metadata.get('file_name')
                     # 如果是绝对路径，直接使用；如果是文件名，尝试拼接（不太准确，最好是full path）
-                    # LlamaIndex usually puts absolute path in file_path
+                    # LlamaIndex 通常将绝对路径放在 file_path 中
                     if file_path and self.processed_file_manager.is_processed(str(file_path)):
                         logger.debug(f"跳过已处理文档: {file_path}")
                         continue
@@ -856,18 +867,18 @@ class KnowledgeGraphManager:
                          # 使用 NetworkX 的 contracted_nodes (生成新图) 或自定义合并
                          # 这里我们手动转移边
                          try:
-                             # Out edges
+                             # 出边
                              for _, nbr, data in list(G.out_edges(s_node, data=True)):
                                  if not G.has_edge(t_node, nbr):
                                      G.add_edge(t_node, nbr, **data)
-                             # In edges
+                             # 入边
                              for nbr, _, data in list(G.in_edges(s_node, data=True)):
                                  if not G.has_edge(nbr, t_node):
                                      G.add_edge(nbr, t_node, **data)
                              G.remove_node(s_node)
                              count += 1
                          except Exception as e:
-                             logger.warning(f"Memory merge failed for {source}->{target}: {e}")
+                             logger.warning(f"内存合并失败 {source}->{target}: {e}")
                 logger.info(f"MemoryStore: 合并了 {count} 对实体")
             else:
                 logger.warning("不支持的内存图存储结构，跳过合并")

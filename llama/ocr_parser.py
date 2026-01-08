@@ -5,7 +5,7 @@ import sys
 from typing import List, Optional, Any
 from pathlib import Path
 
-# Add current directory to path so imports work
+# 添加当前目录到路径以便导入工作
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
@@ -14,13 +14,14 @@ from llama_index.core.readers.base import BaseReader
 from llama_index.core.schema import Document
 
 from config import API_CONFIG
+from llama.common import retry_on_failure
 
 logger = logging.getLogger(__name__)
 
 class DeepSeekOCRParser(BaseReader):
     """
-    Use DeepSeek-OCR (via SiliconFlow/OpenAI API) to parse PDF files.
-    Renders PDF pages as images using PyMuPDF (fitz) and sends them to the VLM for transcription.
+    使用 DeepSeek-OCR（通过 SiliconFlow/OpenAI API）解析 PDF 文件
+    使用 PyMuPDF (fitz) 将 PDF 页面渲染为图像，并发送到 VLM 进行转录
     """
     def __init__(self, api_key: Optional[str] = None, base_url: Optional[str] = None, model: Optional[str] = None, max_pages: Optional[int] = None):
         self.api_key = api_key or API_CONFIG["siliconflow"]["api_key"]
@@ -80,7 +81,7 @@ class DeepSeekOCRParser(BaseReader):
             raise ImportError("PyMuPDF (fitz) is required for DeepSeekOCRParser. Please install it with `pip install pymupdf`.")
 
         try:
-            # First check page count
+                # 首先检查页数
             doc = fitz.open(file)
             total_pages = len(doc)
             pages_to_process = total_pages
@@ -90,9 +91,9 @@ class DeepSeekOCRParser(BaseReader):
                 
             logger.info(f"PDF has {total_pages} pages. Processing first {pages_to_process} pages using multi-threading.")
             
-            # Multi-threading setup
-            # CPU core based dynamic adjustment, but capped to avoid excessive API calls
-            # Target < 80% resource utilization
+            # 多线程设置
+            # 基于 CPU 核心的动态调整，但限制以避免过多的 API 调用
+            # 目标资源利用率 < 80%
             cpu_count = os.cpu_count() or 4
             max_workers = min(int(cpu_count * 0.8*2), 10)
             max_workers = max(1, max_workers) # Ensure at least 1 worker
@@ -122,7 +123,7 @@ class DeepSeekOCRParser(BaseReader):
                         logger.error(f"Page {page_idx+1} generated an exception: {exc}")
                         results[page_idx] = ""
 
-            # Merge results in order
+            # 按顺序合并结果
             full_text = ""
             for i in range(pages_to_process):
                 if i in results:
@@ -158,6 +159,37 @@ class DeepSeekOCRParser(BaseReader):
             logger.error(f"Failed to parse PDF: {e}")
             raise e
 
+    @retry_on_failure(max_retries=3, delay=1.0, backoff_factor=2.0)
+    def _call_ocr_api_with_retry(self, base64_image: str, mime_type: str) -> str:
+        """调用 OCR API 并返回内容（带重试）"""
+        return self._call_ocr_api(base64_image, mime_type)
+
+    def _call_ocr_api(self, base64_image: str, mime_type: str) -> str:
+        """调用 OCR API 并返回内容"""
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "仅输出中文正文与阿拉伯数字及中文标点；不要输出英文字母、尖括号、花括号、或符号序列；如果无法识别则输出空。"},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:{mime_type};base64,{base64_image}"
+                            }
+                        }
+                    ]
+                }
+            ],
+            max_tokens=4096,
+            temperature=0.0,
+            top_p=0.1,
+            frequency_penalty=0.8,
+            presence_penalty=0.0
+        )
+        return response.choices[0].message.content
+
     def _process_page(self, i: int, file_path: Path, file_identifier: str) -> tuple[int, str]:
         """Process a single page: Render -> OCR -> Clean"""
         import fitz
@@ -192,43 +224,11 @@ class DeepSeekOCRParser(BaseReader):
             # Call API with retry
             logger.info(f"Sending page {i+1} image to OCR model...")
             
-            import time
-            max_retries = 3
-            content = ""
-            
-            for attempt in range(max_retries):
-                try:
-                    response = self.client.chat.completions.create(
-                        model=self.model,
-                        messages=[
-                            {
-                                "role": "user",
-                                "content": [
-                                    {"type": "text", "text": "仅输出中文正文与阿拉伯数字及中文标点；不要输出英文字母、尖括号、花括号、或符号序列；如果无法识别则输出空。"},
-                                    {
-                                        "type": "image_url",
-                                        "image_url": {
-                                            "url": f"data:{mime_type};base64,{base64_image}"
-                                        }
-                                    }
-                                ]
-                            }
-                        ],
-                        max_tokens=4096,
-                        temperature=0.0,
-                        top_p=0.1,
-                        frequency_penalty=0.8,
-                        presence_penalty=0.0
-                    )
-                    content = response.choices[0].message.content
-                    break # Success
-                except Exception as api_error:
-                    if attempt < max_retries - 1:
-                        logger.warning(f"OCR API call failed for page {i+1} (attempt {attempt+1}/{max_retries}): {api_error}. Retrying...")
-                        time.sleep(1 * (attempt + 1))
-                    else:
-                        logger.error(f"OCR API call failed for page {i+1} after {max_retries} attempts: {api_error}")
-                        raise api_error
+            try:
+                content = self._call_ocr_api_with_retry(base64_image, mime_type)
+            except Exception as api_error:
+                logger.error(f"OCR API call failed for page {i+1}: {api_error}")
+                raise api_error
             
             # Clean content
             try:

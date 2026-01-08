@@ -322,11 +322,31 @@ def build_graph_sse():
         }
     """
     try:
-        data = request.json or request.form
+        # 使用 silent=True 避免 JSON 解析失败时直接抛出 400 错误
+        # 尝试获取 JSON 数据
+        json_data = request.get_json(silent=True)
+        # 尝试获取表单数据
+        form_data = request.form
+        
+        # 合并数据 (优先使用 JSON)
+        data = {}
+        if form_data:
+            data.update(form_data.to_dict())
+        if json_data:
+            data.update(json_data)
+            
         file_url = data.get('file_url')
         custom_file_name = data.get('file_name')  # 新增可选参数
         
-        logger.info(f"收到构建请求 build_graph_sse: {data}")
+        # 记录原始请求数据以便调试
+        if not data:
+            logger.warning(f"收到 build_graph_sse 请求但无法解析数据. Content-Type: {request.content_type}")
+            try:
+                logger.debug(f"Raw data: {request.get_data(as_text=True)[:1000]}")
+            except:
+                pass
+        else:
+            logger.info(f"收到构建请求 build_graph_sse: {data}")
         
         if not file_url:
              return Response(sse_event(create_error_event("validation", "缺少 file_url 参数")),
@@ -393,12 +413,14 @@ def upload_and_build_sse():
     try:
         if 'file' not in request.files:
             return Response(sse_event(create_error_event("validation", "没有文件上传")),
-                          mimetype='text/event-stream'), 400
+                          mimetype='text/event-stream',
+                          headers={'Access-Control-Allow-Origin': '*'}), 400
         
         file = request.files['file']
         if file.filename == '':
             return Response(sse_event(create_error_event("validation", "没有选择文件")),
-                          mimetype='text/event-stream'), 400
+                          mimetype='text/event-stream',
+                          headers={'Access-Control-Allow-Origin': '*'}), 400
         
         # 生成客户端ID
         client_id = f"client_{int(datetime.now().timestamp() * 1000)}"

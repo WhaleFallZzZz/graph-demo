@@ -5,11 +5,12 @@
 
 import os
 import hashlib
-import datetime
 from typing import Optional, Dict, Any, BinaryIO
 from pathlib import Path
 import logging
 import mimetypes
+
+from llama.common import DateTimeUtils
 
 logger = logging.getLogger(__name__)
 
@@ -153,7 +154,7 @@ class COSUploader:
             client = CosS3Client(config)
             
             # 生成对象键
-            now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            now_date = DateTimeUtils.today_str()
             # 使用 hash.ext 格式，避免中文文件名导致的 URL 问题，也符合用户预期的格式
             if meta.ext:
                 object_key = f"{self.config.cos_path}/{now_date}/{meta.md5[:16]}.{meta.ext}"

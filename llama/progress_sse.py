@@ -9,6 +9,8 @@ from typing import Dict, Any, Optional, Callable
 from datetime import datetime
 import logging
 
+from llama.common import DateTimeUtils
+
 logger = logging.getLogger(__name__)
 
 class ProgressSSE:
@@ -35,7 +37,7 @@ class ProgressSSE:
             try:
                 # 缓存进度信息
                 self.progress_cache[client_id] = {
-                    'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'timestamp': DateTimeUtils.now_str(),
                     'data': data
                 }
                 
@@ -73,7 +75,7 @@ def create_progress_event(
         'type': 'progress',
         'stage': stage,
         'message': message,
-        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        'timestamp': DateTimeUtils.now_str()
     }
     
     if percentage is not None:
@@ -90,7 +92,7 @@ def create_error_event(stage: str, message: str, details: Optional[Dict[str, Any
         'type': 'error',
         'stage': stage,
         'message': message,
-        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        'timestamp': DateTimeUtils.now_str()
     }
     
     if details:
@@ -105,7 +107,7 @@ def create_complete_event(result: Dict[str, Any]) -> Dict[str, Any]:
         'stage': 'complete',
         'message': '处理完成',
         'result': result,
-        'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        'timestamp': DateTimeUtils.now_str()
     }
 
 class ProgressTracker:
@@ -147,7 +149,7 @@ class ProgressTracker:
         
         # 记录阶段时间
         self.stage_times[stage] = {
-            'start_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'start_time': DateTimeUtils.now_str(),
             'step': self.current_step,
             'percentage': percentage
         }

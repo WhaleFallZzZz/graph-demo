@@ -5,9 +5,10 @@
 
 import os
 import logging
-from datetime import datetime
 from typing import Dict, Any
 from pathlib import Path
+
+from llama.common import DateTimeUtils
 
 # 获取项目根目录
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -63,7 +64,7 @@ def setup_logging(log_dir: str = None) -> logging.Logger:
             print(f"Using system temp directory: {log_dir}")
 
     # 生成带日期的日志文件名
-    current_date = datetime.now().strftime("%Y-%m-%d")
+    current_date = DateTimeUtils.today_str()
     log_file = os.path.join(log_dir, f"llama_index_{current_date}.log")
     
     # 清除现有的处理器（避免重复日志）
@@ -111,7 +112,7 @@ DOCUMENT_CONFIG = {
     "path": os.getenv("DOCUMENT_PATH", str(PROJECT_ROOT / "data")),
     "supported_extensions": [".txt", ".docx", ".pdf", ".md"],
     "max_paths_per_chunk": int(os.getenv("MAX_PATHS_PER_CHUNK", "2")),
-    "num_workers": int(os.getenv("DOCUMENT_NUM_WORKERS", "1")),
+    "num_workers": int(os.getenv("DOCUMENT_NUM_WORKERS", "4")),
     "chunk_size": int(os.getenv("DOC_CHUNK_SIZE", "1024")),
     "CHUNK_OVERLAP": int(os.getenv("DOC_CHUNK_OVERLAP", "120")),
     "max_chunk_length": int(os.getenv("DOC_MAX_CHUNK_LENGTH", "1400")),

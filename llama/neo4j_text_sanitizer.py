@@ -45,6 +45,7 @@ class Neo4jTextSanitizer:
         '：': '',      # 全角冒号移除
         '*': '',       # 星号移除
         '_': '',       # 下划线移除（去除 _用于_、_发展为_ 等包裹符号）
+        '.': '',       # 点号移除（去除 .被测量.、.用于测量. 等包裹符号）
     }
     
     # 需要完全移除的字符(通常是控制字符)
@@ -78,7 +79,7 @@ class Neo4jTextSanitizer:
             清理后的文本
         """
         if not text:
-            return ""
+            return "未命名实体"
         
         # 1. 转换为字符串并去除首尾空格
         text = str(text).strip()
@@ -91,6 +92,8 @@ class Neo4jTextSanitizer:
         text = text.replace("'", '').replace('"', '').replace('`', '')
         # 3.1 去除下划线（防止 _检查信息_ 之类的包裹符号）
         text = text.replace('_', '')
+        # 3.2 去除点号（防止 .检查信息. 之类的包裹符号）
+        text = text.replace('.', '')
         
         # 4. 替换其他特殊字符为全角字符(保持语义)
         for char, replacement in cls.SPECIAL_CHARS.items():

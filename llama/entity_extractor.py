@@ -3,21 +3,33 @@
 """
 
 import logging
-import os
 from typing import List, Tuple, Dict, Any, Optional
 import json
-import re
 import queue
 import threading
 import resource
 import time
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 # Import EntityNode and Relation from llama_index.core
 from llama_index.core.graph_stores.types import EntityNode, Relation
 from llama_index.core.schema import BaseNode
 from llama_index.core.indices.property_graph import DynamicLLMPathExtractor
+
+# 导入 common 模块的工具
+from llama.common import (
+    safe_json_parse,
+    parse_llm_output,
+    clean_text,
+    sanitize_for_neo4j,
+    DynamicThreadPool,
+    TaskManager,
+    DateTimeUtils,
+    retry_on_failure_with_strategy,
+    retry_on_failure
+)
 
 try:
     from enhanced_entity_extractor import StandardTermMapper
@@ -31,66 +43,6 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-# Try to import safe_json_parse from utils (handling different import paths)
-try:
-    from llama.utils import safe_json_parse
-except ImportError:
-    try:
-        from utils import safe_json_parse
-    except ImportError:
-        def safe_json_parse(json_str: str) -> List[Dict[str, Any]]:
-            try:
-                # Basic JSON extraction and parsing
-                start = json_str.find('[')
-                end = json_str.rfind(']')
-                if start != -1 and end != -1:
-                    return json.loads(json_str[start:end+1])
-                return json.loads(json_str)
-            except:
-                return []
-
-def parse_llm_output_with_types(llm_output: str) -> List[Dict[str, Any]]:
-    """Parse LLM output using JSON parsing first, falling back to regex"""
-    # 1. Try JSON parsing
-    parsed = safe_json_parse(llm_output)
-    if parsed and isinstance(parsed, list):
-        return parsed
-    
-    # 2. Fallback to regex (improved to handle different orders)
-    import re
-    results = []
-    # Pattern to match individual objects
-    object_pattern = r'\{[^{}]+\}'
-    objects = re.findall(object_pattern, llm_output)
-    
-    for obj_str in objects:
-        try:
-            # Try to parse each object as JSON
-            obj = json.loads(obj_str)
-            if isinstance(obj, dict):
-                results.append(obj)
-                continue
-        except:
-            pass
-            
-        # Regex extraction for fields if object JSON parsing fails
-        head = re.search(r'"head"\s*:\s*"(.*?)"', obj_str)
-        head_type = re.search(r'"head_type"\s*:\s*"(.*?)"', obj_str)
-        relation = re.search(r'"relation"\s*:\s*"(.*?)"', obj_str)
-        tail = re.search(r'"tail"\s*:\s*"(.*?)"', obj_str)
-        tail_type = re.search(r'"tail_type"\s*:\s*"(.*?)"', obj_str)
-        
-        if head and relation and tail:
-            results.append({
-                "head": head.group(1),
-                "head_type": head_type.group(1) if head_type else "概念",
-                "relation": relation.group(1),
-                "tail": tail.group(1),
-                "tail_type": tail_type.group(1) if tail_type else "概念"
-            })
-            
-    return results
-
 class EnhancedEntityExtractor:
     """增强的实体提取器 - 完全信任LLM语义分析"""
     
@@ -102,9 +54,8 @@ class EnhancedEntityExtractor:
         # 添加调试日志以查看LLM原始输出
         logger.info(f"LLM原始输出 (长度: {len(llm_output)}): {llm_output[:500]}...")
         
-        # 使用 enhanced_utils 中的 parse_llm_output_with_types 
-        # 这个函数已经集成了 safe_json_parse 和带类型的正则回退
-        parsed_dicts = parse_llm_output_with_types(llm_output)
+        # 使用 common 模块中的 parse_llm_output
+        parsed_dicts = parse_llm_output(llm_output)
         
         if parsed_dicts:
             for item in parsed_dicts:
@@ -177,10 +128,10 @@ def parse_llm_output_to_enhanced_triplets(llm_output: str) -> List[Tuple[EntityN
         tail_type = triplet_dict.get("tail_type", "概念")
         
         if head_name and relation_type and tail_name:
-            # 清理名称(基本清理)
-            head_name = str(head_name).strip()
-            tail_name = str(tail_name).strip()
-            relation_type = str(relation_type).strip()
+            # 使用 common 模块中的 clean_text 进行基本清理
+            head_name = clean_text(head_name, remove_special=False)
+            tail_name = clean_text(tail_name, remove_special=False)
+            relation_type = clean_text(relation_type, remove_special=False)
             
             # 验证：跳过纯标点或空的实体/关系
             invalid_symbols = {",", ".", "。", "，", "、", " ", "\\", "/", ";", ":", "?", "!", "'", "\"", "(", ")", "[", "]", "{", "}", "-", "_", "+", "=", "*", "&", "^", "%", "$", "#", "@", "~", "`", "<", ">", "|"}
@@ -194,7 +145,7 @@ def parse_llm_output_to_enhanced_triplets(llm_output: str) -> List[Tuple[EntityN
                 logger.warning(f"跳过无效实体/关系: '{head_name}' - '{relation_type}' - '{tail_name}'")
                 continue
             
-            # ===== 新增：Neo4j特殊字符清理 =====
+            # 使用 common 模块中的 sanitize_for_neo4j 进行 Neo4j 安全清理
             # 记录清理前的值(用于日志对比)
             original_head = head_name
             original_tail = tail_name
@@ -251,9 +202,9 @@ parse_dynamic_triplets = parse_llm_output_to_enhanced_triplets
 
 class MultiStageLLMExtractor(DynamicLLMPathExtractor):
     """
-    Multi-stage LLM Extractor:
-    1. Parallel Entity Recognition
-    2. Producer-Consumer Relation Extraction
+    多阶段LLM提取器：
+    1. 并行实体识别
+    2. 生产者-消费者关系提取
     """
     def __init__(
         self,
@@ -268,29 +219,116 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
     ) -> None:
         super().__init__(
             llm=llm,
-            extract_prompt=entity_prompt, # Placeholder
-            parse_fn=None, # We implement custom logic
+            extract_prompt=entity_prompt, # 占位符
+            parse_fn=None, # 我们实现自定义逻辑
             num_workers=num_workers,
             max_triplets_per_chunk=max_triplets_per_chunk,
             **kwargs,
         )
-        # Bypass Pydantic validation for custom fields
+        # 绕过 Pydantic 验证以支持自定义字段
         object.__setattr__(self, "entity_prompt", entity_prompt)
         object.__setattr__(self, "relation_prompt", relation_prompt)
         object.__setattr__(self, "real_num_workers", num_workers)
         object.__setattr__(self, "graph_store", graph_store)
         object.__setattr__(self, "lightweight_llm", lightweight_llm or llm)
         
-        # Memory monitoring config
+        # 内存监控配置
         object.__setattr__(self, "memory_threshold_mb", 100)
         object.__setattr__(self, "peak_memory_usage", 0)
         
-        # File write lock for saving JSON output
+        # 文件写入锁，用于保存JSON输出
         object.__setattr__(self, "_file_lock", threading.Lock())
+        
+        # 异步文件写入执行器
+        object.__setattr__(self, "_write_executor", ThreadPoolExecutor(max_workers=2, thread_name_prefix="async_writer"))
+        
+        # Neo4j批量写入缓冲区
+        object.__setattr__(self, "_node_buffer", {})
+        object.__setattr__(self, "_relation_buffer", [])
+        object.__setattr__(self, "_buffer_lock", threading.Lock())
+        object.__setattr__(self, "_batch_write_threshold", 50)  # 每50个三元组批量写入一次
+
+    @retry_on_failure_with_strategy(max_retries=3)
+    def _call_llm_api(self, prompt: str, llm_instance: Any = None) -> str:
+        """调用LLM API并返回结果"""
+        target_llm = llm_instance or self.llm
+        response = target_llm.complete(prompt)
+        return response.text
+
+    @retry_on_failure(max_retries=3, delay=0.1)
+    def _write_to_file(self, output_path: str, header: str, content: str) -> None:
+        """写入文件（带重试机制）"""
+        with self._file_lock:
+            with open(output_path, "a", encoding="utf-8") as f:
+                f.write(header)
+                f.write(content)
+                f.write("\n\n")
+
+    def _write_to_file_async(self, output_path: str, header: str, content: str) -> None:
+        """异步写入文件（优化版本）"""
+        def write_task():
+            try:
+                with self._file_lock:
+                    with open(output_path, "a", encoding="utf-8") as f:
+                        f.write(header)
+                        f.write(content)
+                        f.write("\n\n")
+                logger.debug(f"✅ 异步写入完成: {output_path}")
+            except Exception as e:
+                logger.error(f"❌ 异步写入失败: {e}")
+                raise
+        
+        # 提交到线程池异步执行
+        self._write_executor.submit(write_task)
+
+    def _add_to_batch_buffer(self, nodes: List[EntityNode], relations: List[Relation]) -> bool:
+        """添加节点关系到批量缓冲区，返回是否达到批量写入阈值"""
+        with self._buffer_lock:
+            # 添加节点到缓冲区（去重）
+            for node in nodes:
+                self._node_buffer[node.id] = node
+            
+            # 添加关系到缓冲区
+            self._relation_buffer.extend(relations)
+            
+            # 检查是否达到批量写入阈值
+            return len(self._relation_buffer) >= self._batch_write_threshold
+
+    def _flush_batch_buffer(self) -> None:
+        """将缓冲区的数据批量写入Neo4j"""
+        with self._buffer_lock:
+            if not self._node_buffer and not self._relation_buffer:
+                return
+            
+            try:
+                start_write = time.time()
+                
+                # 批量写入节点
+                if self._node_buffer:
+                    self.graph_store.upsert_nodes(list(self._node_buffer.values()))
+                    logger.debug(f"✅ 批量写入 {len(self._node_buffer)} 个节点到 Neo4j")
+                
+                # 批量写入关系
+                if self._relation_buffer:
+                    self.graph_store.upsert_relations(self._relation_buffer)
+                    logger.debug(f"✅ 批量写入 {len(self._relation_buffer)} 个关系到 Neo4j")
+                
+                write_time = time.time() - start_write
+                logger.info(f"✅ 批量写入完成: {len(self._node_buffer)} 个节点, {len(self._relation_buffer)} 个关系, 耗时 {write_time:.2f}秒")
+                
+                # 清空缓冲区
+                self._node_buffer.clear()
+                self._relation_buffer.clear()
+                
+            except Exception as e:
+                logger.error(f"❌ 批量写入 Neo4j 失败: {e}")
+                # 清空缓冲区以避免重复写入
+                self._node_buffer.clear()
+                self._relation_buffer.clear()
+                raise
 
     def _safe_llm_call(self, prompt: str, max_retries: int = 3, llm_instance: Any = None) -> str:
-        """Call LLM with enhanced retry mechanism and caching"""
-        import time
+        """使用增强的重试机制和缓存调用LLM"""
         from llm_cache_manager import get_global_cache
         
         target_llm = llm_instance or self.llm
@@ -306,64 +344,30 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
             logger.debug("使用缓存的LLM响应")
             return cached_result
         
-        last_error = None
-        for attempt in range(max_retries):
-            try:
-                response = target_llm.complete(prompt)
-                result = response.text
-                
-                # 缓存成功的结果
-                cache.put(prompt, result, model_params={
-                    "temperature": 0.0,
-                    "model": getattr(target_llm, "model", "unknown")
-                })
-                
-                return result
-                
-            except Exception as e:
-                last_error = e
-                error_type = type(e).__name__
-                
-                # 根据错误类型采用不同的重试策略
-                if "RateLimitError" in error_type or "429" in str(e):
-                    # 速率限制错误,使用指数退避
-                    wait_time = min(60, (2 ** attempt) * 5)
-                    logger.warning(f"速率限制错误,等待 {wait_time}秒后重试 (attempt {attempt+1}/{max_retries})")
-                    time.sleep(wait_time)
-                elif "Timeout" in error_type or "timeout" in str(e).lower():
-                    # 超时错误,短暂等待
-                    wait_time = 5 * (attempt + 1)
-                    logger.warning(f"超时错误,等待 {wait_time}秒后重试 (attempt {attempt+1}/{max_retries})")
-                    time.sleep(wait_time)
-                elif "ConnectionError" in error_type or "NetworkError" in error_type:
-                    # 网络错误,等待较长时间
-                    wait_time = 10 * (attempt + 1)
-                    logger.warning(f"网络错误,等待 {wait_time}秒后重试 (attempt {attempt+1}/{max_retries})")
-                    time.sleep(wait_time)
-                else:
-                    # 其他错误,标准退避
-                    wait_time = 2 * (attempt + 1)
-                    logger.warning(f"LLM调用失败: {error_type}, 等待 {wait_time}秒后重试 (attempt {attempt+1}/{max_retries})")
-                    time.sleep(wait_time)
+        # 调用 LLM API（带重试）
+        result = self._call_llm_api(prompt, llm_instance)
         
-        # 所有重试都失败
-        logger.error(f"LLM调用失败,已达到最大重试次数: {last_error}")
-        raise last_error
+        # 缓存成功的结果
+        cache.put(prompt, result, model_params={
+            "temperature": 0.0,
+            "model": getattr(target_llm, "model", "unknown")
+        })
+        
+        return result
 
     def _save_json_output(self, node: BaseNode, triplets: List[Tuple]) -> None:
         """
-        Securely save LLM output to a JSON file with metadata.
-        Format: "original_filename-json.txt" in "llm_outputs/{date}/"
+        安全地将LLM输出保存到JSON文件，包含元数据。
+        格式：在 "llm_outputs/{date}/" 目录下保存为 "original_filename-json.txt"
         """
-        import datetime
         import os
         
         try:
-            # 1. Prepare data
+            # 1. 准备数据
             file_name = node.metadata.get('file_name', 'unknown_file')
             safe_filename = os.path.basename(file_name)
             
-            # Remove extension for cleaner naming if possible
+            # 如果可能，移除扩展名以获得更清晰的命名
             if '.' in safe_filename:
                 base_name = safe_filename.rsplit('.', 1)[0]
             else:
@@ -372,7 +376,7 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
             json_data = {
                 "node_id": node.node_id,
                 "file_name": file_name,
-                "timestamp": datetime.datetime.now().isoformat(),
+                "timestamp": DateTimeUtils.format_iso_datetime(DateTimeUtils.now()),
                 "triplets": [
                     {
                         "head": t[0].name,
@@ -385,57 +389,48 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
                 ]
             }
             
-            # 2. Prepare directory
-            today_str = datetime.datetime.now().strftime("%Y-%m-%d")
+            # 2. 准备目录
+            today_str = DateTimeUtils.today_str()
             storage_dir = os.path.join(os.getcwd(), "llm_outputs", today_str)
             
-            # Use lock for directory creation to avoid race conditions
+            # 使用锁创建目录以避免竞态条件
             with self._file_lock:
                 if not os.path.exists(storage_dir):
                     os.makedirs(storage_dir, exist_ok=True)
             
-            # 3. Prepare filename
+            # 3. 准备文件名
             output_filename = f"{base_name}-json.txt"
             output_path = os.path.join(storage_dir, output_filename)
             
-            # 4. Format content
-            current_time_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            # 4. 格式化内容
+            current_time_str = DateTimeUtils.now_str()
             header = f"/* 处理时间: {current_time_str} */\n"
             content = json.dumps(json_data, ensure_ascii=False, indent=2)
             
-            # 5. Write to file (with retry)
-            max_retries = 3
-            for attempt in range(max_retries):
-                try:
-                    with self._file_lock:
-                        with open(output_path, "a", encoding="utf-8") as f:
-                            f.write(header)
-                            f.write(content)
-                            f.write("\n\n") # Separator
-                    logger.info(f"✅ JSON output saved to: {output_path}")
-                    break # Success
-                except Exception as write_err:
-                    if attempt < max_retries - 1:
-                        time.sleep(0.1)
-                    else:
-                        raise write_err
+            # 5. 写入文件（异步，带重试）
+            try:
+                self._write_to_file_async(output_path, header, content)
+                logger.info(f"✅ JSON输出已保存（异步）到: {output_path}")
+            except Exception as write_err:
+                logger.error(f"无法将JSON输出写入文件: {write_err}")
+                raise write_err
             
-            # Monitoring Log
+            # 监控日志
             process_time = time.time() - start_time
-            logger.info(f"Performance: Node {node.node_id[:8]} processed in {process_time:.4f}s. Extracted {len(triplets)} triplets.")
+            logger.info(f"性能: 节点 {node.node_id[:8]} 处理耗时 {process_time:.4f}秒。提取了 {len(triplets)} 个三元组。")
                         
         except Exception as e:
-            logger.error(f"Failed to save JSON output for node {node.node_id}: {e}")
+            logger.error(f"无法为节点 {node.node_id} 保存JSON输出: {e}")
 
     def extract(self, nodes: List[BaseNode]) -> List[Dict[str, Any]]:
         results = [{} for _ in range(len(nodes))]
-        # Limit queue size for memory buffer control (approx 100 chunks)
+        # 限制队列大小以控制内存缓冲区（约100个文本块）
         relation_queue = queue.Queue(maxsize=100)
         
-        # Memory monitoring helper
+        # 内存监控辅助函数
         def check_memory():
             try:
-                # Get memory usage in MB
+                # 获取内存使用量（MB）
                 rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
                 if sys.platform == 'darwin':
                     usage_mb = rss / (1024 * 1024)
@@ -446,33 +441,134 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
                     object.__setattr__(self, "peak_memory_usage", usage_mb)
                     
                 if usage_mb > self.memory_threshold_mb:
-                    logger.warning(f"⚠️ Memory usage {usage_mb:.2f}MB exceeded threshold {self.memory_threshold_mb}MB")
+                    logger.warning(f"⚠️ 内存使用量 {usage_mb:.2f}MB 超过阈值 {self.memory_threshold_mb}MB")
             except Exception:
                 pass
 
-        # Stage 1: Entity Extraction (Producers)
-        def entity_producer(node_idx, node):
+        # 阶段1：批量实体提取（优化版）
+        def batch_entity_producer():
+            """批量实体提取 - 优化版本"""
             try:
-                prompt = self.entity_prompt.format(text=node.text)
-                # Use lightweight LLM for initial entity recognition
-                output = self._safe_llm_call(prompt, llm_instance=self.lightweight_llm)
-                entities = self._parse_entities(output)
-                relation_queue.put((node_idx, node, entities))
-                logger.debug(f"Stage 1 (Entity) done for node {node_idx}, found {len(entities)} entities")
+                # 批量收集所有文本
+                batch_size = 10
+                for i in range(0, len(nodes), batch_size):
+                    batch_nodes = nodes[i:i+batch_size]
+                    batch_indices = list(range(i, min(i+batch_size, len(nodes))))
+                    
+                    # 构建批量prompt
+                    batch_prompt = self._build_batch_entity_prompt(batch_nodes)
+                    
+                    # 使用轻量级LLM进行批量实体识别
+                    output = self._safe_llm_call(batch_prompt, llm_instance=self.lightweight_llm)
+                    
+                    # 解析批量结果
+                    batch_entities = self._parse_batch_entities(output, batch_indices)
+                    
+                    # 将结果放入队列
+                    for node_idx, node in zip(batch_indices, batch_nodes):
+                        entities = batch_entities.get(node_idx, [])
+                        relation_queue.put((node_idx, node, entities))
+                        logger.debug(f"阶段1（批量实体）完成节点 {node_idx}，发现 {len(entities)} 个实体")
+                    
+                    logger.info(f"✅ 批次 {i//batch_size + 1}: 处理了 {len(batch_nodes)} 个节点")
+                    
             except Exception as e:
-                logger.error(f"Stage 1 (Entity) failed for node {node_idx}: {e}")
-                relation_queue.put((node_idx, node, []))
+                logger.error(f"阶段1（批量实体）失败: {e}")
+                # 回退到单独处理
+                for node_idx, node in enumerate(nodes):
+                    try:
+                        prompt = self.entity_prompt.format(text=node.text)
+                        output = self._safe_llm_call(prompt, llm_instance=self.lightweight_llm)
+                        entities = self._parse_entities(output)
+                        relation_queue.put((node_idx, node, entities))
+                    except Exception as err:
+                        logger.error(f"节点 {node_idx} 的回退实体提取失败: {err}")
+                        relation_queue.put((node_idx, node, []))
 
-        # Stage 2: Relation Extraction (Consumers)
-        def relation_consumer():
-            while True:
-                item = relation_queue.get()
-                if item is None:
-                    break
-                node_idx, node, entities = item
+        def _build_batch_entity_prompt(self, batch_nodes: List[BaseNode]) -> str:
+            """构建批量实体提取的prompt"""
+            prompt_parts = ["请从以下文本中提取实体，每个文本用编号标识：\n"]
+            
+            for idx, node in enumerate(batch_nodes):
+                prompt_parts.append(f"[{idx}] {node.text}\n")
+            
+            prompt_parts.append("\n请以JSON格式返回结果，格式如下：\n")
+            prompt_parts.append("{\n")
+            prompt_parts.append('  "results": [\n')
+            prompt_parts.append('    {"index": 0, "entities": [{"name": "实体名", "type": "实体类型"}]},\n')
+            prompt_parts.append('    {"index": 1, "entities": [{"name": "实体名", "type": "实体类型"}]}\n')
+            prompt_parts.append('  ]\n')
+            prompt_parts.append("}\n")
+            
+            return "".join(prompt_parts)
+
+        def _parse_batch_entities(self, output: str, batch_indices: List[int]) -> Dict[int, List[Dict[str, str]]]:
+            """解析批量实体提取结果"""
+            batch_entities = {}
+            
+            try:
+                parsed = safe_json_parse(output)
+                results = parsed.get("results", [])
                 
+                for result in results:
+                    idx = result.get("index")
+                    entities = result.get("entities", [])
+                    if idx in batch_indices:
+                        batch_entities[idx] = entities
+                        
+            except Exception as e:
+                logger.error(f"解析批量实体失败: {e}")
+                # 返回空字典，触发回退
+                pass
+            
+            return batch_entities
+
+        # 阶段2：批量关系提取（优化版）
+        def relation_consumer():
+            """批量关系提取 - 优化版本"""
+            batch_buffer = []
+            batch_size = 5
+            batch_timeout = 2.0  # 秒
+            
+            while True:
+                try:
+                    # 从队列获取数据，带超时
+                    item = relation_queue.get(timeout=batch_timeout)
+                    
+                    if item is None:
+                        # 处理缓冲区中的剩余数据
+                        if batch_buffer:
+                            self._process_batch_relations(batch_buffer)
+                            batch_buffer = []
+                        break
+                    
+                    batch_buffer.append(item)
+                    
+                    # 达到批量大小时处理
+                    if len(batch_buffer) >= batch_size:
+                        self._process_batch_relations(batch_buffer)
+                        batch_buffer = []
+                        
+                except queue.Empty:
+                    # 超时后处理缓冲区中的数据
+                    if batch_buffer:
+                        self._process_batch_relations(batch_buffer)
+                        batch_buffer = []
+                except Exception as e:
+                    logger.error(f"关系消费者错误: {e}")
+                finally:
+                    if item is not None:
+                        relation_queue.task_done()
+
+        def _process_batch_relations(self, batch_items: List[Tuple]) -> None:
+            """批量处理关系提取"""
+            if not batch_items:
+                return
+            
+            logger.info(f"🔄 正在处理 {len(batch_items)} 个关系提取的批次")
+            
+            for node_idx, node, entities in batch_items:
                 if not entities:
-                    relation_queue.task_done()
                     continue
                     
                 try:
@@ -481,60 +577,45 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
                     
                     output = self._safe_llm_call(prompt)
                     
-                    # Use existing parsing logic
+                    # 使用现有的解析逻辑
                     triplets = parse_llm_output_to_enhanced_triplets(output)
                     
-                    # Save JSON output using the new robust method
+                    # 使用新的稳健方法保存JSON输出
                     self._save_json_output(node, triplets)
 
-                    # If graph_store is available, write directly
+                    # 如果 graph_store 可用，直接写入（使用批量缓冲区优化）
                     if self.graph_store and triplets:
-                        start_write = time.time()
-                        try:
-                            # Extract nodes and relations
-                            head_nodes = [t[0] for t in triplets]
-                            tail_nodes = [t[2] for t in triplets]
-                            relations = [t[1] for t in triplets]
-                            
-                            # Deduplicate nodes by ID to reduce DB load
-                            unique_nodes = {}
-                            for n in head_nodes + tail_nodes:
-                                unique_nodes[n.id] = n
-                            
-                            # Upsert to Neo4j
-                            self.graph_store.upsert_nodes(list(unique_nodes.values()))
-                            self.graph_store.upsert_relations(relations)
-                            
-                            write_time = time.time() - start_write
-                            logger.info(f"✅ Directly stored {len(triplets)} triplets to Neo4j in {write_time:.2f}s")
-                            
-                            # Do NOT store in results to save memory
-                            # Store empty dict or metadata if needed
-                            # Return empty kg_triplets to satisfy PropertyGraphIndex contract
-                            results[node_idx] = {
-                                "kg_triplets": [], 
-                                "saved_to_neo4j": True, 
-                                "count": len(triplets)
-                            }
-                            
-                        except Exception as db_err:
-                            logger.error(f"❌ Failed to write to Neo4j: {db_err}. Falling back to memory.")
-                            results[node_idx] = {"kg_triplets": triplets}
+                        # 提取节点和关系
+                        head_nodes = [t[0] for t in triplets]
+                        tail_nodes = [t[2] for t in triplets]
+                        relations = [t[1] for t in triplets]
+                        
+                        # 添加到批量缓冲区
+                        should_flush = self._add_to_batch_buffer(head_nodes + tail_nodes, relations)
+                        
+                        # 如果达到阈值，刷新缓冲区
+                        if should_flush:
+                            self._flush_batch_buffer()
+                        
+                        # 更新结果
+                        results[node_idx] = {
+                            "kg_triplets": [], 
+                            "saved_to_neo4j": True, 
+                            "count": len(triplets)
+                        }
                     else:
-                        # Fallback to memory storage
+                        # 回退到内存存储
                         results[node_idx] = {"kg_triplets": triplets}
                     
-                    logger.debug(f"Stage 2 (Relation) done for node {node_idx}, found {len(triplets)} triplets")
+                    logger.debug(f"阶段2（关系）完成节点 {node_idx}，发现 {len(triplets)} 个三元组")
                     
-                    # Check memory periodically
+                    # 定期检查内存
                     check_memory()
                     
                 except Exception as e:
-                    logger.error(f"Stage 2 (Relation) failed for node {node_idx}: {e}")
-                finally:
-                    relation_queue.task_done()
+                    logger.error(f"节点 {node_idx} 的阶段2（关系）失败: {e}")
 
-        # Start Consumers
+        # 启动消费者
         consumer_threads = []
         num_consumers = max(1, self.real_num_workers // 2)
         for _ in range(num_consumers):
@@ -542,26 +623,22 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
             t.start()
             consumer_threads.append(t)
             
-        # Start Producers
-        try:
-            from tqdm import tqdm
-        except ImportError:
-            def tqdm(iterable, **kwargs):
-                return iterable
-
-        with ThreadPoolExecutor(max_workers=self.real_num_workers) as executor:
-            futures = [executor.submit(entity_producer, i, node) for i, node in enumerate(nodes)]
-            for f in tqdm(as_completed(futures), total=len(nodes), desc="Entity Extraction", unit="node"):
-                pass
+        # 启动批量生产者（优化版）
+        logger.info("启动批量实体提取（阶段1）...")
+        batch_entity_producer()
+        logger.info("批量实体提取（阶段1）完成。等待关系提取（阶段2）...")
         
-        logger.info("Entity extraction (Stage 1) completed. Waiting for relation extraction (Stage 2)...")
-        
-        # Stop consumers
+        # 停止消费者
         for _ in range(num_consumers):
             relation_queue.put(None)
         
         for t in consumer_threads:
             t.join()
+        
+        # 将剩余的批量缓冲区刷新到Neo4j
+        if self.graph_store:
+            logger.info("将剩余的批量缓冲区刷新到Neo4j...")
+            self._flush_batch_buffer()
             
         return results
 
@@ -569,7 +646,7 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
         try:
             return safe_json_parse(output)
         except:
-            # Fallback regex
+            # 回退到正则表达式
             import re
             matches = re.findall(r'\{\s*"name"\s*:\s*"(.*?)",\s*"type"\s*:\s*"(.*?)"\s*\}', output)
             return [{"name": m[0], "type": m[1]} for m in matches]

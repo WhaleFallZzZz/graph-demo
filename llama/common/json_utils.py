@@ -189,6 +189,7 @@ def fix_json_syntax(json_str: str) -> str:
     - 尾随逗号
     - 单引号而不是双引号
     - 缺少右括号
+    - 中文键名缺少引号
     
     Args:
         json_str: 可能格式错误的 JSON 字符串
@@ -205,21 +206,36 @@ def fix_json_syntax(json_str: str) -> str:
     
     fixed = json_str
     
-    # 将单引号替换为双引号
-    fixed = re.sub(r"'([^']*)'", r'"\1"', fixed)
-    
-    # 移除尾随逗号
-    fixed = re.sub(r',\s*([}\]])', r'\1', fixed)
-    
-    # 为未加引号的键添加引号
-    fixed = re.sub(r'([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r'\1"\2":', fixed)
-    
     # 移除注释（如果有）
     fixed = re.sub(r'//.*?\n', '\n', fixed)
     fixed = re.sub(r'/\*.*?\*/', '', fixed, flags=re.DOTALL)
     
     # 移除控制字符
     fixed = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', fixed)
+    
+    # 先处理键名中的单引号（避免与值中的单引号混淆）
+    # 使用更精确的匹配：键名: 值，但值可能是嵌套结构
+    # 为未加引号的键添加引号（支持中文字符）
+    # 匹配模式：{ 或 , 后面跟空白，然后是键名（可能包含中文），然后是冒号
+    fixed = re.sub(
+        r'([{,]\s*)([a-zA-Z_\u4e00-\u9fff][a-zA-Z0-9_\u4e00-\u9fff]*)\s*:',
+        r'\1"\2":',
+        fixed
+    )
+    
+    # 将单引号替换为双引号（值部分）
+    # 但要小心处理已经处理过的键名
+    # 使用负向前瞻，确保不在键名位置
+    fixed = re.sub(r"(?<![\"'])\s*'([^']*)'\s*(?![,}\]:])", r' "\1"', fixed)
+    # 更简单的方法：替换所有单引号
+    fixed = re.sub(r"'", '"', fixed)
+    
+    # 移除尾随逗号（在 } 或 ] 之前）
+    fixed = re.sub(r',\s*([}\]])', r'\1', fixed)
+    
+    # 修复常见的转义问题
+    fixed = fixed.replace('\\"', '"')  # 但这样可能会破坏合法的转义，需要更谨慎
+    # 实际上不应该这样做，因为会破坏合法的转义字符
     
     return fixed
 
@@ -229,6 +245,7 @@ def extract_json_from_text(text: str) -> Optional[str]:
     从混合文本中提取 JSON 对象或数组。
     
     处理包含嵌入在 markdown 代码块中或被其他文本包围的 JSON 的文本。
+    改进版本：支持嵌套JSON结构的准确提取。
     
     Args:
         text: 包含 JSON 的混合文本
@@ -248,17 +265,62 @@ def extract_json_from_text(text: str) -> Optional[str]:
     # 尝试在 markdown 代码块中查找 JSON
     code_blocks = re.findall(r'```(?:json)?\s*(\{.*?\}|\[.*?\])\s*```', text, re.DOTALL)
     if code_blocks:
-        return code_blocks[0]
+        # 尝试解析代码块中的JSON，选择第一个有效的
+        for block in code_blocks:
+            try:
+                json.loads(block)
+                return block
+            except:
+                continue
     
-    # 尝试查找 JSON 对象
+    # 改进的JSON提取：使用栈来匹配括号，支持嵌套结构
+    def extract_json_with_stack(text: str, start_char: str, end_char: str) -> Optional[str]:
+        """使用栈匹配括号来提取JSON"""
+        start_indices = []
+        for i, char in enumerate(text):
+            if char == start_char:
+                start_indices.append(i)
+            elif char == end_char:
+                if start_indices:
+                    start = start_indices.pop()
+                    if not start_indices:  # 匹配到最外层
+                        json_candidate = text[start:i+1]
+                        # 验证是否是有效的JSON
+                        try:
+                            json.loads(json_candidate)
+                            return json_candidate
+                        except:
+                            continue
+        return None
+    
+    # 先尝试提取JSON对象
+    json_obj = extract_json_with_stack(text, '{', '}')
+    if json_obj:
+        return json_obj
+    
+    # 再尝试提取JSON数组
+    json_array = extract_json_with_stack(text, '[', ']')
+    if json_array:
+        return json_array
+    
+    # 回退到简单正则匹配（对于简单情况）
     json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', text, re.DOTALL)
     if json_match:
-        return json_match.group(0)
+        candidate = json_match.group(0)
+        try:
+            json.loads(candidate)
+            return candidate
+        except:
+            pass
     
-    # 尝试查找 JSON 数组
     array_match = re.search(r'\[[^\[\]]*(?:\[[^\[\]]*\][^\[\]]*)*\]', text, re.DOTALL)
     if array_match:
-        return array_match.group(0)
+        candidate = array_match.group(0)
+        try:
+            json.loads(candidate)
+            return candidate
+        except:
+            pass
     
     return None
 

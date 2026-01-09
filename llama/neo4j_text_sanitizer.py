@@ -129,20 +129,29 @@ class Neo4jTextSanitizer:
         return text
     
     @classmethod
-    def sanitize_relation_label(cls, text: str, max_length: int = 100) -> str:
+    def sanitize_relation_label(cls, text: str, max_length: int = 10) -> str:
         """
-        清理关系标签
-        关系标签需要更严格的清理，直接移除引号等字符
+        清理关系标签（带关系规范化）
+        关系标签需要更严格的清理，直接移除引号等字符，并简化过长的描述
         
         Args:
             text: 原始关系标签
-            max_length: 最大长度
+            max_length: 最大长度（默认10个字符）
             
         Returns:
             清理后的关系标签
         """
         if not text:
-            return "相关"
+            return "关联"
+        
+        # 首先进行关系规范化（简化长描述）
+        try:
+            from relation_normalizer import RelationNormalizer
+            text = RelationNormalizer.normalize(text, max_length=max_length)
+        except ImportError:
+            logger.warning("RelationNormalizer 未找到，使用基本清理")
+        except Exception as e:
+            logger.warning(f"关系规范化失败: {e}，使用基本清理")
         
         # 1. 基本清理
         text = str(text).strip()
@@ -172,7 +181,7 @@ class Neo4jTextSanitizer:
             text = f"REL_{text}"
             logger.warning(f"关系标签是Cypher关键字，添加前缀: {text}")
         
-        # 8. 长度限制
+        # 8. 长度限制（再次检查，确保不超过限制）
         if len(text) > max_length:
             original_length = len(text)
             text = text[:max_length]
@@ -181,7 +190,7 @@ class Neo4jTextSanitizer:
         # 9. 确保不为空
         if not text:
             logger.error("清理后关系标签为空，使用默认值")
-            return "相关"
+            return "关联"
         
         return text
     

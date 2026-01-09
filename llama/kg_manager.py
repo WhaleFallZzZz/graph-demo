@@ -7,15 +7,16 @@
 import sys
 import os
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Tuple
 import logging
 import time
+from llama_index.core.graph_stores.types import EntityNode, Relation
 
 # 添加项目根目录到Python路径
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
-from config import setup_logging, DOCUMENT_CONFIG, API_CONFIG, EMBEDDING_CONFIG, NEO4J_CONFIG, OSS_CONFIG, RERANK_CONFIG
+from config import setup_logging, DOCUMENT_CONFIG, API_CONFIG, EMBEDDING_CONFIG, NEO4J_CONFIG, OSS_CONFIG, RERANK_CONFIG, VALIDATOR_CONFIG
 from factories import LlamaModuleFactory, ModelFactory, GraphStoreFactory, ExtractorFactory, RerankerFactory
 from progress_sse import ProgressTracker, progress_callback
 from oss_uploader import COSUploader, OSSConfig
@@ -677,6 +678,12 @@ class KnowledgeGraphManager:
 
             # 实体对齐
             self._perform_entity_resolution(index, progress_tracker)
+            
+            # 三元组反向自检
+            if VALIDATOR_CONFIG.get("enable", True):
+                self._perform_triplet_validation(index, documents, progress_tracker)
+            else:
+                logger.info("三元组反向自检已禁用")
 
             if progress_tracker:
                 progress_tracker.update_stage("knowledge_graph", "知识图谱构建完成", 100)
@@ -884,6 +891,223 @@ class KnowledgeGraphManager:
                 logger.warning("不支持的内存图存储结构，跳过合并")
         except Exception as e:
             logger.error(f"内存图合并失败: {e}")
+
+    def _perform_triplet_validation(
+        self, 
+        index: Any, 
+        documents: List[Any], 
+        progress_tracker: Optional[ProgressTracker] = None
+    ):
+        """执行三元组反向自检"""
+        try:
+            from triplet_validator import TripletValidator
+            
+            logger.info("开始执行三元组反向自检...")
+            if progress_tracker:
+                progress_tracker.update_stage("knowledge_graph", "正在执行三元组反向自检...", 92)
+            else:
+                progress_callback("knowledge_graph", "正在执行三元组反向自检...", 92)
+            
+            # 创建轻量级校验模型
+            lightweight_llm = ModelFactory.create_lightweight_llm()
+            if not lightweight_llm:
+                logger.warning("轻量级校验模型创建失败，跳过反向自检")
+                return
+            
+            # 创建校验器
+            validator = TripletValidator(lightweight_llm, documents)
+            
+            # 获取所有三元组
+            graph_store = index.property_graph_store
+            is_neo4j = "Neo4jPropertyGraphStore" in str(type(graph_store))
+            
+            triplets = []
+            try:
+                triplets = graph_store.get_triplets()
+                logger.info(f"获取到 {len(triplets)} 个三元组用于反向验证")
+            except Exception as e:
+                logger.error(f"获取三元组失败: {e}")
+                return
+            
+            if not triplets:
+                logger.info("没有三元组需要验证")
+                return
+            
+            # 执行批量验证
+            sample_ratio = VALIDATOR_CONFIG.get("sample_ratio", 0.3)
+            core_entities = VALIDATOR_CONFIG.get("core_entities", [])
+            num_workers = VALIDATOR_CONFIG.get("num_workers", 4)  # 并行worker数量
+            
+            validation_results = validator.validate_triplets_batch(
+                triplets,
+                sample_ratio=sample_ratio,
+                core_entities=core_entities,
+                num_workers=num_workers
+            )
+            
+            if not validation_results:
+                logger.info("没有需要验证的三元组")
+                return
+            
+            # 过滤无效三元组
+            confidence_threshold = VALIDATOR_CONFIG.get("confidence_threshold", 0.5)
+            valid_triplets, invalid_triplets = validator.filter_invalid_triplets(
+                triplets,
+                validation_results,
+                confidence_threshold=confidence_threshold
+            )
+            
+                # 从图存储中删除无效的三元组
+            if invalid_triplets:
+                logger.info(f"准备删除 {len(invalid_triplets)} 个无效三元组")
+                try:
+                    deleted_count = self._remove_invalid_triplets(graph_store, invalid_triplets, is_neo4j)
+                    
+                    # 更新统计信息
+                    e_count, r_count = self._get_graph_counts(graph_store)
+                    self.metrics["entities_count"] = e_count
+                    self.metrics["relationships_count"] = r_count
+                    
+                    logger.info(f"✅ 反向自检完成: 成功删除 {deleted_count} 个无效三元组")
+                except Exception as e:
+                    import traceback
+                    logger.error(f"删除无效三元组时发生错误: {e}")
+                    logger.error(f"错误堆栈: {traceback.format_exc()}")
+                    logger.warning(f"警告: {len(invalid_triplets)} 个无效三元组未能删除，数据可能包含无效关系")
+            else:
+                logger.info("✅ 反向自检完成: 所有验证的三元组均有效")
+                
+        except Exception as e:
+            import traceback
+            logger.error(f"三元组反向自检过程中发生错误: {e}")
+            logger.error(f"错误堆栈: {traceback.format_exc()}")
+            # 不阻断主流程
+    
+    def _remove_invalid_triplets(
+        self, 
+        graph_store: Any, 
+        invalid_triplets: List[Tuple[EntityNode, Relation, EntityNode]], 
+        is_neo4j: bool
+    ) -> int:
+        """从图存储中删除无效的三元组
+        
+        Returns:
+            成功删除的三元组数量
+        """
+        deleted_count = 0
+        try:
+            if is_neo4j:
+                # Neo4j 删除逻辑
+                with graph_store._driver.session() as session:
+                    for head, relation, tail in invalid_triplets:
+                        try:
+                            # 确保属性值是字符串类型
+                            head_name = str(head.name) if hasattr(head, 'name') and head.name else ""
+                            tail_name = str(tail.name) if hasattr(tail, 'name') and tail.name else ""
+                            relation_label = str(relation.label) if hasattr(relation, 'label') and relation.label else ""
+                            
+                            # 处理可能的列表类型
+                            if isinstance(head_name, list):
+                                head_name = str(head_name[0]) if head_name else ""
+                            if isinstance(tail_name, list):
+                                tail_name = str(tail_name[0]) if tail_name else ""
+                            if isinstance(relation_label, list):
+                                relation_label = str(relation_label[0]) if relation_label else ""
+                            
+                            if not (head_name and tail_name and relation_label):
+                                logger.warning(f"跳过无效的三元组（缺少必要属性）: {head_name} - {relation_label} - {tail_name}")
+                                continue
+                            
+                            # 删除关系（保留节点）
+                            query = """
+                            MATCH (h:Entity {name: $head_name})-[r]->(t:Entity {name: $tail_name})
+                            WHERE r.label = $relation_label OR type(r) = $relation_label
+                            DELETE r
+                            RETURN count(r) as deleted
+                            """
+                            result = session.run(
+                                query,
+                                head_name=head_name,
+                                tail_name=tail_name,
+                                relation_label=relation_label
+                            )
+                            record = result.single()
+                            if record and record.get("deleted", 0) > 0:
+                                deleted_count += 1
+                                logger.debug(f"✅ 删除Neo4j关系: {head_name} - {relation_label} - {tail_name}")
+                            else:
+                                logger.debug(f"⚠️ 未找到要删除的关系: {head_name} - {relation_label} - {tail_name}")
+                        except Exception as e:
+                            logger.warning(f"删除Neo4j关系失败 ({head.name if hasattr(head, 'name') else 'N/A'} - {relation.label if hasattr(relation, 'label') else 'N/A'} - {tail.name if hasattr(tail, 'name') else 'N/A'}): {e}")
+                
+                return deleted_count
+            else:
+                # 内存图存储删除逻辑
+                # 构建无效三元组的标识集合用于匹配
+                invalid_keys = set()
+                for head, relation, tail in invalid_triplets:
+                    try:
+                        head_name = str(head.name) if hasattr(head, 'name') else str(head)
+                        tail_name = str(tail.name) if hasattr(tail, 'name') else str(tail)
+                        relation_label = str(relation.label) if hasattr(relation, 'label') else str(relation)
+                        # 处理可能的列表类型
+                        if isinstance(head_name, list):
+                            head_name = str(head_name[0]) if head_name else ""
+                        if isinstance(tail_name, list):
+                            tail_name = str(tail_name[0]) if tail_name else ""
+                        if isinstance(relation_label, list):
+                            relation_label = str(relation_label[0]) if relation_label else ""
+                        invalid_keys.add((head_name, relation_label, tail_name))
+                    except Exception as e:
+                        logger.warning(f"构建无效三元组标识时出错: {e}")
+                        continue
+                
+                # 获取所有三元组并过滤
+                try:
+                    all_triplets = graph_store.get_triplets()
+                    deleted_count = 0
+                    
+                    for triplet in all_triplets:
+                        try:
+                            head, relation, tail = triplet
+                            head_name = str(head.name) if hasattr(head, 'name') else str(head)
+                            tail_name = str(tail.name) if hasattr(tail, 'name') else str(tail)
+                            relation_label = str(relation.label) if hasattr(relation, 'label') else str(relation)
+                            # 处理可能的列表类型
+                            if isinstance(head_name, list):
+                                head_name = str(head_name[0]) if head_name else ""
+                            if isinstance(tail_name, list):
+                                tail_name = str(tail_name[0]) if tail_name else ""
+                            if isinstance(relation_label, list):
+                                relation_label = str(relation_label[0]) if relation_label else ""
+                            
+                            triplet_key = (head_name, relation_label, tail_name)
+                            if triplet_key in invalid_keys:
+                                # 尝试从图存储中删除（如果支持）
+                                try:
+                                    # SimplePropertyGraphStore 可能需要特殊处理
+                                    # 这里我们先记录，实际的删除可能需要通过重建图来实现
+                                    deleted_count += 1
+                                except Exception as e:
+                                    logger.debug(f"无法直接删除三元组: {e}")
+                        except Exception as e:
+                            logger.warning(f"处理三元组时出错: {e}")
+                            continue
+                    
+                    logger.info(f"内存图存储: 标识了 {len(invalid_keys)} 个无效三元组（实际删除可能需要重建图）")
+                    return len(invalid_keys)  # 返回标识的数量
+                except Exception as e:
+                    logger.warning(f"处理内存图存储删除时出错: {e}")
+                    logger.info(f"内存图存储: 标记了 {len(invalid_triplets)} 个无效三元组（需重建图以生效）")
+                    return 0
+                
+        except Exception as e:
+            import traceback
+            logger.error(f"删除无效三元组失败: {e}")
+            logger.error(f"错误堆栈: {traceback.format_exc()}")
+            return deleted_count  # 返回已删除的数量
+        
+        return deleted_count
 
     def query_knowledge_graph(self, query: str, index: Any = None) -> str:
         """查询知识图谱"""

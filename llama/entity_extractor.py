@@ -157,23 +157,34 @@ def parse_llm_output_to_enhanced_triplets(llm_output: str) -> List[Tuple[EntityN
             head_name = Neo4jTextSanitizer.sanitize_node_name(head_name)
             tail_name = Neo4jTextSanitizer.sanitize_node_name(tail_name)
             
-            # 清理关系标签
-            relation_type = Neo4jTextSanitizer.sanitize_relation_label(relation_type)
+            # 清理关系标签（包含关系规范化）
+            original_relation_length = len(relation_type)
+            relation_type = Neo4jTextSanitizer.sanitize_relation_label(relation_type, max_length=10)
             
             # 清理实体类型(Label)
             head_type = Neo4jTextSanitizer.sanitize_entity_type(head_type)
             tail_type = Neo4jTextSanitizer.sanitize_entity_type(tail_type)
             
             # 如果清理后发生了变化，记录日志
+            relation_changed = original_relation != relation_type
+            relation_simplified = original_relation_length > 10 and len(relation_type) <= 10
+            
             if (original_head != head_name or original_tail != tail_name or 
-                original_relation != relation_type or original_head_type != head_type or 
+                relation_changed or original_head_type != head_type or 
                 original_tail_type != tail_type):
-                logger.info(
-                    f"🧹 字符清理: "
-                    f"[{original_head}({original_head_type})] -> [{head_name}({head_type})], "
-                    f"[{original_relation}] -> [{relation_type}], "
-                    f"[{original_tail}({original_tail_type})] -> [{tail_name}({tail_type})]"
-                )
+                if relation_simplified:
+                    logger.info(
+                        f"🔧 关系简化: "
+                        f"[{original_relation}] ({original_relation_length}字) -> [{relation_type}] ({len(relation_type)}字) | "
+                        f"三元组: {head_name} - {tail_name}"
+                    )
+                else:
+                    logger.debug(
+                        f"🧹 字符清理: "
+                        f"[{original_head}({original_head_type})] -> [{head_name}({head_type})], "
+                        f"[{original_relation}] -> [{relation_type}], "
+                        f"[{original_tail}({original_tail_type})] -> [{tail_name}({tail_type})]"
+                    )
             
             # 再次验证清理后不为空
             if not head_name or not tail_name or not relation_type:

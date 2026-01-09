@@ -109,6 +109,30 @@ class ModelFactory:
         except Exception as e:
             logger.error(f"创建 Embedding 模型失败: {e}")
             return None
+    
+    @staticmethod
+    def create_lightweight_llm():
+        """创建轻量级LLM实例（用于三元组反向校验）"""
+        modules = LlamaModuleFactory.get_modules()
+        if not modules:
+            return None
+            
+        try:
+            # 优先使用配置的轻量级模型，如果没有配置则使用默认的 Qwen/Qwen2.5-7B-Instruct
+            lightweight_model = API_CONFIG["siliconflow"].get("lightweight_model") or "Qwen/Qwen2.5-7B-Instruct"
+            
+            lightweight_llm = modules['SiliconFlow'](
+                api_key=API_CONFIG["siliconflow"]["api_key"],
+                model=lightweight_model,
+                timeout=API_CONFIG["siliconflow"]["timeout"],
+                max_tokens=2048,  # 轻量级模型使用较小的max_tokens
+                temperature=0.0  # 校验任务需要确定性输出
+            )
+            logger.info(f"创建轻量级校验模型成功: {lightweight_model}")
+            return lightweight_llm
+        except Exception as e:
+            logger.error(f"创建轻量级LLM失败: {e}")
+            return None
 
 class GraphStoreFactory:
     """图存储工厂"""

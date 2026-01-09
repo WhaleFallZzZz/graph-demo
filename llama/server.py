@@ -23,10 +23,12 @@ from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
 import logging
-from kg_manager import builder, cos_uploader
+from kg_manager import builder
+from config import cos_uploader
 from progress_sse import ProgressTracker, progress_manager, sse_event, create_progress_event, create_error_event, create_complete_event
 from file_type_detector import file_detector, detect_file_type, is_allowed_file
-from config import DOCUMENT_CONFIG, task_results, NEO4J_CONFIG
+from config import DOCUMENT_CONFIG, task_results, NEO4J_CONFIG, RATE_LIMIT_CONFIG
+from common.dynamic_resource_allocator import DynamicScalingManager, ResourceAllocation
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +37,79 @@ logger.info("正在初始化知识图谱构建器...")
 if not builder.initialize():
     logger.error("构建器初始化失败")
     # 不在这里退出，以免影响其他 worker 或导致不断重启，但会记录严重错误
+
+# 动态资源分配管理器
+scaling_manager: Optional[DynamicScalingManager] = None
+
+def apply_resource_allocation(allocation: ResourceAllocation):
+    """
+    应用资源分配到配置
+    
+    Args:
+        allocation: 资源分配配置
+    """
+    global RATE_LIMIT_CONFIG
+    
+    try:
+        # 更新速率限制配置
+        RATE_LIMIT_CONFIG['max_concurrent_requests'] = allocation.max_concurrent_requests
+        RATE_LIMIT_CONFIG['rpm_limit'] = allocation.rpm_limit
+        RATE_LIMIT_CONFIG['tpm_limit'] = allocation.tpm_limit
+        
+        logger.info(
+            f"✅ 资源分配已应用: "
+            f"concurrent={allocation.max_concurrent_requests}, "
+            f"rpm={allocation.rpm_limit}, "
+            f"tpm={allocation.tpm_limit}, "
+            f"workers={allocation.num_workers}"
+        )
+    except Exception as e:
+        logger.error(f"应用资源分配失败: {e}")
+
+def initialize_dynamic_scaling():
+    """初始化动态资源分配系统"""
+    global scaling_manager
+    
+    try:
+        # 获取当前Worker ID（从环境变量或进程ID）
+        worker_id = os.getenv('WORKER_ID', f"worker_{os.getpid()}")
+        
+        # 获取总Worker数量
+        total_workers = int(os.getenv('WORKER_COUNT', '4'))
+        
+        # 创建基础资源分配配置
+        base_allocation = ResourceAllocation(
+            max_concurrent_requests=RATE_LIMIT_CONFIG['max_concurrent_requests'],
+            rpm_limit=RATE_LIMIT_CONFIG['rpm_limit'],
+            tpm_limit=RATE_LIMIT_CONFIG['tpm_limit'],
+            num_workers=3  # executor的max_workers
+        )
+        
+        # 创建动态缩放管理器
+        scaling_manager = DynamicScalingManager(
+            worker_id=worker_id,
+            total_workers=total_workers,
+            base_allocation=base_allocation,
+            enable_scaling=True
+        )
+        
+        # 设置资源分配回调函数
+        scaling_manager.set_allocation_callback(apply_resource_allocation)
+        
+        # 启动监控和调整
+        scaling_manager.start()
+        
+        logger.info(
+            f"✅ 动态资源分配系统已启动: "
+            f"worker_id={worker_id}, total_workers={total_workers}"
+        )
+        
+    except Exception as e:
+        logger.error(f"初始化动态资源分配系统失败: {e}")
+        scaling_manager = None
+
+# 初始化动态资源分配系统
+initialize_dynamic_scaling()
 
 # 创建Flask应用
 app = Flask(__name__)
@@ -55,6 +130,10 @@ def build_graph_with_progress(file_url: str, client_id: str, custom_file_name: O
     """
     start_time = datetime.now()
     temp_dir = None
+    
+    # 标记Worker为活跃状态
+    if scaling_manager:
+        scaling_manager.update_activity(is_active=True, current_load=1.0, active_tasks=1)
     
     try:
         # 创建进度跟踪器
@@ -221,6 +300,10 @@ def build_graph_with_progress(file_url: str, client_id: str, custom_file_name: O
         return {'success': False, 'error': error_msg}
         
     finally:
+        # 标记Worker为非活跃状态
+        if scaling_manager:
+            scaling_manager.update_activity(is_active=False, current_load=0.0, active_tasks=0)
+        
         # 恢复原始配置
         if 'original_path' in locals():
             DOCUMENT_CONFIG['path'] = original_path
@@ -584,6 +667,23 @@ def health_check():
         'timestamp': datetime.now().isoformat(),
         'service': 'knowledge-graph-api'
     })
+
+@app.route('/scaling_status', methods=['GET'])
+def scaling_status():
+    """动态资源分配状态接口"""
+    try:
+        if scaling_manager is None:
+            return jsonify({
+                'error': '动态资源分配系统未初始化'
+            }), 503
+        
+        status = scaling_manager.get_status()
+        return jsonify(status)
+    except Exception as e:
+        logger.error(f"获取缩放状态失败: {e}")
+        return jsonify({
+            'error': f'获取缩放状态失败: {str(e)}'
+        }), 500
 
 @app.route('/task_status/<task_id>', methods=['GET'])
 def task_status(task_id: str):

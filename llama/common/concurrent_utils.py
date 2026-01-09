@@ -38,7 +38,7 @@ class DynamicThreadPool:
     
     def __init__(
         self,
-        min_workers: int = 2,
+        min_workers: int = 4,
         max_workers: Optional[int] = None,
         idle_timeout: float = 60.0,
         queue_size: int = 1000
@@ -47,14 +47,14 @@ class DynamicThreadPool:
         初始化动态线程池
         
         Args:
-            min_workers: 最小线程数（默认：2）
+            min_workers: 最小线程数（默认：4）
             max_workers: 最大线程数（默认：CPU核心数*2）
             idle_timeout: 空闲超时（秒），超过此时间减少线程（默认：60）
             queue_size: 任务队列大小（默认：1000）
         """
         # 确定最大线程数
         if max_workers is None:
-            max_workers = max(4, (os.cpu_count() or 1) * 2)
+            max_workers = max(8, (os.cpu_count() or 1) * 2)
         
         # 参数验证：确保 max_workers >= min_workers
         if max_workers < min_workers:
@@ -93,7 +93,7 @@ class DynamicThreadPool:
             'memory_usage': 0.0
         }
         
-        # 自适应批量大小（优化版）
+        # 自适应批量大小（优化版 - 4个worker共享）
         self.optimal_batch_size = 10
         self.batch_size_history = []
         self.performance_history = []
@@ -148,7 +148,7 @@ class DynamicThreadPool:
         consecutive_overload = 0
         
         while not self._shutdown:
-            time.sleep(5.0)  # 每5秒检查一次
+            time.sleep(10.0)  # 每10秒检查一次
             
             # 获取系统资源使用情况（优化版）
             cpu_usage = self._get_cpu_usage()
@@ -254,10 +254,10 @@ class DynamicThreadPool:
         # 根据负载因子调整批量大小
         if load_factor > 0.8:
             # 高负载：减小批量大小
-            new_batch_size = max(5, self.optimal_batch_size - 2)
+            new_batch_size = max(10, self.optimal_batch_size - 2)
         elif load_factor < 0.3:
             # 低负载：增加批量大小
-            new_batch_size = min(20, self.optimal_batch_size + 2)
+            new_batch_size = min(40, self.optimal_batch_size + 2)
         else:
             # 中等负载：保持当前批量大小
             new_batch_size = self.optimal_batch_size

@@ -14,6 +14,8 @@ from llama.common import DateTimeUtils
 PROJECT_ROOT = Path(__file__).parent.parent
 
 # 日志配置
+_logging_initialized = False
+
 def setup_logging(log_dir: str = None) -> logging.Logger:
     """设置日志配置，按日期生成日志文件
     
@@ -21,6 +23,13 @@ def setup_logging(log_dir: str = None) -> logging.Logger:
         log_dir: 日志目录路径，默认为项目根目录下的 logs 文件夹
                  可以通过环境变量 LOG_DIR 进行配置
     """
+    global _logging_initialized
+    
+    # 防止同一进程内重复初始化
+    if _logging_initialized:
+        return logging.getLogger(__name__)
+    
+    _logging_initialized = True
     if log_dir is None:
         # 优先从环境变量获取；若为绝对路径则使用，否则统一为当前工作目录 ./logs
         env_log_dir = os.getenv("LOG_DIR")
@@ -82,6 +91,7 @@ def setup_logging(log_dir: str = None) -> logging.Logger:
     )
     logger = logging.getLogger(__name__)
     logger.info(f"Log directory initialized at: {log_dir}")
+    
     return logger
 
 # API配置 - 支持通过环境变量配置
@@ -92,7 +102,7 @@ API_CONFIG = {
         "lightweight_model": os.getenv("SILICONFLOW_LIGHTWEIGHT_MODEL"),
         "embedding_model": os.getenv("SILICONFLOW_EMBEDDING_MODEL"),
         "timeout": int(os.getenv("SILICONFLOW_TIMEOUT", "120")),
-        "max_tokens": int(os.getenv("SILICONFLOW_MAX_TOKENS", "1000")),
+        "max_tokens": int(os.getenv("SILICONFLOW_MAX_TOKENS", "4096")),
         "max_retries": int(os.getenv("SILICONFLOW_MAX_RETRIES", "3")),
         "temperature": float(os.getenv("SILICONFLOW_TEMPERATURE", "0.0")),
         "ocr_model": os.getenv("SILICONFLOW_OCR_MODEL")
@@ -124,14 +134,14 @@ DOCUMENT_CONFIG = {
     "sentence_splitter": os.getenv("DOC_SENTENCE_SPLITTER", "。！？!?"),
     "semantic_separator": os.getenv("DOC_SEMANTIC_SEPARATOR", "\n\n"),
     "incremental_processing": os.getenv("INCREMENTAL_PROCESSING", "true").lower() == "true",
-    "batch_size": int(os.getenv("DOC_BATCH_SIZE", "5")),
+    "batch_size": int(os.getenv("DOC_BATCH_SIZE", "10")), # 每个worker的批处理大小 (40/4=10)
     "progress_update_every_batches": int(os.getenv("PROGRESS_UPDATE_EVERY_BATCHES", "3")),
 }
 
 # 提取器配置
 EXTRACTOR_CONFIG = {
     "max_triplets_per_chunk": 20, # 增加提取数量以提高召回率
-    "num_workers":8,
+    "num_workers": 10, # 每个worker的工作线程数 (40/4=10)，4个worker总共40
     "extract_prompt": """# Role: 青少年眼科视光知识图谱建模专家  
 ## 核心任务  
 从提供的中文视光医学文本中，以JSON格式输出结构化的"实体-关系-实体"三元组。
@@ -265,13 +275,13 @@ EXTRACTOR_CONFIG = {
 Text: {text}"""
 }
 
-# 请求限制配置 - 更严格的速率限制
+# 请求限制配置 - 4个worker共享API限流 (RPM=1000, TPM=50000)
 RATE_LIMIT_CONFIG = {
-    "request_delay": 0.5,  # 增加请求间隔到3秒，避免触发403错误
-    "max_concurrent_requests": 5,  # 严格控制并发数
-    "retry_delay": 15.0,  # 增加重试延迟到15秒
-    "rpm_limit": 20,  # 大幅降低每分钟请求数限制
-    "tpm_limit": 10000,  # 降低每分钟Token数限制
+    "request_delay": 0.1,  # 减少请求间隔到0.1秒，最大化吞吐量
+    "max_concurrent_requests": 10,  # 每个worker的并发数 (40/4=10)
+    "retry_delay": 3.0,  # 减少重试延迟到3秒
+    "rpm_limit": 200,  # 每个worker的RPM限制 (800/4=200)，4个worker总共800
+    "tpm_limit": 10000,  # 每个worker的TPM限制 (40000/4=10000)，4个worker总共40000
     "max_tokens_per_request": 1000,  # 每个请求的最大Token数
     "max_retries": 3  # 最大重试次数
 }

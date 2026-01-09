@@ -389,7 +389,7 @@ class FileMonitorHandler(FileSystemEventHandler):
                  watch_directory: str,
                  supported_extensions: list,
                  batch_delay: float = 2.0,
-                 batch_size: int = 5):
+                 batch_size: int = 10):
         """
         初始化文件监控处理器
         

@@ -154,57 +154,13 @@ class ExtractorFactory:
             return None
             
         try:
-            # 优先使用专门的实体和关系Prompt
-            entity_prompt = EXTRACTOR_CONFIG.get('entity_prompt')
-            relation_prompt = EXTRACTOR_CONFIG.get('relation_prompt')
-            
-            # 如果没有配置专门的Prompt，回退到通用的extract_prompt (兼容旧配置)
-            if not entity_prompt or not relation_prompt:
-                logger.warning("未检测到 entity_prompt 或 relation_prompt，回退到单阶段提取模式")
-                prompt = extract_prompt or EXTRACTOR_CONFIG['extract_prompt']
-                return modules['DynamicLLMPathExtractor'](
-                    llm=llm,
-                    extract_prompt=prompt,
-                    parse_fn=parse_dynamic_triplets,
-                    num_workers=EXTRACTOR_CONFIG.get('num_workers', 4),
-                    max_triplets_per_chunk=EXTRACTOR_CONFIG['max_triplets_per_chunk']
-                )
-
-            # 使用多阶段并行提取器
-            import os
-            # 默认使用CPU核心数的一半作为并发数，防止过载
-            default_workers = max(2, (os.cpu_count() or 4) // 2)
-            num_workers = EXTRACTOR_CONFIG.get('num_workers', default_workers)
-            
-            logger.info(f"初始化多阶段LLM提取器，并发工作线程数: {num_workers}")
-            
-            # 获取图存储实例用于流式写入
-            graph_store = GraphStoreFactory.create_graph_store()
-            
-            # 创建轻量级LLM (如果配置)
-            lightweight_llm = None
-            lightweight_model_name = API_CONFIG["siliconflow"].get("lightweight_model")
-            if lightweight_model_name:
-                try:
-                    logger.info(f"初始化轻量级LLM: {lightweight_model_name}")
-                    lightweight_llm = modules['SiliconFlow'](
-                        api_key=API_CONFIG["siliconflow"]["api_key"],
-                        model=lightweight_model_name,
-                        timeout=API_CONFIG["siliconflow"]["timeout"],
-                        max_tokens=API_CONFIG["siliconflow"]["max_tokens"],
-                        temperature=API_CONFIG["siliconflow"]["temperature"]
-                    )
-                except Exception as le:
-                    logger.warning(f"轻量级LLM初始化失败: {le}，将使用主模型")
-
-            return MultiStageLLMExtractor(
+            prompt = extract_prompt or EXTRACTOR_CONFIG['extract_prompt']
+            return modules['DynamicLLMPathExtractor'](
                 llm=llm,
-                entity_prompt=entity_prompt,
-                relation_prompt=relation_prompt,
-                num_workers=num_workers,
-                max_triplets_per_chunk=EXTRACTOR_CONFIG['max_triplets_per_chunk'],
-                graph_store=graph_store,
-                lightweight_llm=lightweight_llm
+                extract_prompt=prompt,
+                parse_fn=parse_dynamic_triplets,
+                num_workers=EXTRACTOR_CONFIG.get('num_workers', 4),
+                max_triplets_per_chunk=EXTRACTOR_CONFIG['max_triplets_per_chunk']
             )
         except Exception as e:
             logger.error(f"创建提取器失败: {e}")

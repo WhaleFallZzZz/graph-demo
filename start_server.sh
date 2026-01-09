@@ -38,7 +38,7 @@ echo "Checking server configuration..."
 
 if command -v gunicorn &> /dev/null; then
     echo "Starting server with Gunicorn..."
-    gunicorn --workers 1 --bind 0.0.0.0:8001 --timeout 0 --access-logfile - --error-logfile - $DAEMONIZE_GUNICORN llama.server:app
+    gunicorn --workers 4 --bind 0.0.0.0:8001 --timeout 0 --access-logfile - --error-logfile - $DAEMONIZE_GUNICORN llama.server:app
 elif command -v waitress-serve &> /dev/null; then
     echo "Starting server with Waitress (Windows)..."
     # Waitress does not have a direct daemonize flag.

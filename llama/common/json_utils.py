@@ -149,8 +149,13 @@ def _normalize_entity(entity: Dict[str, Any]) -> Dict[str, str]:
         entity: 实体字典（可能有各种键名）
         
     Returns:
-        带有 'name' 和 'type' 键的标准化实体字典
+        带有 'name' 和 'type' 键的标准化实体字典，或者完整的三元组格式
     """
+    # 检查是否是三元组格式（包含head, relation, tail）
+    if any(key in entity for key in ['head', 'relation', 'tail']):
+        # 直接返回三元组格式的字典
+        return {k: str(v) for k, v in entity.items()}
+    
     normalized = {'name': '', 'type': 'unknown'}
     
     # 处理各种键名变体

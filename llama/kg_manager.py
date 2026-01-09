@@ -937,12 +937,3 @@ class KnowledgeGraphManager:
 
 # 全局构建器实例 - 为了保持兼容性，变量名仍为 builder
 builder = KnowledgeGraphManager()
-
-# 初始化COS上传器
-cos_uploader = None
-try:
-    oss_config = OSSConfig(OSS_CONFIG)
-    cos_uploader = COSUploader(oss_config)
-    logger.info("COS上传器初始化成功")
-except Exception as e:
-    logger.error(f"COS上传器初始化失败: {e}")

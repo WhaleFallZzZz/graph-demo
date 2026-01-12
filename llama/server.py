@@ -5,311 +5,33 @@
 
 import os
 import sys
-import json
 import tempfile
-import shutil
+import queue
 from pathlib import Path
-from typing import Optional, Dict, Any, List
 from datetime import datetime
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
 from flask import Response, stream_with_context
+from flask_cors import CORS
 
 # 添加项目根目录到Python路径
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
 from flask import Flask, request, jsonify
-from werkzeug.utils import secure_filename
-from werkzeug.exceptions import RequestEntityTooLarge
 import logging
 from kg_manager import builder
 from config import cos_uploader
-from progress_sse import ProgressTracker, progress_manager, sse_event, create_progress_event, create_error_event, create_complete_event
-from file_type_detector import file_detector, detect_file_type, is_allowed_file
-from config import DOCUMENT_CONFIG, task_results, NEO4J_CONFIG, RATE_LIMIT_CONFIG
-from common.dynamic_resource_allocator import DynamicScalingManager, ResourceAllocation
+from progress_sse import progress_manager, sse_event, create_progress_event, create_error_event, consume_sse_queue
+from file_type_detector import detect_file_type
+from graph_service import graph_service
 
 logger = logging.getLogger(__name__)
 
-# 初始化构建器 (Gunicorn 启动时也会执行)
-logger.info("正在初始化知识图谱构建器...")
-if not builder.initialize():
-    logger.error("构建器初始化失败")
-    # 不在这里退出，以免影响其他 worker 或导致不断重启，但会记录严重错误
-
-# 动态资源分配管理器
-scaling_manager: Optional[DynamicScalingManager] = None
-
-def apply_resource_allocation(allocation: ResourceAllocation):
-    """
-    应用资源分配到配置
-    
-    Args:
-        allocation: 资源分配配置
-    """
-    global RATE_LIMIT_CONFIG
-    
-    try:
-        # 更新速率限制配置
-        RATE_LIMIT_CONFIG['max_concurrent_requests'] = allocation.max_concurrent_requests
-        RATE_LIMIT_CONFIG['rpm_limit'] = allocation.rpm_limit
-        RATE_LIMIT_CONFIG['tpm_limit'] = allocation.tpm_limit
-        
-        logger.info(
-            f"✅ 资源分配已应用: "
-            f"concurrent={allocation.max_concurrent_requests}, "
-            f"rpm={allocation.rpm_limit}, "
-            f"tpm={allocation.tpm_limit}, "
-            f"workers={allocation.num_workers}"
-        )
-    except Exception as e:
-        logger.error(f"应用资源分配失败: {e}")
-
-def initialize_dynamic_scaling():
-    """初始化动态资源分配系统"""
-    global scaling_manager
-    
-    try:
-        # 获取当前Worker ID（从环境变量或进程ID）
-        worker_id = os.getenv('WORKER_ID', f"worker_{os.getpid()}")
-        
-        # 获取总Worker数量
-        total_workers = int(os.getenv('WORKER_COUNT', '4'))
-        
-        # 创建基础资源分配配置
-        base_allocation = ResourceAllocation(
-            max_concurrent_requests=RATE_LIMIT_CONFIG['max_concurrent_requests'],
-            rpm_limit=RATE_LIMIT_CONFIG['rpm_limit'],
-            tpm_limit=RATE_LIMIT_CONFIG['tpm_limit'],
-            num_workers=3  # executor的max_workers
-        )
-        
-        # 创建动态缩放管理器
-        scaling_manager = DynamicScalingManager(
-            worker_id=worker_id,
-            total_workers=total_workers,
-            base_allocation=base_allocation,
-            enable_scaling=True
-        )
-        
-        # 设置资源分配回调函数
-        scaling_manager.set_allocation_callback(apply_resource_allocation)
-        
-        # 启动监控和调整
-        scaling_manager.start()
-        
-        logger.info(
-            f"✅ 动态资源分配系统已启动: "
-            f"worker_id={worker_id}, total_workers={total_workers}"
-        )
-        
-    except Exception as e:
-        logger.error(f"初始化动态资源分配系统失败: {e}")
-        scaling_manager = None
-
-# 初始化动态资源分配系统
-initialize_dynamic_scaling()
-
 # 创建Flask应用
 app = Flask(__name__)
+CORS(app)  # 启用跨域资源共享
 
 # 配置
 app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # 200MB 文件大小限制
-
-# 全局构建器实例
-executor = ThreadPoolExecutor(max_workers=3)
-
-def build_graph_with_progress(file_url: str, client_id: str, custom_file_name: Optional[str] = None) -> Dict[str, Any]:
-    """带进度推送的知识图谱构建
-    
-    Args:
-        file_url: 文件URL
-        client_id: 客户端ID
-        custom_file_name: 自定义文件名（可选），如果提供则使用该名称而非从URL中提取
-    """
-    start_time = datetime.now()
-    temp_dir = None
-    
-    # 标记Worker为活跃状态
-    if scaling_manager:
-        scaling_manager.update_activity(is_active=True, current_load=1.0, active_tasks=1)
-    
-    try:
-        # 创建进度跟踪器
-        progress_tracker = ProgressTracker(client_id, total_steps=8)
-        
-        # 阶段1：初始化
-        progress_tracker.update_stage("initialization", "正在初始化构建器...", 10)
-        
-        # 检查构建器是否初始化
-        if not builder:
-            error_msg = "知识图谱构建器未初始化"
-            progress_tracker.error("initialization", error_msg)
-            return {'success': False, 'error': error_msg}
-        
-        # 阶段2：下载文件
-        progress_tracker.update_stage("file_download", "正在下载文件...", 20)
-        
-        # 创建临时目录用于文档处理
-        temp_dir = Path(tempfile.mkdtemp())
-        
-        # 从COS URL下载文件
-        if file_url.startswith('https://') and '.cos.' in file_url:
-            import requests
-            import certifi
-            
-            try:
-                response = requests.get(file_url, timeout=30, verify=certifi.where())
-            except requests.exceptions.SSLError as ssl_err:
-                logger.warning(f"COS证书验证失败，降级为不验证: {ssl_err}")
-                response = requests.get(file_url, timeout=30, verify=False)
-            response.raise_for_status()
-            
-            # 获取文件名
-            # 优先使用自定义文件名，否则从URL提取
-            if custom_file_name:
-                filename = custom_file_name
-                logger.info(f"使用自定义文件名: {filename}")
-            else:
-                filename = file_url.split('/')[-1].split('?')[0]
-            
-            # 尝试修复文件名后缀
-            # 1. 如果文件名以 _pdf, _docx 等结尾，替换为 .pdf, .docx (针对特殊OSS/COS链接)
-            if filename.endswith('_pdf'):
-                filename = filename[:-4] + '.pdf'
-            elif filename.endswith('_docx'):
-                filename = filename[:-5] + '.docx'
-            elif filename.endswith('_txt'):
-                filename = filename[:-4] + '.txt'
-            
-            # 2. 如果没有后缀，尝试从Content-Type推断
-            if not Path(filename).suffix:
-                import mimetypes
-                content_type = response.headers.get('Content-Type')
-                if content_type:
-                    ext = mimetypes.guess_extension(content_type)
-                    if ext:
-                        # mimetypes.guess_extension 可能返回 .jpe 而不是 .jpg，但在我们的场景下主要是 pdf/docx
-                        filename = filename + ext
-            
-            temp_file = temp_dir / filename
-            
-            # 保存文件
-            with open(temp_file, 'wb') as f:
-                f.write(response.content)
-                
-            logger.info(f"从COS下载文件成功: {filename}")
-        else:
-            error_msg = '只支持腾讯云COS文件URL'
-            progress_tracker.error("file_download", error_msg)
-            return {'success': False, 'error': error_msg}
-        
-        # 阶段3：加载文档
-        progress_tracker.update_stage("document_loading", "正在加载文档...", 30)
-        
-        # 临时修改DOCUMENT_CONFIG路径
-        original_path = DOCUMENT_CONFIG['path']
-        DOCUMENT_CONFIG['path'] = str(temp_dir)
-        
-        # 加载文档
-        documents = builder.load_documents(progress_tracker)
-        if not documents:
-            error_msg = '无法加载文档'
-            progress_tracker.error("document_loading", error_msg)
-            return {'success': False, 'error': error_msg}
-        
-        # 将自定义文件名添加到所有文档的metadata中
-        for doc in documents:
-            if not hasattr(doc, 'metadata'):
-                doc.metadata = {}
-            # 保存原始文件名信息
-            doc.metadata['source_file_name'] = filename
-            doc.metadata['file_url'] = file_url
-            logger.debug(f"文档metadata已更新: source_file_name={filename}")
-        
-        # 阶段4：构建知识图谱
-        progress_tracker.update_stage("knowledge_graph", "开始构建知识图谱...", 40)
-        
-        # 预检: 检查llm_outputs目录权限
-        llm_outputs_dir = Path(os.getcwd()) / "llm_outputs"
-        try:
-            if not llm_outputs_dir.exists():
-                llm_outputs_dir.mkdir(parents=True, exist_ok=True)
-                logger.info(f"已创建输出目录: {llm_outputs_dir}")
-            
-            # 检查写权限
-            test_file = llm_outputs_dir / ".test_write"
-            with open(test_file, 'w') as f:
-                f.write('test')
-            test_file.unlink()
-            logger.info(f"输出目录权限检查通过: {llm_outputs_dir}")
-        except Exception as e:
-            logger.error(f"输出目录权限检查失败: {e}")
-            # 不阻断流程，但记录警告
-        
-        logger.info(f"开始调用 builder.build_knowledge_graph, 文档数: {len(documents)}")
-        
-        # 构建知识图谱
-        index = builder.build_knowledge_graph(documents, progress_tracker)
-        
-        if not index:
-            error_msg = '知识图谱构建失败'
-            progress_tracker.error("knowledge_graph", error_msg)
-            return {'success': False, 'error': error_msg}
-            
-        logger.info("builder.build_knowledge_graph 调用成功")
-        
-        # 阶段5：完成
-        processing_time = (datetime.now() - start_time).total_seconds()
-        task_id = f"task_{int(start_time.timestamp())}"
-        
-        # 存储任务结果
-        task_results[task_id] = {
-            'status': 'completed',
-            'graph_id': f"graph_{int(start_time.timestamp())}",
-            'entities_count': len(documents) * 5,  # 估算
-            'relationships_count': len(documents) * 10,  # 估算
-            'created_at': start_time.isoformat(),
-            'completed_at': datetime.now().isoformat()
-        }
-        
-        # 完成结果
-        result = {
-            'success': True,
-            'task_id': task_id,
-            'graph_id': f"graph_{int(start_time.timestamp())}",
-            'document_count': len(documents),
-            'processing_time': processing_time,
-            'file_info': {
-                'filename': filename,
-                'file_url': file_url
-            }
-        }
-        
-        progress_tracker.complete(result)
-        return result
-        
-    except Exception as e:
-        error_msg = f"知识图谱构建过程失败: {e}"
-        logger.error(error_msg)
-        
-        if 'progress_tracker' in locals():
-            progress_tracker.error("knowledge_graph", error_msg)
-        
-        return {'success': False, 'error': error_msg}
-        
-    finally:
-        # 标记Worker为非活跃状态
-        if scaling_manager:
-            scaling_manager.update_activity(is_active=False, current_load=0.0, active_tasks=0)
-        
-        # 恢复原始配置
-        if 'original_path' in locals():
-            DOCUMENT_CONFIG['path'] = original_path
-        # 清理临时目录
-        if temp_dir and temp_dir.exists():
-            shutil.rmtree(temp_dir)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -439,7 +161,6 @@ def build_graph_sse():
         
         def generate_events():
             """生成SSE事件流"""
-            import queue
             
             q = queue.Queue()
             def progress_callback(data):
@@ -452,26 +173,23 @@ def build_graph_sse():
                 yield sse_event(create_progress_event("knowledge_graph", "开始构建知识图谱...", 0))
                 
                 # 提交任务，传递custom_file_name参数
-                future = executor.submit(build_graph_with_progress, file_url, client_id, custom_file_name)
+                future = graph_service.submit_build_task(file_url, client_id, custom_file_name)
                 
-                while True:
-                    try:
-                        data = q.get(timeout=1.0)
-                        yield sse_event(data)
-                        if data.get('type') in ['complete', 'error']:
-                            break
-                    except queue.Empty:
-                        if future.done():
-                            try:
-                                exception = future.exception()
-                                if exception:
-                                    logger.error(f"后台任务异常: {exception}")
-                                    yield sse_event(create_error_event("unknown", f"后台处理异常: {str(exception)}"))
-                                break
-                            except Exception:
-                                break
-                        yield ": heartbeat\n\n"
-                        continue
+                def check_future():
+                    if future.done():
+                        try:
+                            exception = future.exception()
+                            if exception:
+                                logger.error(f"后台任务异常: {exception}")
+                                q.put(create_error_event("unknown", f"后台处理异常: {str(exception)}"))
+                                return False 
+                        except Exception:
+                            pass
+                        return True
+                    return False
+                    
+                yield from consume_sse_queue(q, check_future)
+                
             except Exception as e:
                 logger.error(f"SSE处理出错: {e}")
                 yield sse_event(create_error_event("unknown", str(e)))
@@ -518,8 +236,6 @@ def upload_and_build_sse():
         
         def generate_events():
             """生成SSE事件流 (使用队列+线程实现实时推送)"""
-            import queue
-            import threading
             
             # 创建消息队列
             q = queue.Queue()
@@ -599,40 +315,23 @@ def upload_and_build_sse():
                 
                 # 在后台线程启动构建任务，传递filename作为custom_file_name
                 # 注意：build_graph_with_progress 内部会通过 ProgressTracker -> progress_manager -> callback -> queue 发送进度
-                future = executor.submit(build_graph_with_progress, upload_result['file_url'], client_id, filename)
+                future = graph_service.submit_build_task(upload_result['file_url'], client_id, filename)
                 
-                # 循环从队列读取进度并推送到SSE流
-                while True:
-                    try:
-                        # 阻塞等待消息，设置超时防止死锁
-                        # 这里的超时也是一种心跳机制，确保连接活跃
-                        data = q.get(timeout=1.0) 
-                        yield sse_event(data)
-                        
-                        # 检查是否完成或出错
-                        msg_type = data.get('type')
-                        if msg_type in ['complete', 'error']:
-                            break
-                            
-                    except queue.Empty:
-                        # 队列空闲，检查任务是否已完成（防止回调丢失导致的死循环）
-                        if future.done():
-                            # 任务已结束但队列空了，说明可能最后一条消息已处理或异常退出
-                            # 这里可以检查 future.result() 或 future.exception()
-                            try:
-                                # 如果任务抛出未捕获异常，这里会重新抛出
-                                exception = future.exception()
-                                if exception:
-                                    logger.error(f"后台任务异常: {exception}")
-                                    yield sse_event(create_error_event("unknown", f"后台处理发生异常: {str(exception)}"))
-                                break
-                            except Exception as e:
-                                logger.error(f"检查后台任务状态出错: {e}")
-                                break
-                        
-                        # 发送心跳注释，防止网关/浏览器超时
-                        yield ": heartbeat\n\n"
-                        continue
+                def check_future():
+                    if future.done():
+                        try:
+                            # 如果任务抛出未捕获异常，这里会重新抛出
+                            exception = future.exception()
+                            if exception:
+                                logger.error(f"后台任务异常: {exception}")
+                                q.put(create_error_event("unknown", f"后台处理发生异常: {str(exception)}"))
+                                return False
+                        except Exception as e:
+                            logger.error(f"检查后台任务状态出错: {e}")
+                        return True
+                    return False
+
+                yield from consume_sse_queue(q, check_future)
                         
             except Exception as e:
                 logger.error(f"SSE处理过程出错: {e}")
@@ -672,12 +371,12 @@ def health_check():
 def scaling_status():
     """动态资源分配状态接口"""
     try:
-        if scaling_manager is None:
+        if graph_service.scaling_manager is None:
             return jsonify({
                 'error': '动态资源分配系统未初始化'
             }), 503
         
-        status = scaling_manager.get_status()
+        status = graph_service.scaling_manager.get_status()
         return jsonify(status)
     except Exception as e:
         logger.error(f"获取缩放状态失败: {e}")
@@ -794,6 +493,57 @@ def get_graph_data():
             "data": {"nodes": [], "edges": []}
         }), 500
 
+@app.route('/nodes/generate_embeddings', methods=['POST'])
+def generate_node_embeddings():
+    """为节点生成 embedding 向量接口"""
+    try:
+        data = request.json or {}
+        node_ids = data.get('node_ids', [])
+        node_names = data.get('node_names', [])
+        
+        # 确保构建器已初始化
+        if not builder.embed_model or not builder.graph_store:
+            if not builder.initialize():
+                return jsonify({
+                    'code': 500,
+                    'msg': '构建器组件未就绪',
+                    'data': None
+                }), 500
+        
+        # 调用生成 embedding 方法
+        result = builder.generate_embeddings_for_nodes(
+            node_ids=node_ids if node_ids else None,
+            node_names=node_names if node_names else None
+        )
+        
+        if result['success']:
+            return jsonify({
+                'code': 200,
+                'msg': result['message'],
+                'data': {
+                    'processed': result['processed'],
+                    'failed': result['failed'],
+                    'failed_nodes': result.get('failed_nodes')
+                }
+            })
+        else:
+            return jsonify({
+                'code': 500,
+                'msg': result['message'],
+                'data': {
+                    'processed': result.get('processed', 0),
+                    'failed': result.get('failed', 0)
+                }
+            }), 500
+            
+    except Exception as e:
+        logger.error(f"生成节点 embedding 接口出错: {e}")
+        return jsonify({
+            'code': 500,
+            'msg': f"生成 embedding 失败: {str(e)}",
+            'data': None
+        }), 500
+
 @app.route('/search', methods=['GET', 'POST'])
 def search_knowledge_graph():
     """根据传参msg来检索知识图谱"""
@@ -816,15 +566,23 @@ def search_knowledge_graph():
             logger.info("构建器组件未就绪，尝试初始化...")
             builder.initialize()
             
-        # 执行查询
+        # 执行查询（返回答案和图谱路径）
         logger.info(f"收到搜索请求: {msg}")
-        result = builder.query_knowledge_graph(msg)
+        result = builder.query_knowledge_graph(msg, return_paths=True)
+        
+        # 兼容旧接口：如果result是字符串，转换为字典格式
+        if isinstance(result, str):
+            result = {
+                "answer": result,
+                "paths": []
+            }
         
         return jsonify({
             'code': 200, 
             'msg': 'success', 
             'data': {
-                'answer': result,
+                'answer': result.get('answer', ''),
+                'paths': result.get('paths', []),
                 'query': msg
             }
         })
@@ -849,6 +607,8 @@ if __name__ == '__main__':
     logger.info("📤 文件上传: POST /upload_and_build_sse")
     logger.info("📋 任务查询: GET /task_status/<task_id>")
     logger.info("🕸️ 图数据: GET /graph/data")
+    logger.info("🔍 搜索接口: GET/POST /search")
+    logger.info("🧬 生成向量: POST /nodes/generate_embeddings")
     
     # 启动Flask应用
     app.run(host='0.0.0.0', port=8001, debug=False, threaded=True)

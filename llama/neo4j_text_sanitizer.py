@@ -6,12 +6,43 @@ Neo4j 文本清理工具
 import re
 import logging
 from typing import Optional
+import difflib
+try:
+    from llama.enhanced_entity_extractor import StandardTermMapper
+    from llama.config import EXTRACTOR_CONFIG
+except ImportError:
+    from enhanced_entity_extractor import StandardTermMapper
+    from config import EXTRACTOR_CONFIG
 
 logger = logging.getLogger(__name__)
 
 
 class Neo4jTextSanitizer:
     """Neo4j文本清理器 - 处理实体名称和关系标签中的特殊字符"""
+    
+    # 标准实体列表（用于强映射）
+    STANDARD_ENTITIES = {
+        # 疾病
+        "近视", "远视", "散光", "弱视", "斜视", "外斜", "内斜", "病理性近视", "轴性近视", 
+        "屈光不正", "屈光参差", "老视", "并发性白内障", "后巩膜葡萄肿",
+        # 症状体征
+        "视物模糊", "眼胀", "虹视", "眼痛", "畏光", "流泪", "视力下降", "豹纹状眼底", 
+        "视网膜萎缩", "脉络膜萎缩", "黄斑出血", "漆样裂纹", "视盘杯盘比(C/D)扩大", 
+        "眼压升高", "瞳孔放大", "活动受限",
+        # 解剖结构
+        "角膜", "晶状体", "视网膜", "视神经", "黄斑区", "中心凹", "睫状肌", "悬韧带", 
+        "脉络膜", "巩膜", "前房", "房水",
+        # 检查参数
+        "眼轴长度", "屈光度", "远视储备", "调节幅度", "调节灵敏度", "眼压", "角膜曲率", 
+        "调节滞后", "五分记录法", "LogMAR视力表",
+        # 治疗防控
+        "户外活动", "角膜塑形镜(OK镜)", "低浓度阿托品", "RGP镜片", "后巩膜加固术", 
+        "离焦框架镜", "视觉训练", "准分子激光手术(LASIK)", "全飞秒激光手术(SMILE)", 
+        "眼内接触镜植入(ICL)"
+    }
+    
+    # 相似度阈值
+    SIMILARITY_THRESHOLD = 0.85
     
     # Neo4j Cypher 中有特殊含义的字符
     SPECIAL_CHARS = {
@@ -80,53 +111,64 @@ class Neo4jTextSanitizer:
             清理后的文本
         """
         if not text:
-            return "未命名实体"
+            return "Unknown_Entity"
+            
+        # 1. 基础清理：去除前后空格
+        cleaned = text.strip()
+        if not cleaned:
+            return "Unknown_Entity"
+            
+        # 1.5 别名查表 (Alias Lookup)
+        # 优先检查是否存在于别名表中，如果存在直接映射
+        alias_mapping = EXTRACTOR_CONFIG.get("alias_mapping", {})
+        if cleaned in alias_mapping:
+            standard_name = alias_mapping[cleaned]
+            logger.info(f"别名映射生效: '{cleaned}' -> '{standard_name}'")
+            return standard_name
+            
+        # 2. 强映射门控 (Hard-Mapping Gate)
+        # 如果实体不在标准库中，尝试模糊匹配
+        if cleaned not in cls.STANDARD_ENTITIES:
+            # 2.1 长度差异过大则跳过匹配（优化性能）
+            # 只对长度相近的词进行匹配 (长度差 <= 4)
+            potential_matches = [
+                std for std in cls.STANDARD_ENTITIES 
+                if abs(len(std) - len(cleaned)) <= 4
+            ]
+            
+            if potential_matches:
+                # 2.2 使用 difflib 计算 Levenshtein 相似度
+                matches = difflib.get_close_matches(cleaned, potential_matches, n=1, cutoff=cls.SIMILARITY_THRESHOLD)
+                
+                if matches:
+                    best_match = matches[0]
+                    logger.info(f"强映射生效: '{cleaned}' -> '{best_match}' (Similarity > {cls.SIMILARITY_THRESHOLD})")
+                    return best_match
+                    
+        # 3. 移除危险字符和控制字符
+        result = []
+        for char in cleaned:
+            if char in cls.REMOVE_CHARS:
+                replacement = cls.REMOVE_CHARS[char]
+                if replacement:
+                    result.append(replacement)
+            elif char in cls.SPECIAL_CHARS:
+                result.append(cls.SPECIAL_CHARS[char])
+            else:
+                result.append(char)
+                
+        cleaned = "".join(result)
         
-        # 1. 转换为字符串并去除首尾空格
-        text = str(text).strip()
-        
-        # 2. 移除控制字符
-        for char, replacement in cls.REMOVE_CHARS.items():
-            text = text.replace(char, replacement)
-        
-        # 3. 先移除单双引号和反引号（保持名称简洁）
-        text = text.replace("'", '').replace('"', '').replace('`', '')
-        # 3.1 去除下划线（防止 _检查信息_ 之类的包裹符号）
-        text = text.replace('_', '')
-        # 3.2 去除点号（防止 .检查信息. 之类的包裹符号）
-        text = text.replace('.', '')
-        
-        # 4. 替换其他特殊字符为全角字符(保持语义)
-        for char, replacement in cls.SPECIAL_CHARS.items():
-            # 跳过已处理的引号
-            if char not in ["'", '"', '`']:
-                text = text.replace(char, replacement)
-        
-        # 5. 多个空格合并为一个
-        text = re.sub(r'\s+', ' ', text)
-        
-        # 6. 去除首尾空格与首尾标点（: ： - * 等）
-        text = text.strip()
-        text = re.sub(r'^[\s:\-＊*：]+', '', text)
-        text = re.sub(r'[\s:\-＊*：]+$', '', text)
-        
-        # 7. 检查是否是Cypher关键字,如果是则添加前缀
-        if text.upper() in cls.CYPHER_KEYWORDS:
-            text = f"Entity_{text}"
-            logger.warning(f"节点名称是Cypher关键字，添加前缀: {text}")
-        
-        # 8. 长度限制
-        if len(text) > max_length:
-            original_length = len(text)
-            text = text[:max_length]
-            logger.warning(f"节点名称过长({original_length}字符)，截断到{max_length}字符: {text}...")
-        
-        # 9. 确保不为空
-        if not text:
-            logger.error("清理后节点名称为空，使用默认值")
-            return "未命名实体"
-        
-        return text
+        # 4. 长度限制
+        if len(cleaned) > max_length:
+            logger.warning(f"节点名称过长，已截断: {cleaned[:20]}... (Len: {len(cleaned)})")
+            cleaned = cleaned[:max_length]
+            
+        # 5. 空结果处理
+        if not cleaned:
+            return "Unknown_Entity"
+            
+        return cleaned
     
     @classmethod
     def sanitize_relation_label(cls, text: str, max_length: int = 10) -> str:

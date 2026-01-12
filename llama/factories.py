@@ -171,7 +171,7 @@ class ExtractorFactory:
     """提取器工厂"""
     
     @staticmethod
-    def create_extractor(llm, extract_prompt: str = None):
+    def create_extractor(llm, extract_prompt: str = None, max_triplets_per_chunk: int = None):
         """创建实体提取器 - 使用多阶段并行处理架构"""
         modules = LlamaModuleFactory.get_modules()
         if not modules:
@@ -179,12 +179,14 @@ class ExtractorFactory:
             
         try:
             prompt = extract_prompt or EXTRACTOR_CONFIG['extract_prompt']
+            max_triplets = max_triplets_per_chunk or EXTRACTOR_CONFIG['max_triplets_per_chunk']
+            
             return modules['DynamicLLMPathExtractor'](
                 llm=llm,
                 extract_prompt=prompt,
                 parse_fn=parse_dynamic_triplets,
                 num_workers=EXTRACTOR_CONFIG.get('num_workers', 4),
-                max_triplets_per_chunk=EXTRACTOR_CONFIG['max_triplets_per_chunk']
+                max_triplets_per_chunk=max_triplets
             )
         except Exception as e:
             logger.error(f"创建提取器失败: {e}")

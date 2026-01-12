@@ -82,7 +82,7 @@ class EnhancedEntityExtractor:
                     
                     logger.debug(f"提取LLM语义三元组: {head}({head_type}) - {relation} - {tail}({tail_type})")
         
-        # 应用术语映射标准化
+        # 应用术语映射标准化 先注释
         enhanced_triplets = StandardTermMapper.process_triplets(enhanced_triplets)
         
         if not enhanced_triplets:
@@ -132,6 +132,26 @@ def parse_llm_output_to_enhanced_triplets(llm_output: str) -> List[Tuple[EntityN
             head_name = clean_text(head_name, remove_special=False)
             tail_name = clean_text(tail_name, remove_special=False)
             relation_type = clean_text(relation_type, remove_special=False)
+
+            # ---------------------------------------------------------
+            # 强制映射层 (Standardization Error Fix) - 用户请求的强校验钩子
+            # ---------------------------------------------------------
+            try:
+                # 再次尝试标准化，确保在创建节点前强制应用标准术语
+                std_head = StandardTermMapper.standardize(head_name)
+                if std_head in StandardTermMapper.STANDARD_ENTITIES:
+                    if head_name != std_head:
+                        logger.info(f"🔧 强制纠偏 (Head): {head_name} -> {std_head}")
+                    head_name = std_head
+                
+                std_tail = StandardTermMapper.standardize(tail_name)
+                if std_tail in StandardTermMapper.STANDARD_ENTITIES:
+                    if tail_name != std_tail:
+                        logger.info(f"🔧 强制纠偏 (Tail): {tail_name} -> {std_tail}")
+                    tail_name = std_tail
+            except Exception as e:
+                logger.warning(f"StandardTermMapper 强校验失败: {e}")
+            # ---------------------------------------------------------
             
             # 验证：跳过纯标点或空的实体/关系
             invalid_symbols = {",", ".", "。", "，", "、", " ", "\\", "/", ";", ":", "?", "!", "'", "\"", "(", ")", "[", "]", "{", "}", "-", "_", "+", "=", "*", "&", "^", "%", "$", "#", "@", "~", "`", "<", ">", "|"}

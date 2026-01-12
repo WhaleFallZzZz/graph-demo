@@ -5,6 +5,7 @@ SSE进度推送模块
 """
 
 import json
+import queue
 from typing import Dict, Any, Optional, Callable
 from datetime import datetime
 import logging
@@ -16,12 +17,15 @@ logger = logging.getLogger(__name__)
 class ProgressSSE:
     """SSE进度推送管理器"""
     
-    def __init__(self):
+    def __init__(self, max_cache_size: int = 1000, ttl_seconds: int = 3600):
         self.listeners = {}
         self.progress_cache = {}
+        self.max_cache_size = max_cache_size
+        self.ttl_seconds = ttl_seconds
         
     def add_listener(self, client_id: str, callback: Callable):
         """添加监听器"""
+        self._cleanup_cache()  # 惰性清理
         self.listeners[client_id] = callback
         logger.info(f"添加监听器: {client_id}")
         
@@ -31,6 +35,38 @@ class ProgressSSE:
             del self.listeners[client_id]
             logger.info(f"移除监听器: {client_id}")
             
+    def _cleanup_cache(self):
+        """清理过期的缓存"""
+        try:
+            now_ts = datetime.now().timestamp()
+            # 1. 清理过期条目
+            expired_keys = []
+            for client_id, info in self.progress_cache.items():
+                # 假设 timestamp 是 ISO 格式字符串，需要解析
+                # 为了简化，我们在缓存时也存一个时间戳
+                cached_ts = info.get('_ts', 0)
+                if now_ts - cached_ts > self.ttl_seconds:
+                    expired_keys.append(client_id)
+            
+            for key in expired_keys:
+                del self.progress_cache[key]
+                
+            # 2. 如果仍然超过最大大小，清理最旧的
+            if len(self.progress_cache) > self.max_cache_size:
+                # 按时间戳排序
+                sorted_items = sorted(
+                    self.progress_cache.items(), 
+                    key=lambda x: x[1].get('_ts', 0)
+                )
+                # 删除最旧的 (当前数量 - 目标数量) 个
+                num_to_remove = len(self.progress_cache) - self.max_cache_size
+                for i in range(num_to_remove):
+                    del self.progress_cache[sorted_items[i][0]]
+                    
+                logger.info(f"清理缓存: 移除了 {len(expired_keys) + num_to_remove} 个条目")
+        except Exception as e:
+            logger.error(f"清理缓存失败: {e}")
+
     def send_progress(self, client_id: str, data: Dict[str, Any]):
         """发送进度信息"""
         if client_id in self.listeners:
@@ -38,6 +74,7 @@ class ProgressSSE:
                 # 缓存进度信息
                 self.progress_cache[client_id] = {
                     'timestamp': DateTimeUtils.now_str(),
+                    '_ts': datetime.now().timestamp(), # 用于清理
                     'data': data
                 }
                 
@@ -199,3 +236,36 @@ def progress_callback(stage: str, message: str, percentage: Optional[float] = No
     progress_manager.broadcast_progress(event)
     
     logger.info(f"构建进度: {stage} - {message}" + (f" ({percentage:.1f}%)" if percentage else ""))
+
+def consume_sse_queue(q: queue.Queue, check_future: Optional[Callable[[], bool]] = None, heartbeat_interval: float = 1.0):
+    """
+    通用SSE队列消费者生成器
+    
+    Args:
+        q: 消息队列
+        check_future: 可选的回调函数，用于检查后台任务状态。如果返回True，则停止循环。
+        heartbeat_interval: 心跳间隔（秒）
+        
+    Yields:
+        str: SSE格式的字符串
+    """
+    while True:
+        try:
+            # 阻塞等待消息，设置超时防止死锁
+            # 这里的超时也是一种心跳机制，确保连接活跃
+            data = q.get(timeout=heartbeat_interval)
+            yield sse_event(data)
+            
+            # 检查是否完成或出错
+            msg_type = data.get('type')
+            if msg_type in ['complete', 'error']:
+                break
+                
+        except queue.Empty:
+            # 队列空闲，检查任务是否已完成（防止回调丢失导致的死循环）
+            if check_future and check_future():
+                break
+            
+            # 发送心跳注释，防止网关/浏览器超时
+            yield ": heartbeat\n\n"
+            continue

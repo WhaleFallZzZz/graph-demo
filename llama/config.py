@@ -7,8 +7,12 @@ import os
 import logging
 from typing import Dict, Any
 from pathlib import Path
+from dotenv import load_dotenv
 
 from llama.common import DateTimeUtils
+
+# 加载 .env 文件
+load_dotenv()
 
 # 获取项目根目录
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -124,7 +128,7 @@ DOCUMENT_CONFIG = {
     "max_paths_per_chunk": int(os.getenv("MAX_PATHS_PER_CHUNK", "2")),
     "num_workers": int(os.getenv("DOCUMENT_NUM_WORKERS", "4")),
     "chunk_size": int(os.getenv("DOC_CHUNK_SIZE", "1024")),
-    "CHUNK_OVERLAP": int(os.getenv("DOC_CHUNK_OVERLAP", "120")),
+    "CHUNK_OVERLAP": int(os.getenv("DOC_CHUNK_OVERLAP", "200")),
     "max_chunk_length": int(os.getenv("DOC_MAX_CHUNK_LENGTH", "1400")),
     "min_chunk_length": int(os.getenv("DOC_MIN_CHUNK_LENGTH", "600")),
     "dynamic_chunking": os.getenv("DOC_DYNAMIC_CHUNKING", "true").lower() == "true",
@@ -226,13 +230,16 @@ EXTRACTOR_CONFIG = {
    - 屈光度：度数、D、球镜度数
    - 调节幅度：调节力、AMP、调节不足
    - 视物模糊：视力模糊、模糊、看东西模糊
-   - 眼压：眼内压、IOP
+   - 眼压：眼内压、IOP、眼压升高
+   - 外斜：外斜视、废用性外斜视
+   - 不良反应：副作用、并发症、不良后果
+   - 瞳孔放大：瞳孔散大、瞳孔扩大
 3. **严格限制非标准实体**：如果实体不在标准列表且不是关键医学概念，**不应提取**
 
 ### 标准实体列表（57个核心实体）：
-**疾病(12)**: 近视、远视、散光、弱视、斜视、病理性近视、轴性近视、屈光不正、屈光参差、老视、并发性白内障、后巩膜葡萄肿
+**疾病(13)**: 近视、远视、散光、弱视、斜视、外斜、内斜、病理性近视、轴性近视、屈光不正、屈光参差、老视、并发性白内障、后巩膜葡萄肿
 
-**症状体征(13)**: 视物模糊、眼胀、虹视、眼痛、畏光、流泪、视力下降、豹纹状眼底、视网膜萎缩、脉络膜萎缩、黄斑出血、漆样裂纹、视盘杯盘比(C/D)扩大
+**症状体征(16)**: 视物模糊、眼胀、虹视、眼痛、畏光、流泪、视力下降、豹纹状眼底、视网膜萎缩、脉络膜萎缩、黄斑出血、漆样裂纹、视盘杯盘比(C/D)扩大、眼压升高、瞳孔放大、活动受限
 
 **解剖结构(12)**: 角膜、晶状体、视网膜、视神经、黄斑区、中心凹、睫状肌、悬韧带、脉络膜、巩膜、前房、房水
 
@@ -296,6 +303,7 @@ EXTRACTOR_CONFIG = {
 3. **充分提取**：尽量提取文本中的所有标准实体和相关三元组，不要遗漏
 4. **数量目标**：每个文本块建议提取15-20个三元组，确保覆盖所有重要医学关系
 5. **严格遵守长度限制**：任何超过8个字的实体都将被视为提取失败
+6. **硬性指令**：如果你输出的 JSON 中包含‘青少年’、‘家长’或任何非标准列表中的人群，系统将判定任务失败。请再次核对 负向约束 列表。
 
 Text: {text}"""
 }
@@ -306,6 +314,10 @@ VALIDATOR_CONFIG = {
     "sample_ratio": float(os.getenv("VALIDATOR_SAMPLE_RATIO", "0.3")),  # 抽样比例（0.0-1.0）
     "confidence_threshold": float(os.getenv("VALIDATOR_CONFIDENCE_THRESHOLD", "0.5")),  # 置信度阈值
     "num_workers": int(os.getenv("VALIDATOR_NUM_WORKERS", "4")),  # 并行worker数量
+    "max_concurrent_requests": int(os.getenv("VALIDATOR_MAX_CONCURRENT", "3")),  # 最大并发请求数（防止触发429）
+    "request_delay": float(os.getenv("VALIDATOR_REQUEST_DELAY", "0.2")),  # 请求延迟（秒）
+    "max_retries": int(os.getenv("VALIDATOR_MAX_RETRIES", "3")),  # 最大重试次数
+    "retry_delay": float(os.getenv("VALIDATOR_RETRY_DELAY", "5.0")),  # 重试延迟（秒）
     "core_entities": [  # 核心实体列表，包含这些实体的三元组优先验证
         "近视", "远视", "散光", "弱视", "斜视", "病理性近视", "轴性近视",
         "眼轴长度", "屈光度", "调节幅度", "眼压", "角膜塑形镜(OK镜)",

@@ -8,11 +8,25 @@ import logging
 from typing import List, Dict, Any, Tuple, Optional
 import random
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from llama_index.core.graph_stores.types import EntityNode, Relation
 from llama_index.core.schema import BaseNode
 
 logger = logging.getLogger(__name__)
+
+# 导入限流配置
+try:
+    from config import VALIDATOR_CONFIG
+    VALIDATOR_REQUEST_DELAY = VALIDATOR_CONFIG.get('request_delay', 0.2)  # 反向验证的请求延迟
+    VALIDATOR_MAX_RETRIES = VALIDATOR_CONFIG.get('max_retries', 3)
+    VALIDATOR_RETRY_DELAY = VALIDATOR_CONFIG.get('retry_delay', 5.0)
+    VALIDATOR_MAX_CONCURRENT = VALIDATOR_CONFIG.get('max_concurrent_requests', 3)
+except ImportError:
+    VALIDATOR_REQUEST_DELAY = 0.2  # 默认延迟200ms
+    VALIDATOR_MAX_RETRIES = 3
+    VALIDATOR_RETRY_DELAY = 5.0
+    VALIDATOR_MAX_CONCURRENT = 3
 
 
 class TripletValidator:
@@ -107,7 +121,7 @@ class TripletValidator:
     
     def validate_triplet_reverse(self, head: str, relation: str, tail: str, text: str) -> Dict[str, Any]:
         """
-        验证单个三元组的反向关系
+        验证单个三元组的反向关系（带重试和限流控制）
         
         Args:
             head: 头实体
@@ -118,48 +132,95 @@ class TripletValidator:
         Returns:
             验证结果字典，包含 has_reverse_evidence, confidence, reason
         """
-        try:
-            prompt = self.get_reverse_relation_prompt(head, relation, tail, text)
-            response = self.lightweight_llm.complete(prompt)
-            response_text = response.text.strip()
-            
-            # 尝试解析JSON响应
-            import json
-            import re
-            
-            # 提取JSON部分（去除可能的markdown代码块）
-            json_match = re.search(r'\{[^{}]*"has_reverse_evidence"[^{}]*\}', response_text, re.DOTALL)
-            if json_match:
-                json_str = json_match.group(0)
-            else:
-                # 如果没有找到JSON，尝试直接解析整个响应
-                json_str = response_text
-            
+        prompt = self.get_reverse_relation_prompt(head, relation, tail, text)
+        
+        # 带重试机制的API调用
+        last_exception = None
+        for attempt in range(VALIDATOR_MAX_RETRIES + 1):
             try:
-                result = json.loads(json_str)
-            except json.JSONDecodeError:
-                # 如果JSON解析失败，尝试提取布尔值
-                has_evidence = "true" in response_text.lower() or "存在" in response_text or "支持" in response_text
-                result = {
-                    "has_reverse_evidence": has_evidence,
-                    "confidence": 0.5,
-                    "reason": "无法解析JSON，基于关键词判断"
+                # 请求前延迟（限流控制）
+                if attempt > 0:
+                    # 重试时使用指数退避
+                    wait_time = VALIDATOR_RETRY_DELAY * (2 ** (attempt - 1))
+                    logger.warning(f"反向验证重试 ({head} - {relation} - {tail}): 等待 {wait_time:.2f} 秒后重试 (第 {attempt + 1} 次)")
+                    time.sleep(wait_time)
+                else:
+                    # 首次请求前短暂延迟
+                    time.sleep(VALIDATOR_REQUEST_DELAY)
+                
+                response = self.lightweight_llm.complete(prompt)
+                response_text = response.text.strip()
+                
+                # 尝试解析JSON响应
+                import json
+                import re
+                
+                # 提取JSON部分（去除可能的markdown代码块）
+                json_match = re.search(r'\{[^{}]*"has_reverse_evidence"[^{}]*\}', response_text, re.DOTALL)
+                if json_match:
+                    json_str = json_match.group(0)
+                else:
+                    # 如果没有找到JSON，尝试直接解析整个响应
+                    json_str = response_text
+                
+                try:
+                    result = json.loads(json_str)
+                except json.JSONDecodeError:
+                    # 如果JSON解析失败，尝试提取布尔值
+                    has_evidence = "true" in response_text.lower() or "存在" in response_text or "支持" in response_text
+                    result = {
+                        "has_reverse_evidence": has_evidence,
+                        "confidence": 0.5,
+                        "reason": "无法解析JSON，基于关键词判断"
+                    }
+                
+                return {
+                    "has_reverse_evidence": result.get("has_reverse_evidence", False),
+                    "confidence": result.get("confidence", 0.5),
+                    "reason": result.get("reason", "未提供理由")
                 }
-            
-            return {
-                "has_reverse_evidence": result.get("has_reverse_evidence", False),
-                "confidence": result.get("confidence", 0.5),
-                "reason": result.get("reason", "未提供理由")
-            }
-            
-        except Exception as e:
-            logger.error(f"验证三元组反向关系失败 ({head} - {relation} - {tail}): {e}")
-            # 出错时默认返回不通过，避免误判
-            return {
-                "has_reverse_evidence": False,
-                "confidence": 0.0,
-                "reason": f"验证过程出错: {str(e)}"
-            }
+                
+            except Exception as e:
+                last_exception = e
+                error_str = str(e)
+                
+                # 检查是否是429限流错误
+                if "429" in error_str or "Too Many Requests" in error_str or "RateLimitError" in error_str:
+                    if attempt < VALIDATOR_MAX_RETRIES:
+                        # 429错误需要更长的等待时间
+                        wait_time = VALIDATOR_RETRY_DELAY * (2 ** attempt) * 2  # 指数退避，429错误加倍等待
+                        logger.warning(
+                            f"反向验证遇到限流错误 ({head} - {relation} - {tail}): "
+                            f"等待 {wait_time:.2f} 秒后重试 (第 {attempt + 2}/{VALIDATOR_MAX_RETRIES + 1} 次)"
+                        )
+                        time.sleep(wait_time)
+                        continue
+                    else:
+                        logger.error(
+                            f"反向验证达到最大重试次数，限流错误 ({head} - {relation} - {tail}): {e}"
+                        )
+                else:
+                    # 其他错误，如果是最后一次尝试则退出
+                    if attempt < VALIDATOR_MAX_RETRIES:
+                        logger.warning(
+                            f"反向验证失败 ({head} - {relation} - {tail}): {e}，"
+                            f"第 {attempt + 2}/{VALIDATOR_MAX_RETRIES + 1} 次重试"
+                        )
+                        continue
+                    else:
+                        logger.error(f"验证三元组反向关系失败 ({head} - {relation} - {tail}): {e}")
+        
+        # 所有重试都失败，返回默认结果
+        logger.error(
+            f"验证三元组反向关系最终失败 ({head} - {relation} - {tail}): "
+            f"已重试 {VALIDATOR_MAX_RETRIES} 次，最后错误: {last_exception}"
+        )
+        # 出错时默认返回不通过，避免误判
+        return {
+            "has_reverse_evidence": False,
+            "confidence": 0.0,
+            "reason": f"验证过程出错（已重试{VALIDATOR_MAX_RETRIES}次）: {str(last_exception) if last_exception else '未知错误'}"
+        }
     
     def find_source_text(self, head: str, tail: str, relation: str) -> Optional[str]:
         """
@@ -257,9 +318,19 @@ class TripletValidator:
             
             return (triplet, result)
         
-        # 使用线程池并行处理
+        # 添加请求限流信号量（控制并发请求数，避免触发限流）
+        max_concurrent_requests = min(num_workers, VALIDATOR_MAX_CONCURRENT)
+        request_semaphore = threading.Semaphore(max_concurrent_requests)
+        logger.info(f"反向验证限流配置: 最大并发请求数={max_concurrent_requests}, 请求延迟={VALIDATOR_REQUEST_DELAY}s, 最大重试={VALIDATOR_MAX_RETRIES}次")
+        
+        def validate_with_rate_limit(triplet: Tuple[EntityNode, Relation, EntityNode]) -> Tuple[Tuple[EntityNode, Relation, EntityNode], Dict[str, Any]]:
+            """带限流控制的验证函数"""
+            with request_semaphore:  # 获取信号量，控制并发数
+                return validate_single_triplet(triplet)
+        
+        # 使用线程池并行处理（但通过信号量限制并发数）
         with ThreadPoolExecutor(max_workers=num_workers) as executor:
-            future_to_triplet = {executor.submit(validate_single_triplet, triplet): triplet for triplet in candidates}
+            future_to_triplet = {executor.submit(validate_with_rate_limit, triplet): triplet for triplet in candidates}
             
             for future in as_completed(future_to_triplet):
                 try:

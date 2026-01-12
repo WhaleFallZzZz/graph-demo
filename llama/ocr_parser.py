@@ -28,7 +28,8 @@ class DeepSeekOCRParser(BaseReader):
         self.base_url = base_url or "https://api.siliconflow.cn/v1"
         self.model = model or API_CONFIG["siliconflow"].get("ocr_model", "deepseek-ai/DeepSeek-OCR")
         self.max_pages = max_pages
-        self.client = OpenAI(api_key=self.api_key, base_url=self.base_url)
+        # 设置60秒超时
+        self.client = OpenAI(api_key=self.api_key, base_url=self.base_url, timeout=60.0)
 
     def load_data(self, file: Path, extra_info: Optional[dict] = None) -> List[Document]:
         if not isinstance(file, Path):

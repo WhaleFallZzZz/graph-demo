@@ -3,11 +3,20 @@ Enhanced Entity Extractor with Standard Term Mapping
 """
 import logging
 from typing import Dict, Any, List
+import difflib
+import threading
+import numpy as np
+from llama.config import API_CONFIG
+from llama.custom_siliconflow_embedding import HybridSiliconFlowEmbedding
 
 logger = logging.getLogger(__name__)
 
 class StandardTermMapper:
     """标准术语映射器"""
+    
+    _embedding_model = None
+    _standard_embeddings = {}
+    _embedding_lock = threading.Lock()
     
     # 57个标准实体列表
     STANDARD_ENTITIES = {
@@ -224,8 +233,47 @@ class StandardTermMapper:
     # 检查参数 - LogMAR视力表相关 (扩展)
     "LogMAR": "LogMAR视力表", "LogMAR表": "LogMAR视力表",
     "国际通用视力表": "LogMAR视力表", "国际通用视力评估标准": "LogMAR视力表",
-}
+    }
     
+    @classmethod
+    def _get_embedding_model(cls):
+        """延迟初始化 Embedding 模型"""
+        if cls._embedding_model is None:
+            with cls._embedding_lock:
+                if cls._embedding_model is None:
+                    try:
+                        api_cfg = API_CONFIG.get("siliconflow", {})
+                        # 使用 HybridSiliconFlowEmbedding (纯在线模式)
+                        cls._embedding_model = HybridSiliconFlowEmbedding(
+                            api_key=api_cfg.get("api_key"),
+                            model=api_cfg.get("embedding_model", "BAAI/bge-m3")
+                        )
+                        logger.info("StandardTermMapper: Vector Embedding model initialized.")
+                    except Exception as e:
+                        logger.error(f"Failed to init embedding model: {e}")
+        return cls._embedding_model
+
+    @classmethod
+    def _ensure_standard_embeddings(cls):
+        """确保标准实体的 Embedding 已缓存"""
+        if not cls._standard_embeddings:
+            model = cls._get_embedding_model()
+            if not model:
+                return
+            
+            with cls._embedding_lock:
+                if not cls._standard_embeddings:
+                    logger.info("Generating embeddings for 57 standard entities...")
+                    try:
+                        entities = list(cls.STANDARD_ENTITIES)
+                        # 批量获取 Embedding
+                        embeddings = model.get_text_embedding_batch(entities)
+                        for ent, emb in zip(entities, embeddings):
+                            cls._standard_embeddings[ent] = np.array(emb)
+                        logger.info(f"Successfully cached {len(cls._standard_embeddings)} standard entity embeddings.")
+                    except Exception as e:
+                        logger.error(f"Error generating standard embeddings: {e}")
+
     @classmethod
     def remove_modifiers(cls, entity_name: str) -> str:
         """移除实体修饰语"""
@@ -247,7 +295,7 @@ class StandardTermMapper:
     @classmethod
     def standardize(cls, entity_name: str) -> str:
         """
-        标准化实体名称
+        标准化实体名称 (包含 Levenshtein 和 Vector 硬纠偏)
         """
         if not hasattr(cls, "_lru_cache"):
             from collections import OrderedDict
@@ -261,13 +309,67 @@ class StandardTermMapper:
         if cached is not None:
             cls._lru_cache.move_to_end(key)
             return cached
+            
         clean_name = key
         clean_name = cls.remove_modifiers(clean_name)
-        if clean_name in cls.SYNONYM_MAP:
-            standard_name = cls.SYNONYM_MAP[clean_name]
-            result = standard_name
-        else:
+        
+        result = clean_name
+        
+        # 1. 检查精确匹配和同义词映射
+        if clean_name in cls.STANDARD_ENTITIES:
             result = clean_name
+        elif clean_name in cls.SYNONYM_MAP:
+            mapped = cls.SYNONYM_MAP[clean_name]
+            if mapped in cls.STANDARD_ENTITIES:
+                result = mapped
+            else:
+                result = mapped
+        else:
+            # 2. Levenshtein 距离检查 (Threshold 0.85)
+            best_match = None
+            best_ratio = 0.0
+            
+            # 优化：只对长度相近的进行比较
+            candidates = [s for s in cls.STANDARD_ENTITIES if abs(len(s) - len(clean_name)) <= 4]
+            
+            for std in candidates:
+                ratio = difflib.SequenceMatcher(None, clean_name, std).ratio()
+                if ratio > best_ratio:
+                    best_ratio = ratio
+                    best_match = std
+            
+            if best_ratio > 0.85:
+                logger.debug(f"Levenshtein Match: '{clean_name}' -> '{best_match}' ({best_ratio:.2f})")
+                result = best_match
+            
+            # 3. Vector 硬纠偏 (Threshold 0.8) - 仅当 Levenshtein 失败且长度足够时尝试
+            elif len(clean_name) >= 2: 
+                try:
+                    cls._ensure_standard_embeddings()
+                    if cls._standard_embeddings:
+                        model = cls._get_embedding_model()
+                        if model:
+                            # 获取当前实体的 Embedding
+                            vec = np.array(model.get_text_embedding(clean_name))
+                            norm_v = np.linalg.norm(vec)
+                            
+                            best_vec_score = 0.0
+                            best_vec_match = None
+                            
+                            for std, std_vec in cls._standard_embeddings.items():
+                                norm_std = np.linalg.norm(std_vec)
+                                # Cosine Similarity
+                                score = np.dot(vec, std_vec) / (norm_v * norm_std + 1e-9)
+                                if score > best_vec_score:
+                                    best_vec_score = score
+                                    best_vec_match = std
+                            
+                            if best_vec_score > 0.8:
+                                logger.info(f"Vector Hard-Correction: '{clean_name}' -> '{best_vec_match}' ({best_vec_score:.2f})")
+                                result = best_vec_match
+                except Exception as e:
+                    logger.warning(f"Vector similarity check failed for '{clean_name}': {e}")
+
         cls._lru_cache[key] = result
         if len(cls._lru_cache) > cls._lru_max:
             cls._lru_cache.popitem(last=False)
@@ -364,15 +466,26 @@ class StandardTermMapper:
     def process_triplets(cls, triplets: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
         批量处理三元组，标准化其中的实体并进行批量验证
+        实施强映射门控：不在标准列表且无法归一化的实体将被丢弃
         """
         processed_triplets = []
         for triplet in triplets:
             head = triplet.get("head")
             tail = triplet.get("tail")
             
-            # 标准化
+            # 标准化 (包含 Levenshtein/Vector 纠偏)
             std_head = cls.standardize(head)
             std_tail = cls.standardize(tail)
+            
+            # Gate: 硬拦截
+            # 如果归一化后的实体仍不在标准列表中，说明相似度低，直接丢弃
+            if std_head not in cls.STANDARD_ENTITIES:
+                logger.debug(f"Gate Discard: Head '{std_head}' (orig: '{head}') not in standard list.")
+                continue
+                
+            if std_tail not in cls.STANDARD_ENTITIES:
+                logger.debug(f"Gate Discard: Tail '{std_tail}' (orig: '{tail}') not in standard list.")
+                continue
             
             # 记录变化
             if std_head != head:
@@ -386,4 +499,9 @@ class StandardTermMapper:
             processed_triplets.append(triplet)
         
         # 执行批量验证
+        valid_count = len(processed_triplets)
+        original_count = len(triplets)
+        if valid_count < original_count:
+            logger.info(f"Gate Filtered: {original_count} -> {valid_count} triplets (Discarded {original_count - valid_count})")
+            
         return cls.validate_batch(processed_triplets)

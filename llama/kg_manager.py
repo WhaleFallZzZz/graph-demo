@@ -6,6 +6,7 @@
 
 import sys
 import os
+import re
 from pathlib import Path
 from typing import Optional, Dict, Any, List, Tuple
 import logging
@@ -16,12 +17,13 @@ from llama_index.core.graph_stores.types import EntityNode, Relation
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
-from config import setup_logging, DOCUMENT_CONFIG, API_CONFIG, EMBEDDING_CONFIG, NEO4J_CONFIG, OSS_CONFIG, RERANK_CONFIG, VALIDATOR_CONFIG
+from config import setup_logging, DOCUMENT_CONFIG, API_CONFIG, EMBEDDING_CONFIG, NEO4J_CONFIG, OSS_CONFIG, RERANK_CONFIG, VALIDATOR_CONFIG, EXTRACTOR_CONFIG
 from factories import LlamaModuleFactory, ModelFactory, GraphStoreFactory, ExtractorFactory, RerankerFactory
 from progress_sse import ProgressTracker, progress_callback
 from oss_uploader import COSUploader, OSSConfig
 from ocr_parser import DeepSeekOCRParser
 from enhanced_entity_extractor import StandardTermMapper
+from graph_agent import GraphAgent
 import json
 import collections
 
@@ -126,6 +128,7 @@ class KnowledgeGraphManager:
             "entities_count": 0,
             "relationships_count": 0
         }
+        self.graph_agent = None  # 智能图谱查询代理
         
     def initialize(self) -> bool:
         """初始化所有组件"""
@@ -177,6 +180,15 @@ class KnowledgeGraphManager:
             except Exception as e:
                 logger.warning(f"Neo4j连接测试失败: {e}")
                 # 不中断，继续执行，因为可能是网络波动
+            
+            # 5. 初始化智能图谱查询代理
+            progress_callback("initialization", "正在初始化智能图谱查询代理...", 90)
+            try:
+                self.graph_agent = GraphAgent(self.graph_store)
+                logger.info("✅ 智能图谱查询代理初始化成功")
+            except Exception as e:
+                logger.warning(f"智能图谱查询代理初始化失败: {e}")
+                self.graph_agent = None
             
             progress_callback("initialization", "初始化完成", 100)
             self._initialized = True
@@ -591,6 +603,34 @@ class KnowledgeGraphManager:
             else:
                 progress_callback("knowledge_graph", "开始构建知识图谱...", 20)
             
+            # 0. 预处理：基于别名映射替换文本中的非标实体
+            if EXTRACTOR_CONFIG.get("alias_mapping"):
+                logger.info("正在执行文本预处理：别名替换...")
+                mapping = EXTRACTOR_CONFIG["alias_mapping"]
+                
+                # 预编译正则：按长度降序排序，确保优先匹配长词
+                sorted_aliases = sorted(mapping.keys(), key=len, reverse=True)
+                pattern_str = '|'.join(map(re.escape, sorted_aliases))
+                pattern = re.compile(pattern_str)
+                
+                processed_count = 0
+                for doc in documents:
+                    if not hasattr(doc, "text") or not doc.text:
+                        continue
+                    
+                    original_text = doc.text
+                    # 使用正则一次性替换，避免递归替换问题 (如 AL->眼轴长度, 然后 眼轴->眼轴长度 => 眼轴长度长度)
+                    modified_text = pattern.sub(lambda m: mapping[m.group(0)], original_text)
+                    
+                    if modified_text != original_text:
+                        if hasattr(doc, "set_content"):
+                            doc.set_content(modified_text)
+                        else:
+                            doc.text = modified_text
+                        processed_count += 1
+                
+                logger.info(f"别名替换完成，共修改了 {processed_count} 个文档")
+
             # 创建提取器
             if progress_tracker:
                 progress_tracker.update_stage("knowledge_graph", "正在创建实体提取器...", 25)
@@ -660,6 +700,11 @@ class KnowledgeGraphManager:
                 # 插入节点
                 index.insert_nodes(batch)
             
+            # 3. 后处理：创建语义弱关联
+            if progress_tracker:
+                progress_tracker.update_stage("knowledge_graph", "正在分析语义弱关联...", 95)
+            self._create_semantic_relationships(documents, index)
+            
             self.metrics["processed_docs"] = total_docs
             e_count, r_count = self._get_graph_counts(self.graph_store)
             self.metrics["entities_count"] = e_count
@@ -680,7 +725,7 @@ class KnowledgeGraphManager:
             self._perform_entity_resolution(index, progress_tracker)
             
             # 三元组反向自检
-            if VALIDATOR_CONFIG.get("enable", True):
+            if VALIDATOR_CONFIG.get("enable", False):
                 self._perform_triplet_validation(index, documents, progress_tracker)
             else:
                 logger.info("三元组反向自检已禁用")
@@ -703,12 +748,68 @@ class KnowledgeGraphManager:
                 progress_callback("knowledge_graph", error_msg, 0)
             return None
     
+    def _create_semantic_relationships(self, documents: List[Any], index: Any):
+        """
+        创建语义弱关联
+        若同一文本块中出现两个标准实体且未建立关系，则创建 'RELATED_TO' 弱关联
+        """
+        logger.info("正在分析潜在的语义弱关联...")
+        from enhanced_entity_extractor import StandardTermMapper
+        from llama_index.core.graph_stores.types import Relation
+        import itertools
+        
+        new_relations = []
+        count = 0
+        
+        # 建立实体到标准名的映射以便快速查找
+        # StandardTermMapper.STANDARD_ENTITIES 是个 set
+        
+        for doc in documents:
+            text = getattr(doc, "text", "")
+            if not text:
+                continue
+                
+            found_entities = []
+            # 简单的字符串匹配 
+            # 优化：只检查长度 > 1 的实体
+            for entity in StandardTermMapper.STANDARD_ENTITIES:
+                if entity in text:
+                    found_entities.append(entity)
+            
+            # 如果找到2个以上实体
+            if len(found_entities) >= 2:
+                # 生成两两组合
+                for e1, e2 in itertools.combinations(found_entities, 2):
+                    rel = Relation(
+                        source_id=e1,
+                        target_id=e2,
+                        label="RELATED_TO",
+                        properties={"confidence": "low", "type": "co_occurrence", "source_chunk": doc.id_}
+                    )
+                    new_relations.append(rel)
+                    count += 1
+        
+        if new_relations:
+            logger.info(f"发现 {count} 个潜在弱关联，正在注入图谱...")
+            try:
+                # 尝试使用 upsert 或 add
+                # LlamaIndex 的 PropertyGraphStore 接口通常有 upsert_relations
+                if hasattr(index.property_graph_store, "upsert_relations"):
+                    index.property_graph_store.upsert_relations(new_relations)
+                elif hasattr(index.property_graph_store, "add"):
+                     index.property_graph_store.add(relations=new_relations)
+                else:
+                    logger.warning("Graph store does not support batch relation insertion")
+            except Exception as e:
+                logger.warning(f"注入弱关联失败: {e}")
+
     def _get_graph_counts(self, graph_store) -> tuple:
         try:
             is_neo4j = "Neo4jPropertyGraphStore" in str(type(graph_store))
             if is_neo4j:
                 with graph_store._driver.session() as session:
-                    e = session.run("MATCH (n:Entity) RETURN count(n) as c").single()["c"]
+                    # PropertyGraphIndex 使用 __Entity__ 标签
+                    e = session.run("MATCH (n:__Entity__) RETURN count(n) as c").single()["c"]
                     r = session.run("MATCH ()-[r]->() RETURN count(r) as c").single()["c"]
                     return int(e or 0), int(r or 0)
             triplets = graph_store.get_triplets()
@@ -742,7 +843,7 @@ class KnowledgeGraphManager:
             if is_neo4j:
                 try:
                     with graph_store._driver.session() as session:
-                        result = session.run("MATCH (n:Entity) RETURN DISTINCT n.name as name")
+                        result = session.run("MATCH (n:__Entity__) RETURN DISTINCT n.name as name")
                         entities = [record["name"] for record in result]
                 except Exception as e:
                     logger.warning(f"Neo4j 获取实体失败，回退到通用方法: {e}")
@@ -1109,19 +1210,35 @@ class KnowledgeGraphManager:
         
         return deleted_count
 
-    def query_knowledge_graph(self, query: str, index: Any = None) -> str:
-        """查询知识图谱"""
+    def query_knowledge_graph(self, query: str, index: Any = None, return_paths: bool = True) -> Dict[str, Any]:
+        """
+        查询知识图谱，返回答案和图谱推理路径
+        
+        Args:
+            query: 查询字符串
+            index: 图谱索引（可选）
+            return_paths: 是否返回图谱路径
+            
+        Returns:
+            包含答案和图谱路径的字典
+        """
         try:
             logger.info(f"查询知识图谱: {query}")
             
             if index is None:
                 if not self.graph_store:
-                    return "错误: 图存储未初始化"
+                    return {
+                        "answer": "错误: 图存储未初始化",
+                        "paths": []
+                    }
                 
                 # 确保LLM和Embed Model已就绪
                 if not self.llm or not self.embed_model:
                      if not self.initialize():
-                         return "错误: 组件初始化失败"
+                         return {
+                             "answer": "错误: 组件初始化失败",
+                             "paths": []
+                         }
                 
                 logger.info("正在从现有存储加载索引...")
                 try:
@@ -1132,32 +1249,782 @@ class KnowledgeGraphManager:
                     )
                 except Exception as e:
                     logger.error(f"加载现有索引失败: {e}")
-                    return f"加载索引失败: {str(e)}"
+                    return {
+                        "answer": f"加载索引失败: {str(e)}",
+                        "paths": []
+                    }
             
             query_engine = index.as_query_engine(
                 include_text=True,
                 similarity_top_k=5
             )
             
+            # 添加后处理器列表
+            postprocessors = []
+            initial_k = 5  # 默认值
+            
+            # 添加语义补偿后处理器（一度关联节点拉取）
+            try:
+                from semantic_enrichment_postprocessor import SemanticEnrichmentPostprocessor
+                semantic_enricher = SemanticEnrichmentPostprocessor(
+                    graph_store=self.graph_store,
+                    max_neighbors_per_entity=10
+                )
+                postprocessors.append(semantic_enricher)
+                logger.info("✅ 启用语义补偿后处理器（一度关联节点拉取）")
+            except Exception as e:
+                logger.warning(f"语义补偿后处理器初始化失败: {e}")
+            
             # 添加重排序逻辑
             reranker = RerankerFactory.create_reranker()
             if reranker:
                 initial_k = RERANK_CONFIG.get('initial_top_k', 10)
                 logger.info(f"启用重排序: initial_k={initial_k}, model={RERANK_CONFIG.get('model')}")
-                
+                postprocessors.append(reranker)
+            
+            # 如果有后处理器，应用到查询引擎
+            if postprocessors:
                 query_engine = index.as_query_engine(
                     include_text=True,
                     similarity_top_k=initial_k,
-                    node_postprocessors=[reranker]
+                    node_postprocessors=postprocessors
                 )
             
+            # 执行查询
             response = query_engine.query(query)
-            logger.info("✅ 查询完成")
-            return str(response)
+            answer = str(response)
+            
+            # 提取图谱路径
+            paths = []
+            if return_paths:
+                paths = self._extract_graph_paths(query, response, index)
+            
+            logger.info(f"✅ 查询完成，找到 {len(paths)} 条推理路径")
+            
+            return {
+                "answer": answer,
+                "paths": paths
+            }
             
         except Exception as e:
             logger.error(f"查询失败: {e}")
-            return f"查询失败: {str(e)}"
+            return {
+                "answer": f"查询失败: {str(e)}",
+                "paths": []
+            }
+    
+    def _extract_graph_paths(self, query: str, response: Any, index: Any) -> List[Dict[str, Any]]:
+        """
+        从查询响应中提取图谱推理路径（使用智能Graph-Agent）
+        
+        Args:
+            query: 原始查询
+            response: 查询响应对象
+            index: 图谱索引
+            
+        Returns:
+            路径列表，每个路径包含实体和关系链
+        """
+        paths = []
+        try:
+            # 优先使用智能Graph-Agent
+            if self.graph_agent:
+                logger.info("使用智能Graph-Agent进行路径提取")
+                return self._extract_paths_with_agent(query, response, index)
+            
+            # 回退到传统方法
+            logger.info("Graph-Agent不可用，使用传统路径提取方法")
+            return self._extract_paths_traditional(query, response, index)
+            
+        except Exception as e:
+            logger.warning(f"提取图谱路径失败: {e}")
+            import traceback
+            logger.debug(f"路径提取错误堆栈: {traceback.format_exc()}")
+            return paths
+    
+    def _extract_paths_with_agent(self, query: str, response: Any, index: Any) -> List[Dict[str, Any]]:
+        """
+        使用智能Graph-Agent提取图谱路径
+        
+        Args:
+            query: 原始查询
+            response: 查询响应对象
+            index: 图谱索引
+            
+        Returns:
+            路径列表
+        """
+        paths = []
+        
+        try:
+            # 1. 从查询和答案中提取实体
+            entities = self._extract_entities_from_query_and_response(query, response)
+            
+            if not entities:
+                logger.warning("未找到相关实体，无法使用Graph-Agent")
+                return []
+            
+            logger.info(f"提取到 {len(entities)} 个实体: {entities}")
+            
+            # 2. 使用Graph-Agent进行智能查询
+            agent_result = self.graph_agent.query(query, entities)
+            
+            # 3. 将Agent的结果转换为路径格式
+            paths = self._convert_agent_result_to_paths(agent_result)
+            
+            logger.info(f"Graph-Agent返回 {len(paths)} 条路径，意图: {agent_result.get('intent', 'unknown')}")
+            
+        except Exception as e:
+            logger.warning(f"Graph-Agent路径提取失败: {e}")
+            import traceback
+            logger.debug(f"Graph-Agent错误堆栈: {traceback.format_exc()}")
+        
+        return paths
+    
+    def _extract_paths_traditional(self, query: str, response: Any, index: Any) -> List[Dict[str, Any]]:
+        """
+        使用传统方法提取图谱路径
+        
+        Args:
+            query: 原始查询
+            response: 查询响应对象
+            index: 图谱索引
+            
+        Returns:
+            路径列表
+        """
+        paths = []
+        try:
+            graph_store = index.property_graph_store
+            is_neo4j = "Neo4jPropertyGraphStore" in str(type(graph_store))
+            
+            # 1. 从response中提取相关节点
+            query_entities = []
+            answer_entities = []
+            
+            # 尝试从source_nodes中提取实体
+            if hasattr(response, 'source_nodes') and response.source_nodes:
+                for node in response.source_nodes[:5]:  # 最多取前5个节点
+                    if hasattr(node, 'node_id'):
+                        # 尝试从节点属性中提取实体名
+                        if hasattr(node, 'text'):
+                            # 从节点文本中提取实体
+                            node_text = node.text
+                            entities = self._extract_entities_from_text(node_text)
+                            if entities:
+                                query_entities.extend(entities)
+            
+            # 2. 从查询和答案文本中提取实体
+            import re
+            medical_keywords = [
+                "近视", "远视", "散光", "弱视", "斜视", "病理性近视", "轴性近视", "屈光不正", "屈光参差",
+                "眼轴长度", "屈光度", "调节幅度", "调节灵敏度", "眼压", "角膜曲率", "远视储备",
+                "角膜塑形镜", "OK镜", "低浓度阿托品", "RGP镜片", "后巩膜加固术", 
+                "准分子激光手术", "LASIK", "全飞秒激光手术", "SMILE", "眼内接触镜植入", "ICL",
+                "视网膜", "角膜", "晶状体", "视神经", "黄斑区", "脉络膜", "巩膜",
+                "视物模糊", "视力下降", "豹纹状眼底", "视网膜萎缩", "脉络膜萎缩"
+            ]
+            
+            # 从查询中提取实体
+            for keyword in medical_keywords:
+                if keyword in query:
+                    if keyword not in query_entities:
+                        query_entities.append(keyword)
+            
+            # 从答案中提取实体
+            answer_text = str(response)
+            for keyword in medical_keywords:
+                if keyword in answer_text:
+                    if keyword not in answer_entities:
+                        answer_entities.append(keyword)
+            
+            logger.debug(f"提取的查询实体: {query_entities}, 答案实体: {answer_entities}")
+            
+            # 3. 查找从查询实体到答案实体的路径
+            if query_entities or answer_entities:
+                if is_neo4j:
+                    paths = self._find_neo4j_paths(graph_store, query_entities, answer_entities, max_path_length=4)
+                else:
+                    paths = self._find_memory_paths(graph_store, query_entities, answer_entities, max_path_length=4)
+            
+            # 4. 如果没有找到路径，尝试查找答案实体之间的关联路径
+            if not paths and len(answer_entities) >= 2:
+                if is_neo4j:
+                    paths = self._find_neo4j_paths(graph_store, answer_entities[:2], answer_entities[2:], max_path_length=3)
+                else:
+                    paths = self._find_memory_paths(graph_store, answer_entities[:2], answer_entities[2:], max_path_length=3)
+            
+        except Exception as e:
+            logger.warning(f"传统路径提取失败: {e}")
+            import traceback
+            logger.debug(f"路径提取错误堆栈: {traceback.format_exc()}")
+        
+        return paths
+    
+    def _extract_entities_from_query_and_response(self, query: str, response: Any) -> List[str]:
+        """
+        从查询和响应中提取实体
+        
+        Args:
+            query: 查询文本
+            response: 响应对象
+            
+        Returns:
+            实体列表
+        """
+        entities = []
+        
+        # 医学关键词列表
+        medical_keywords = [
+            "近视", "远视", "散光", "弱视", "斜视", "病理性近视", "轴性近视", "屈光不正", "屈光参差",
+            "眼轴长度", "屈光度", "调节幅度", "调节灵敏度", "眼压", "角膜曲率", "远视储备",
+            "角膜塑形镜", "OK镜", "低浓度阿托品", "RGP镜片", "后巩膜加固术", 
+            "准分子激光手术", "LASIK", "全飞秒激光手术", "SMILE", "眼内接触镜植入", "ICL",
+            "视网膜", "角膜", "晶状体", "视神经", "黄斑区", "脉络膜", "巩膜",
+            "视物模糊", "视力下降", "豹纹状眼底", "视网膜萎缩", "脉络膜萎缩",
+            "阿托品", "青少年", "副作用", "治疗", "防控"
+        ]
+        
+        # 从查询中提取实体
+        for keyword in medical_keywords:
+            if keyword in query and keyword not in entities:
+                entities.append(keyword)
+        
+        # 从响应中提取实体
+        answer_text = str(response)
+        for keyword in medical_keywords:
+            if keyword in answer_text and keyword not in entities:
+                entities.append(keyword)
+        
+        # 从source_nodes中提取实体
+        if hasattr(response, 'source_nodes') and response.source_nodes:
+            for node in response.source_nodes[:5]:
+                if hasattr(node, 'text'):
+                    node_text = node.text
+                    node_entities = self._extract_entities_from_text(node_text)
+                    for entity in node_entities:
+                        if entity not in entities:
+                            entities.append(entity)
+        
+        return entities
+    
+    def _convert_agent_result_to_paths(self, agent_result: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        将Graph-Agent的结果转换为路径格式
+        
+        Args:
+            agent_result: Graph-Agent的查询结果
+            
+        Returns:
+            路径列表
+        """
+        paths = []
+        
+        try:
+            path_results = agent_result.get('path_results', [])
+            merged_results = agent_result.get('merged_results', {})
+            
+            # 为每个路径结果创建路径对象
+            for i, results in enumerate(path_results):
+                if not results:
+                    continue
+                
+                # 构建路径实体链
+                entities = []
+                relations = []
+                
+                for result in results:
+                    source = result.get('source', '')
+                    target = result.get('target', '')
+                    relation = result.get('relation', '')
+                    
+                    if source and source not in entities:
+                        entities.append(source)
+                    if target and target not in entities:
+                        entities.append(target)
+                    if relation and relation not in relations:
+                        relations.append(relation)
+                
+                if entities and relations:
+                    paths.append({
+                        "entities": entities,
+                        "relations": relations,
+                        "source": results[0].get('source', ''),
+                        "target": results[-1].get('target', ''),
+                        "relation_chain": relations,
+                        "intent": agent_result.get('intent', 'unknown'),
+                        "confidence": 0.8  # 默认置信度
+                    })
+            
+            # 如果没有路径，尝试从合并结果中创建
+            if not paths and merged_results:
+                entities = list(merged_results.get('entities', {}).keys())
+                relations = list(merged_results.get('relations', {}).keys())
+                
+                if entities and relations:
+                    paths.append({
+                        "entities": entities,
+                        "relations": relations,
+                        "source": entities[0] if len(entities) > 0 else '',
+                        "target": entities[-1] if len(entities) > 1 else '',
+                        "relation_chain": relations,
+                        "intent": agent_result.get('intent', 'unknown'),
+                        "confidence": 0.7
+                    })
+        
+        except Exception as e:
+            logger.warning(f"转换Agent结果失败: {e}")
+        
+        return paths
+    
+    def _extract_entities_from_text(self, text: str) -> List[str]:
+        """从文本中提取实体名"""
+        entities = []
+        medical_keywords = [
+            "近视", "远视", "散光", "弱视", "斜视", "病理性近视", "轴性近视",
+            "眼轴长度", "屈光度", "调节幅度", "眼压", "角膜塑形镜", "OK镜",
+            "低浓度阿托品", "RGP镜片"
+        ]
+        
+        for keyword in medical_keywords:
+            if keyword in text and keyword not in entities:
+                entities.append(keyword)
+        
+        return entities
+    
+    def _find_neo4j_paths(
+        self, 
+        graph_store: Any, 
+        start_entities: List[str], 
+        end_entities: List[str], 
+        max_path_length: int = 3
+    ) -> List[Dict[str, Any]]:
+        """在Neo4j中查找从起始实体到目标实体的路径"""
+        paths = []
+        
+        if not start_entities or not end_entities:
+            return paths
+        
+        try:
+            with graph_store._driver.session() as session:
+                # 为每个起始实体和目标实体对查找路径
+                for start in start_entities[:3]:  # 限制起始实体数量
+                    for end in end_entities[:5]:  # 限制目标实体数量
+                        if start == end:
+                            continue
+                        
+                        # 查找最短路径（使用Cypher的shortestPath或allShortestPaths）
+                        # 先尝试精确匹配
+                        query = """
+                        MATCH (start:Entity), (end:Entity)
+                        WHERE start.name = $start_name AND end.name = $end_name
+                        MATCH path = shortestPath((start)-[*1..%d]->(end))
+                        RETURN path, 
+                               [node in nodes(path) | node.name] as entity_names,
+                               [rel in relationships(path) | COALESCE(rel.label, type(rel))] as relation_labels
+                        LIMIT 5
+                        """ % max_path_length
+                        
+                        try:
+                            result = session.run(query, start_name=start, end_name=end)
+                            for record in result:
+                                # 优先使用提取的实体名和关系标签
+                                entity_names = record.get("entity_names", [])
+                                relation_labels = record.get("relation_labels", [])
+                                
+                                if entity_names and len(entity_names) >= 2:
+                                    path_data = {
+                                        "entities": entity_names,
+                                        "relations": relation_labels,
+                                        "path_string": self._format_path_string(entity_names, relation_labels),
+                                        "length": len(relation_labels)
+                                    }
+                                    paths.append(path_data)
+                                else:
+                                    # 回退到原始路径转换
+                                    path = record.get("path")
+                                    if path:
+                                        path_data = self._convert_neo4j_path_to_dict(path)
+                                        if path_data:
+                                            paths.append(path_data)
+                        except Exception as e:
+                            logger.debug(f"查找路径失败 ({start} -> {end}): {e}")
+                            continue
+                        
+                        # 如果找到了路径，尝试反向路径
+                        try:
+                            reverse_query = """
+                            MATCH (start:Entity), (end:Entity)
+                            WHERE start.name = $end_name AND end.name = $start_name
+                            MATCH path = shortestPath((start)-[*1..%d]->(end))
+                            RETURN path,
+                                   [node in nodes(path) | node.name] as entity_names,
+                                   [rel in relationships(path) | COALESCE(rel.label, type(rel))] as relation_labels
+                            LIMIT 3
+                            """ % max_path_length
+                            
+                            result = session.run(reverse_query, end_name=end, start_name=start)
+                            for record in result:
+                                entity_names = record.get("entity_names", [])
+                                relation_labels = record.get("relation_labels", [])
+                                
+                                if entity_names and len(entity_names) >= 2:
+                                    path_data = {
+                                        "entities": entity_names,
+                                        "relations": relation_labels,
+                                        "path_string": self._format_path_string(entity_names, relation_labels),
+                                        "length": len(relation_labels)
+                                    }
+                                    paths.append(path_data)
+                        except Exception:
+                            pass
+                        
+        except Exception as e:
+            logger.warning(f"Neo4j路径查找失败: {e}")
+        
+        # 去重并限制数量
+        unique_paths = []
+        seen_paths = set()
+        for path in paths[:10]:  # 最多返回10条路径
+            path_key = tuple(path.get("entities", []))
+            if path_key not in seen_paths:
+                seen_paths.add(path_key)
+                unique_paths.append(path)
+        
+        return unique_paths
+    
+    def _find_memory_paths(
+        self, 
+        graph_store: Any, 
+        start_entities: List[str], 
+        end_entities: List[str], 
+        max_path_length: int = 3
+    ) -> List[Dict[str, Any]]:
+        """在内存图中查找从起始实体到目标实体的路径"""
+        paths = []
+        
+        if not start_entities or not end_entities:
+            return paths
+        
+        try:
+            # 获取所有三元组
+            triplets = graph_store.get_triplets()
+            
+            # 构建邻接表
+            adjacency = {}
+            for head, relation, tail in triplets:
+                head_name = head.name if hasattr(head, 'name') else str(head)
+                tail_name = tail.name if hasattr(tail, 'name') else str(tail)
+                relation_label = relation.label if hasattr(relation, 'label') else str(relation)
+                
+                if head_name not in adjacency:
+                    adjacency[head_name] = []
+                adjacency[head_name].append((tail_name, relation_label))
+            
+            # 使用BFS查找路径
+            for start in start_entities[:3]:
+                for end in end_entities[:5]:
+                    if start == end:
+                        continue
+                    
+                    path = self._bfs_find_path(adjacency, start, end, max_path_length)
+                    if path:
+                        entities = [p[0] for p in path]
+                        relations = [p[1] for p in path[1:]]
+                        path_data = {
+                            "entities": entities,
+                            "relations": relations,
+                            "path_string": self._format_path_string(entities, relations),
+                            "length": len(relations)
+                        }
+                        paths.append(path_data)
+            
+        except Exception as e:
+            logger.warning(f"内存图路径查找失败: {e}")
+        
+        # 去重并限制数量
+        unique_paths = []
+        seen_paths = set()
+        for path in paths[:10]:
+            path_key = tuple(path.get("entities", []))
+            if path_key not in seen_paths:
+                seen_paths.add(path_key)
+                unique_paths.append(path)
+        
+        return unique_paths
+    
+    def _bfs_find_path(
+        self, 
+        adjacency: Dict[str, List[Tuple[str, str]]], 
+        start: str, 
+        end: str, 
+        max_depth: int
+    ) -> Optional[List[Tuple[str, str]]]:
+        """使用BFS查找最短路径"""
+        from collections import deque
+        
+        if start not in adjacency:
+            return None
+        
+        queue = deque([(start, [(start, "")])])  # (current_node, path)
+        visited = {start}
+        
+        while queue:
+            current, path = queue.popleft()
+            
+            if len(path) > max_depth + 1:
+                continue
+            
+            if current == end:
+                return path
+            
+            if current in adjacency:
+                for neighbor, relation in adjacency[current]:
+                    if neighbor not in visited:
+                        visited.add(neighbor)
+                        new_path = path + [(neighbor, relation)]
+                        queue.append((neighbor, new_path))
+        
+        return None
+    
+    def _format_path_string(self, entities: List[str], relations: List[str]) -> str:
+        """格式化路径字符串"""
+        if not entities:
+            return ""
+        
+        if not relations:
+            return entities[0] if entities else ""
+        
+        path_parts = [entities[0]]
+        for i, rel in enumerate(relations):
+            if i + 1 < len(entities):
+                path_parts.append(f"-[{rel}]->")
+                path_parts.append(entities[i + 1])
+        
+        return "".join(path_parts)
+    
+    def _convert_neo4j_path_to_dict(self, path: Any) -> Optional[Dict[str, Any]]:
+        """将Neo4j路径对象转换为字典"""
+        try:
+            entities = []
+            relations = []
+            
+            # Neo4j路径通常包含nodes和relationships
+            if hasattr(path, 'nodes'):
+                for node in path.nodes:
+                    if hasattr(node, 'get'):
+                        entities.append(node.get('name', str(node)))
+                    elif hasattr(node, '__getitem__'):
+                        entities.append(node.get('name', str(node)))
+                    else:
+                        entities.append(str(node))
+            
+            if hasattr(path, 'relationships'):
+                for rel in path.relationships:
+                    if hasattr(rel, 'type'):
+                        relations.append(rel.type())
+                    elif hasattr(rel, 'get'):
+                        relations.append(rel.get('label', str(rel)))
+                    elif hasattr(rel, '__getitem__'):
+                        relations.append(rel.get('label', type(rel).__name__))
+                    else:
+                        relations.append(str(rel))
+            
+            if not entities:
+                return None
+            
+            return {
+                "entities": entities,
+                "relations": relations,
+                "path_string": self._format_path_string(entities, relations),
+                "length": len(relations)
+            }
+            
+        except Exception as e:
+            logger.debug(f"转换Neo4j路径失败: {e}")
+            return None
+    
+    def generate_embeddings_for_nodes(self, node_ids: List[str] = None, node_names: List[str] = None) -> Dict[str, Any]:
+        """
+        为指定节点生成 embedding 向量
+        
+        Args:
+            node_ids: 节点ID列表（Neo4j elementId）
+            node_names: 节点名称列表
+            
+        Returns:
+            包含成功和失败信息的字典
+        """
+        if not self.graph_store or not self.embed_model:
+            return {
+                "success": False,
+                "message": "图存储或嵌入模型未初始化",
+                "processed": 0,
+                "failed": 0
+            }
+        
+        is_neo4j = "Neo4jPropertyGraphStore" in str(type(self.graph_store))
+        if not is_neo4j:
+            return {
+                "success": False,
+                "message": "当前图存储不是 Neo4j，无法生成 embedding",
+                "processed": 0,
+                "failed": 0
+            }
+        
+        try:
+            processed_count = 0
+            failed_count = 0
+            failed_nodes = []
+            
+            with self.graph_store._driver.session() as session:
+                # 查询需要生成 embedding 的节点
+                # 条件：没有 embedding 或 source 为 manual/手工录入（手动新增的节点）
+                # 如果明确指定了 node_ids，则只检查是否有 embedding，不限制 source
+                if node_ids:
+                    # 根据节点ID查询（明确指定ID时，只检查是否缺少embedding）
+                    query = """
+                    MATCH (n:__Entity__)
+                    WHERE elementId(n) IN $node_ids
+                    AND n.embedding IS NULL
+                    AND (n.source IS NULL OR n.source IN ['manual', '手工录入'])
+                    RETURN elementId(n) as id, n.name as name, COALESCE(n.label, n.type, '__Entity__') as label
+                    """
+                    result = session.run(query, node_ids=node_ids)
+                elif node_names:
+                    # 根据节点名称查询（只检查是否缺少embedding）
+                    query = """
+                    MATCH (n:__Entity__)
+                    WHERE n.name IN $node_names
+                    AND n.embedding IS NULL
+                    AND (n.source IS NULL OR n.source IN ['manual', '手工录入'])
+                    RETURN elementId(n) as id, n.name as name, COALESCE(n.label, n.type, '__Entity__') as label
+                    """
+                    result = session.run(query, node_names=node_names)
+                else:
+                    # 查询所有没有 embedding 的 manual/手工录入节点
+                    query = """
+                    MATCH (n:__Entity__)
+                    WHERE n.embedding IS NULL 
+                    AND (n.source IS NULL OR n.source IN ['manual', '手工录入'])
+                    RETURN elementId(n) as id, n.name as name, COALESCE(n.label, n.type, '__Entity__') as label
+                    LIMIT 100
+                    """
+                    result = session.run(query)
+                
+                nodes_to_process = []
+                for record in result:
+                    nodes_to_process.append({
+                        "id": record["id"],
+                        "name": record["name"],
+                        "label": record["label"]  # COALESCE 后的 label，用于生成 embedding 文本
+                    })
+                
+                if not nodes_to_process:
+                    return {
+                        "success": True,
+                        "message": "没有需要生成 embedding 的节点",
+                        "processed": 0,
+                        "failed": 0
+                    }
+                
+                logger.info(f"准备为 {len(nodes_to_process)} 个节点生成 embedding")
+                
+                # 批量生成 embedding
+                for node_info in nodes_to_process:
+                    try:
+                        # 构建用于生成 embedding 的文本
+                        # 格式：节点名称 + 节点类型（如果有且不是默认的Entity）
+                        embed_text = node_info["name"]
+                        if node_info["label"] and node_info["label"] != "Entity":
+                            embed_text = f"{node_info['name']} {node_info['label']}"
+                        
+                        # 生成 embedding
+                        logger.info(f"正在为节点 '{node_info['name']}' (ID: {node_info['id']}) 生成 embedding，文本: {embed_text}")
+                        embedding = self.embed_model.get_text_embedding(embed_text)
+                        
+                        if not embedding or len(embedding) == 0:
+                            raise ValueError(f"生成的 embedding 为空")
+                        
+                        logger.info(f"生成的 embedding 维度: {len(embedding)}")
+                        
+                        # 更新节点属性和标签（labels）
+                        # 为手动新增的节点添加 'manual' 标签（Neo4j 的 labels，不是属性）
+                        # 同时确保节点的 label 属性存在（如果没有则设置为 '__Entity__'）
+                        update_query = """
+                        MATCH (n:__Entity__)
+                        WHERE elementId(n) = $node_id
+                        SET n.embedding = $embedding,
+                            n.updated_at = timestamp(),
+                            n:manual,
+                            n.label = CASE 
+                                WHEN n.label IS NULL THEN '__Entity__'
+                                ELSE n.label
+                            END
+                        RETURN n.name as name, 
+                               n.embedding IS NOT NULL as has_embedding,
+                               labels(n) as labels,
+                               n.label as label
+                        """
+                        result = session.run(update_query, node_id=node_info["id"], embedding=embedding)
+                        
+                        # 验证是否成功更新
+                        record = result.single()
+                        if not record:
+                            raise ValueError(f"节点 {node_info['id']} 不存在或更新失败")
+                        
+                        # 验证 embedding、labels 和 label 是否真的写入
+                        verify_query = """
+                        MATCH (n)
+                        WHERE elementId(n) = $node_id
+                        RETURN n.embedding IS NOT NULL as has_embedding, 
+                               size(n.embedding) as embedding_size,
+                               labels(n) as labels,
+                               n.label as label
+                        """
+                        verify_result = session.run(verify_query, node_id=node_info["id"])
+                        verify_record = verify_result.single()
+                        
+                        if verify_record and verify_record["has_embedding"]:
+                            labels_info = f"，labels: {verify_record.get('labels', [])}"
+                            label_info = f"，label属性: {verify_record.get('label', 'N/A')}"
+                            logger.info(
+                                f"✅ 已为节点 '{node_info['name']}' 生成并写入 embedding "
+                                f"(维度: {verify_record.get('embedding_size', 'N/A')}{labels_info}{label_info})"
+                            )
+                            processed_count += 1
+                        else:
+                            raise ValueError(f"节点更新成功但验证时未找到 embedding 属性")
+                        
+                        
+                    except Exception as e:
+                        failed_count += 1
+                        failed_nodes.append({
+                            "name": node_info.get("name", "Unknown"),
+                            "error": str(e)
+                        })
+                        logger.warning(f"❌ 为节点 '{node_info.get('name')}' 生成 embedding 失败: {e}")
+                
+                message = f"成功为 {processed_count} 个节点生成 embedding"
+                if failed_count > 0:
+                    message += f"，{failed_count} 个节点失败"
+                
+                return {
+                    "success": True,
+                    "message": message,
+                    "processed": processed_count,
+                    "failed": failed_count,
+                    "failed_nodes": failed_nodes if failed_nodes else None
+                }
+                
+        except Exception as e:
+            logger.error(f"生成节点 embedding 时发生错误: {e}")
+            return {
+                "success": False,
+                "message": f"生成 embedding 失败: {str(e)}",
+                "processed": processed_count,
+                "failed": failed_count
+            }
 
 # 全局构建器实例 - 为了保持兼容性，变量名仍为 builder
 builder = KnowledgeGraphManager()

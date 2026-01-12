@@ -603,33 +603,33 @@ class KnowledgeGraphManager:
             else:
                 progress_callback("knowledge_graph", "开始构建知识图谱...", 20)
             
-            # 0. 预处理：基于别名映射替换文本中的非标实体
-            if EXTRACTOR_CONFIG.get("alias_mapping"):
-                logger.info("正在执行文本预处理：别名替换...")
-                mapping = EXTRACTOR_CONFIG["alias_mapping"]
+            # # 0. 预处理：基于别名映射替换文本中的非标实体
+            # if EXTRACTOR_CONFIG.get("alias_mapping"):
+            #     logger.info("正在执行文本预处理：别名替换...")
+            #     mapping = EXTRACTOR_CONFIG["alias_mapping"]
                 
-                # 预编译正则：按长度降序排序，确保优先匹配长词
-                sorted_aliases = sorted(mapping.keys(), key=len, reverse=True)
-                pattern_str = '|'.join(map(re.escape, sorted_aliases))
-                pattern = re.compile(pattern_str)
+            #     # 预编译正则：按长度降序排序，确保优先匹配长词
+            #     sorted_aliases = sorted(mapping.keys(), key=len, reverse=True)
+            #     pattern_str = '|'.join(map(re.escape, sorted_aliases))
+            #     pattern = re.compile(pattern_str)
                 
-                processed_count = 0
-                for doc in documents:
-                    if not hasattr(doc, "text") or not doc.text:
-                        continue
+            #     processed_count = 0
+            #     for doc in documents:
+            #         if not hasattr(doc, "text") or not doc.text:
+            #             continue
                     
-                    original_text = doc.text
-                    # 使用正则一次性替换，避免递归替换问题 (如 AL->眼轴长度, 然后 眼轴->眼轴长度 => 眼轴长度长度)
-                    modified_text = pattern.sub(lambda m: mapping[m.group(0)], original_text)
+            #         original_text = doc.text
+            #         # 使用正则一次性替换，避免递归替换问题 (如 AL->眼轴长度, 然后 眼轴->眼轴长度 => 眼轴长度长度)
+            #         modified_text = pattern.sub(lambda m: mapping[m.group(0)], original_text)
                     
-                    if modified_text != original_text:
-                        if hasattr(doc, "set_content"):
-                            doc.set_content(modified_text)
-                        else:
-                            doc.text = modified_text
-                        processed_count += 1
+            #         if modified_text != original_text:
+            #             if hasattr(doc, "set_content"):
+            #                 doc.set_content(modified_text)
+            #             else:
+            #                 doc.text = modified_text
+            #             processed_count += 1
                 
-                logger.info(f"别名替换完成，共修改了 {processed_count} 个文档")
+            #     logger.info(f"别名替换完成，共修改了 {processed_count} 个文档")
 
             # 创建提取器
             if progress_tracker:
@@ -700,10 +700,10 @@ class KnowledgeGraphManager:
                 # 插入节点
                 index.insert_nodes(batch)
             
-            # 3. 后处理：创建语义弱关联
-            if progress_tracker:
-                progress_tracker.update_stage("knowledge_graph", "正在分析语义弱关联...", 95)
-            self._create_semantic_relationships(documents, index)
+            # # 3. 后处理：创建语义弱关联
+            # if progress_tracker:
+            #     progress_tracker.update_stage("knowledge_graph", "正在分析语义弱关联...", 95)
+            # self._create_semantic_relationships(documents, index)
             
             self.metrics["processed_docs"] = total_docs
             e_count, r_count = self._get_graph_counts(self.graph_store)

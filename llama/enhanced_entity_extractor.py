@@ -499,9 +499,9 @@ class StandardTermMapper:
             processed_triplets.append(triplet)
         
         # 执行批量验证
-        valid_count = len(processed_triplets)
-        original_count = len(triplets)
-        if valid_count < original_count:
-            logger.info(f"Gate Filtered: {original_count} -> {valid_count} triplets (Discarded {original_count - valid_count})")
+        # valid_count = len(processed_triplets)
+        # original_count = len(triplets)
+        # if valid_count < original_count:
+        #     logger.info(f"Gate Filtered: {original_count} -> {valid_count} triplets (Discarded {original_count - valid_count})")
             
         return cls.validate_batch(processed_triplets)

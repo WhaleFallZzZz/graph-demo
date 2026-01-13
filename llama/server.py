@@ -546,53 +546,63 @@ def generate_node_embeddings():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search_knowledge_graph():
-    """根据传参msg来检索知识图谱"""
+    """根据传参msg来检索知识图谱
+    固定以SSE流式输出
+    """
     try:
-        # 获取查询参数
         msg = request.args.get('msg')
         if not msg and request.is_json:
-            msg = request.json.get('msg')
-            
+            json_data = request.json
+            msg = json_data.get('msg')
+        
         if not msg:
-            return jsonify({
-                'code': 400, 
-                'msg': '缺少msg参数', 
-                'data': None
-            }), 400
+            return Response(sse_event(create_error_event("search", "缺少msg参数")), mimetype='text/event-stream'), 400
             
         # 确保构建器已初始化
         if not builder.llm or not builder.graph_store:
-            # 尝试重新初始化
             logger.info("构建器组件未就绪，尝试初始化...")
             builder.initialize()
-            
-        # 执行查询（返回答案和图谱路径）
-        logger.info(f"收到搜索请求: {msg}")
-        result = builder.query_knowledge_graph(msg, return_paths=True)
         
-        # 兼容旧接口：如果result是字符串，转换为字典格式
-        if isinstance(result, str):
-            result = {
-                "answer": result,
-                "paths": []
-            }
+        logger.info(f"收到流式搜索请求: {msg}")
         
-        return jsonify({
-            'code': 200, 
-            'msg': 'success', 
-            'data': {
-                'answer': result.get('answer', ''),
-                'paths': result.get('paths', []),
-                'query': msg
+        def generate():
+            stream_gen = builder.stream_query_knowledge_graph(msg)
+            for item in stream_gen:
+                if isinstance(item, str):
+                    if item.startswith("错误:") or item.startswith("查询出错:"):
+                         yield sse_event(create_error_event("search", item))
+                    else:
+                         yield sse_event({
+                             "event": "delta",
+                             "data": {"text": item}
+                         })
+                elif isinstance(item, dict) and item.get("type") == "graph_paths":
+                    yield sse_event({
+                        "event": "graph_data",
+                        "data": item["data"]
+                    })
+                elif isinstance(item, dict) and item.get("type") == "done":
+                    yield sse_event({
+                        "event": "done",
+                        "data": {"full_answer": item.get("full_answer", "")}
+                    })
+                elif isinstance(item, dict):
+                    yield sse_event(item)
+                else:
+                    logger.warning(f"未知的流式返回类型: {type(item)}")
+        
+        return Response(
+            stream_with_context(generate()),
+            mimetype='text/event-stream',
+            headers={
+                'Cache-Control': 'no-cache',
+                'X-Accel-Buffering': 'no',
+                'Access-Control-Allow-Origin': '*'
             }
-        })
+        )
     except Exception as e:
         logger.error(f"搜索接口出错: {e}")
-        return jsonify({
-            'code': 500, 
-            'msg': f"搜索失败: {str(e)}", 
-            'data': None
-        }), 500
+        return Response(sse_event(create_error_event("unknown", str(e))), mimetype='text/event-stream'), 500
 
 if __name__ == '__main__':
     # 初始化构建器

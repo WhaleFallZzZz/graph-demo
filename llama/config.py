@@ -360,6 +360,28 @@ OSS_CONFIG = {
 }
 
 # 重排序配置 (Rerank)
+# 实体描述生成配置
+ENTITY_DESCRIPTION_CONFIG = {
+    "enable": os.getenv("ENTITY_DESCRIPTION_ENABLE", "true").lower() == "true",
+    "core_entity_types": ["疾病", "治疗防控"],  # 核心实体类型（已弃用，现在为所有节点生成）
+    "num_workers": int(os.getenv("ENTITY_DESCRIPTION_NUM_WORKERS", "2")),  # 并行worker数量
+    "request_delay": float(os.getenv("ENTITY_DESCRIPTION_REQUEST_DELAY", "0.3")),  # 请求延迟（秒）
+    "max_retries": int(os.getenv("ENTITY_DESCRIPTION_MAX_RETRIES", "3")),  # 最大重试次数
+    "retry_delay": float(os.getenv("ENTITY_DESCRIPTION_RETRY_DELAY", "5.0")),  # 重试延迟（秒）
+    "description_prompt": """你是一名专业的眼科医学专家。请为以下医学实体生成一个简短的医学定义（20-50字）。
+
+实体名称：{entity_name}
+实体类型：{entity_type}
+
+要求：
+1. 定义要简洁、准确、专业
+2. 使用医学专业术语
+3. 控制在20-50字之间
+4. 只输出定义内容，不要包含任何其他说明或格式
+
+实体定义："""
+}
+
 RERANK_CONFIG = {
     "enable": os.getenv("RERANK_ENABLE", "true").lower() == "true",
     "provider": os.getenv("RERANK_PROVIDER", "siliconflow"),

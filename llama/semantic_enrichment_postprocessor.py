@@ -3,7 +3,7 @@
 当向量检索找到实体时，自动拉取该实体在图谱中的一度关联节点作为语义补偿
 """
 import logging
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Dict
 from llama_index.core.postprocessor.types import BaseNodePostprocessor
 from llama_index.core.schema import NodeWithScore, QueryBundle, TextNode, MetadataMode
 
@@ -15,6 +15,8 @@ class SemanticEnrichmentPostprocessor(BaseNodePostprocessor):
     语义补偿后处理器
     从检索到的实体中提取一度关联节点，作为额外的上下文信息
     """
+    graph_store: Any
+    max_neighbors_per_entity: int = 10
     
     def __init__(
         self,
@@ -29,9 +31,11 @@ class SemanticEnrichmentPostprocessor(BaseNodePostprocessor):
             graph_store: 图存储实例
             max_neighbors_per_entity: 每个实体最多拉取的关联节点数
         """
-        super().__init__(**kwargs)
-        self.graph_store = graph_store
-        self.max_neighbors_per_entity = max_neighbors_per_entity
+        super().__init__(
+            graph_store=graph_store,
+            max_neighbors_per_entity=max_neighbors_per_entity,
+            **kwargs
+        )
     
     @classmethod
     def class_name(cls) -> str:

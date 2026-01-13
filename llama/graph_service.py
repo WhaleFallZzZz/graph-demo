@@ -217,7 +217,7 @@ class GraphService:
                 if not hasattr(doc, 'metadata'):
                     doc.metadata = {}
                 # 保存原始文件名信息
-                doc.metadata['source_file_name'] = filename
+                # doc.metadata['source_file_name'] = filename
                 doc.metadata['created_at'] = int(datetime.now().timestamp())
                 doc.metadata['updated_at'] = 0
                 doc.metadata['deleted_at'] = 0

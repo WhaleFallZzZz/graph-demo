@@ -59,11 +59,11 @@ class EnhancedEntityExtractor:
         
         if parsed_dicts:
             for item in parsed_dicts:
-                head = item.get("head", "").strip()
-                head_type = item.get("head_type", "").strip()
-                relation = item.get("relation", "").strip()
-                tail = item.get("tail", "").strip()
-                tail_type = item.get("tail_type", "").strip()
+                head = (item.get("head") or "").strip()
+                head_type = (item.get("head_type") or "").strip()
+                relation = (item.get("relation") or "").strip()
+                tail = (item.get("tail") or "").strip()
+                tail_type = (item.get("tail_type") or "").strip()
                 
                 # 只有当head, relation, tail都存在且不全是标点符号时才添加
                 if head and relation and tail:
@@ -71,13 +71,23 @@ class EnhancedEntityExtractor:
                     if tail in {",", ".", "。", "，", "、"}:
                          logger.warning(f"检测到无效的尾部实体(标点符号): '{tail}'，跳过该三元组")
                          continue
+                    
+                    # 确保实体类型和关系不为空或 None
+                    head_type = head_type.strip() if head_type else "概念"
+                    tail_type = tail_type.strip() if tail_type else "概念"
+                    relation = relation.strip() if relation else None
+                    
+                    # 如果关系为空，跳过该三元组
+                    if not relation:
+                        logger.warning(f"关系类型为空，跳过三元组: {head} - {relation} - {tail}")
+                        continue
 
                     enhanced_triplets.append({
                         "head": head,
-                        "head_type": head_type or "概念",
+                        "head_type": head_type,
                         "relation": relation,
                         "tail": tail,
-                        "tail_type": tail_type or "概念"
+                        "tail_type": tail_type
                     })
                     
                     logger.debug(f"提取LLM语义三元组: {head}({head_type}) - {relation} - {tail}({tail_type})")
@@ -181,9 +191,24 @@ def parse_llm_output_to_enhanced_triplets(llm_output: str) -> List[Tuple[EntityN
             original_relation_length = len(relation_type)
             relation_type = Neo4jTextSanitizer.sanitize_relation_label(relation_type, max_length=10)
             
-            # 清理实体类型(Label)
+            # 清理实体类型(Label) - 确保有默认值
+            head_type = head_type or "概念"
+            tail_type = tail_type or "概念"
             head_type = Neo4jTextSanitizer.sanitize_entity_type(head_type)
             tail_type = Neo4jTextSanitizer.sanitize_entity_type(tail_type)
+            
+            # 确保清理后不为 None 或空字符串
+            if not head_type or head_type == "None":
+                head_type = "概念"
+                logger.warning(f"实体类型为空，使用默认值 '概念': {head_name}")
+            if not tail_type or tail_type == "None":
+                tail_type = "概念"
+                logger.warning(f"实体类型为空，使用默认值 '概念': {tail_name}")
+            
+            # 验证关系类型不为空
+            if not relation_type or relation_type == "None":
+                logger.warning(f"关系类型为空，跳过三元组: {head_name} - {relation_type} - {tail_name}")
+                continue
             
             # 如果清理后发生了变化，记录日志
             relation_changed = original_relation != relation_type
@@ -283,8 +308,20 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
     def _call_llm_api(self, prompt: str, llm_instance: Any = None) -> str:
         """调用LLM API并返回结果"""
         target_llm = llm_instance or self.llm
-        response = target_llm.complete(prompt)
-        return response.text
+        try:
+            response = target_llm.complete(prompt)
+            if hasattr(response, 'text'):
+                return response.text
+            else:
+                # 如果 response 没有 text 属性，尝试其他方式获取
+                logger.error(f"LLM response 没有 text 属性: {type(response)}, {response}")
+                raise ValueError(f"LLM response 格式错误: {type(response)}")
+        except KeyError as e:
+            logger.error(f"LLM API 调用失败 (KeyError): {e}, response type: {type(response) if 'response' in locals() else 'unknown'}")
+            raise
+        except Exception as e:
+            logger.error(f"LLM API 调用失败: {e}, prompt length: {len(prompt)}")
+            raise
 
     @retry_on_failure(max_retries=3, delay=0.1)
     def _write_to_file(self, output_path: str, header: str, content: str) -> None:
@@ -504,7 +541,9 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
                     logger.info(f"✅ 批次 {i//batch_size + 1}: 处理了 {len(batch_nodes)} 个节点")
                     
             except Exception as e:
+                import traceback
                 logger.error(f"阶段1（批量实体）失败: {e}")
+                logger.error(f"错误详情: {traceback.format_exc()}")
                 # 回退到单独处理
                 for node_idx, node in enumerate(nodes):
                     try:
@@ -513,7 +552,9 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
                         entities = self._parse_entities(output)
                         relation_queue.put((node_idx, node, entities))
                     except Exception as err:
+                        import traceback
                         logger.error(f"节点 {node_idx} 的回退实体提取失败: {err}")
+                        logger.error(f"错误详情: {traceback.format_exc()}")
                         relation_queue.put((node_idx, node, []))
 
         def _build_batch_entity_prompt(self, batch_nodes: List[BaseNode]) -> str:
@@ -644,7 +685,11 @@ class MultiStageLLMExtractor(DynamicLLMPathExtractor):
                     check_memory()
                     
                 except Exception as e:
+                    import traceback
                     logger.error(f"节点 {node_idx} 的阶段2（关系）失败: {e}")
+                    logger.error(f"错误详情: {traceback.format_exc()}")
+                    # 设置空结果，避免影响后续处理
+                    results[node_idx] = {"kg_triplets": []}
 
         # 启动消费者
         consumer_threads = []

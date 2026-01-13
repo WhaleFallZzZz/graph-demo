@@ -338,7 +338,7 @@ class StandardTermMapper:
                     best_ratio = ratio
                     best_match = std
             
-            if best_ratio > 0.85:
+            if best_ratio > 0.80:
                 logger.debug(f"Levenshtein Match: '{clean_name}' -> '{best_match}' ({best_ratio:.2f})")
                 result = best_match
             
@@ -364,7 +364,7 @@ class StandardTermMapper:
                                     best_vec_score = score
                                     best_vec_match = std
                             
-                            if best_vec_score > 0.65:
+                            if best_vec_score > 0.60:
                                 logger.info(f"Vector Hard-Correction: '{clean_name}' -> '{best_vec_match}' ({best_vec_score:.2f})")
                                 result = best_vec_match
                 except Exception as e:
@@ -479,13 +479,13 @@ class StandardTermMapper:
             
             # Gate: 硬拦截
             # 如果归一化后的实体仍不在标准列表中，说明相似度低，直接丢弃
-            if std_head not in cls.STANDARD_ENTITIES:
-                logger.debug(f"Gate Discard: Head '{std_head}' (orig: '{head}') not in standard list.")
-                continue
+            # if std_head not in cls.STANDARD_ENTITIES:
+            #     logger.debug(f"Gate Discard: Head '{std_head}' (orig: '{head}') not in standard list.")
+            #     continue
                 
-            if std_tail not in cls.STANDARD_ENTITIES:
-                logger.debug(f"Gate Discard: Tail '{std_tail}' (orig: '{tail}') not in standard list.")
-                continue
+            # if std_tail not in cls.STANDARD_ENTITIES:
+            #     logger.debug(f"Gate Discard: Tail '{std_tail}' (orig: '{tail}') not in standard list.")
+            #     continue
             
             # 记录变化
             if std_head != head:

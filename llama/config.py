@@ -144,7 +144,7 @@ DOCUMENT_CONFIG = {
 
 # 提取器配置
 EXTRACTOR_CONFIG = {
-    "max_triplets_per_chunk": 20, # 增加提取数量以提高召回率
+    "max_triplets_per_chunk": 25, # 增加提取数量以提高召回率
     "num_workers": 10, # 每个worker的工作线程数 (40/4=10)，4个worker总共40
     "extract_prompt": """# Role: 青少年眼科视光知识图谱建模专家  
 ## 核心任务  

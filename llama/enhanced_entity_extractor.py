@@ -342,7 +342,7 @@ class StandardTermMapper:
                 logger.debug(f"Levenshtein Match: '{clean_name}' -> '{best_match}' ({best_ratio:.2f})")
                 result = best_match
             
-            # 3. Vector 硬纠偏 (Threshold 0.8) - 仅当 Levenshtein 失败且长度足够时尝试
+            # 3. Vector 硬纠偏 (Threshold 0.65) - 仅当 Levenshtein 失败且长度足够时尝试
             elif len(clean_name) >= 2: 
                 try:
                     cls._ensure_standard_embeddings()
@@ -364,7 +364,7 @@ class StandardTermMapper:
                                     best_vec_score = score
                                     best_vec_match = std
                             
-                            if best_vec_score > 0.8:
+                            if best_vec_score > 0.65:
                                 logger.info(f"Vector Hard-Correction: '{clean_name}' -> '{best_vec_match}' ({best_vec_score:.2f})")
                                 result = best_vec_match
                 except Exception as e:

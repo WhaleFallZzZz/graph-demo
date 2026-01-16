@@ -20,26 +20,8 @@ logger = logging.getLogger(__name__)
 class Neo4jTextSanitizer:
     """Neo4j文本清理器 - 处理实体名称和关系标签中的特殊字符"""
     
-    # 标准实体列表（用于强映射）
-    STANDARD_ENTITIES = {
-        # 疾病
-        "近视", "远视", "散光", "弱视", "斜视", "外斜", "内斜", "病理性近视", "轴性近视", 
-        "屈光不正", "屈光参差", "老视", "并发性白内障", "后巩膜葡萄肿",
-        # 症状体征
-        "视物模糊", "眼胀", "虹视", "眼痛", "畏光", "流泪", "视力下降", "豹纹状眼底", 
-        "视网膜萎缩", "脉络膜萎缩", "黄斑出血", "漆样裂纹", "视盘杯盘比(C/D)扩大", 
-        "眼压升高", "瞳孔放大", "活动受限",
-        # 解剖结构
-        "角膜", "晶状体", "视网膜", "视神经", "黄斑区", "中心凹", "睫状肌", "悬韧带", 
-        "脉络膜", "巩膜", "前房", "房水",
-        # 检查参数
-        "眼轴长度", "屈光度", "远视储备", "调节幅度", "调节灵敏度", "眼压", "角膜曲率", 
-        "调节滞后", "五分记录法", "LogMAR视力表",
-        # 治疗防控
-        "户外活动", "角膜塑形镜(OK镜)", "低浓度阿托品", "RGP镜片", "后巩膜加固术", 
-        "离焦框架镜", "视觉训练", "准分子激光手术(LASIK)", "全飞秒激光手术(SMILE)", 
-        "眼内接触镜植入(ICL)"
-    }
+    # 标准实体列表（用于强映射） - Empty for greedy mode
+    STANDARD_ENTITIES = set()
     
     # 相似度阈值
     SIMILARITY_THRESHOLD = 0.85
@@ -102,6 +84,7 @@ class Neo4jTextSanitizer:
     def sanitize_node_name(cls, text: str, max_length: int = 200) -> str:
         """
         清理节点名称
+        已注释：移除除了防注入以外的所有过滤逻辑
         
         Args:
             text: 原始文本
@@ -118,34 +101,32 @@ class Neo4jTextSanitizer:
         if not cleaned:
             return "Unknown_Entity"
             
-        # 1.5 别名查表 (Alias Lookup)
-        # 优先检查是否存在于别名表中，如果存在直接映射
-        alias_mapping = EXTRACTOR_CONFIG.get("alias_mapping", {})
-        if cleaned in alias_mapping:
-            standard_name = alias_mapping[cleaned]
-            logger.info(f"别名映射生效: '{cleaned}' -> '{standard_name}'")
-            return standard_name
+        # 1.5 别名查表 (Alias Lookup) - 已注释
+        # alias_mapping = EXTRACTOR_CONFIG.get("alias_mapping", {})
+        # if cleaned in alias_mapping:
+        #     standard_name = alias_mapping[cleaned]
+        #     logger.info(f"别名映射生效: '{cleaned}' -> '{standard_name}'")
+        #     return standard_name
             
-        # 2. 强映射门控 (Hard-Mapping Gate)
-        # 如果实体不在标准库中，尝试模糊匹配
-        if cleaned not in cls.STANDARD_ENTITIES:
-            # 2.1 长度差异过大则跳过匹配（优化性能）
-            # 只对长度相近的词进行匹配 (长度差 <= 4)
-            potential_matches = [
-                std for std in cls.STANDARD_ENTITIES 
-                if abs(len(std) - len(cleaned)) <= 4
-            ]
-            
-            if potential_matches:
-                # 2.2 使用 difflib 计算 Levenshtein 相似度
-                matches = difflib.get_close_matches(cleaned, potential_matches, n=1, cutoff=cls.SIMILARITY_THRESHOLD)
-                
-                if matches:
-                    best_match = matches[0]
-                    logger.info(f"强映射生效: '{cleaned}' -> '{best_match}' (Similarity > {cls.SIMILARITY_THRESHOLD})")
-                    return best_match
+        # 2. 强映射门控 (Hard-Mapping Gate) - 已注释
+        # if cleaned not in cls.STANDARD_ENTITIES:
+        #     # 2.1 长度差异过大则跳过匹配（优化性能）
+        #     # 只对长度相近的词进行匹配 (长度差 <= 4)
+        #     potential_matches = [
+        #         std for std in cls.STANDARD_ENTITIES 
+        #         if abs(len(std) - len(cleaned)) <= 4
+        #     ]
+        #     
+        #     if potential_matches:
+        #         # 2.2 使用 difflib 计算 Levenshtein 相似度
+        #         matches = difflib.get_close_matches(cleaned, potential_matches, n=1, cutoff=cls.SIMILARITY_THRESHOLD)
+        #         
+        #         if matches:
+        #             best_match = matches[0]
+        #             logger.info(f"强映射生效: '{cleaned}' -> '{best_match}' (Similarity > {cls.SIMILARITY_THRESHOLD})")
+        #             return best_match
                     
-        # 3. 移除危险字符和控制字符
+        # 3. 移除危险字符和控制字符 - 保留（防注入）
         result = []
         for char in cleaned:
             if char in cls.REMOVE_CHARS:
@@ -159,10 +140,10 @@ class Neo4jTextSanitizer:
                 
         cleaned = "".join(result)
         
-        # 4. 长度限制
-        if len(cleaned) > max_length:
-            logger.warning(f"节点名称过长，已截断: {cleaned[:20]}... (Len: {len(cleaned)})")
-            cleaned = cleaned[:max_length]
+        # 4. 长度限制 - 已注释
+        # if len(cleaned) > max_length:
+        #     logger.warning(f"节点名称过长，已截断: {cleaned[:20]}... (Len: {len(cleaned)})")
+        #     cleaned = cleaned[:max_length]
             
         # 5. 空结果处理
         if not cleaned:
@@ -175,6 +156,7 @@ class Neo4jTextSanitizer:
         """
         清理关系标签（带关系规范化）
         关系标签需要更严格的清理，直接移除引号等字符，并简化过长的描述
+        已注释：移除除了防注入以外的所有过滤逻辑
         
         Args:
             text: 原始关系标签
@@ -186,48 +168,48 @@ class Neo4jTextSanitizer:
         if not text:
             return "关联"
         
-        # 首先进行关系规范化（简化长描述）
-        try:
-            from relation_normalizer import RelationNormalizer
-            text = RelationNormalizer.normalize(text, max_length=max_length)
-        except ImportError:
-            logger.warning("RelationNormalizer 未找到，使用基本清理")
-        except Exception as e:
-            logger.warning(f"关系规范化失败: {e}，使用基本清理")
+        # 首先进行关系规范化（简化长描述） - 已注释
+        # try:
+        #     from relation_normalizer import RelationNormalizer
+        #     text = RelationNormalizer.normalize(text, max_length=max_length)
+        # except ImportError:
+        #     logger.warning("RelationNormalizer 未找到，使用基本清理")
+        # except Exception as e:
+        #     logger.warning(f"关系规范化失败: {e}，使用基本清理")
         
-        # 1. 基本清理
+        # 1. 基本清理 - 保留（防注入）
         text = str(text).strip()
         
-        # 2. 移除控制字符
+        # 2. 移除控制字符 - 保留（防注入）
         for char, replacement in cls.REMOVE_CHARS.items():
             text = text.replace(char, replacement)
         
-        # 3. 优先使用关系标签专用的移除规则（直接删除引号等）
-        for char, replacement in cls.RELATION_REMOVE_CHARS.items():
-            text = text.replace(char, replacement)
+        # 3. 优先使用关系标签专用的移除规则（直接删除引号等） - 已注释
+        # for char, replacement in cls.RELATION_REMOVE_CHARS.items():
+        #     text = text.replace(char, replacement)
         
-        # 4. 其他特殊字符替换为全角
-        for char, replacement in cls.SPECIAL_CHARS.items():
-            # 跳过已经处理的字符
-            if char not in cls.RELATION_REMOVE_CHARS:
-                text = text.replace(char, replacement)
+        # 4. 其他特殊字符替换为全角 - 已注释
+        # for char, replacement in cls.SPECIAL_CHARS.items():
+        #     # 跳过已经处理的字符
+        #     if char not in cls.RELATION_REMOVE_CHARS:
+        #         text = text.replace(char, replacement)
         
-        # 5. 多个空格合并
-        text = re.sub(r'\s+', ' ', text)
+        # 5. 多个空格合并 - 已注释
+        # text = re.sub(r'\s+', ' ', text)
         
-        # 6. 去除首尾空格
+        # 6. 去除首尾空格 - 保留（防注入）
         text = text.strip()
         
-        # 7. 检查Cypher关键字
+        # 7. 检查Cypher关键字 - 保留（防注入）
         if text.upper() in cls.CYPHER_KEYWORDS:
             text = f"REL_{text}"
             logger.warning(f"关系标签是Cypher关键字，添加前缀: {text}")
         
-        # 8. 长度限制（再次检查，确保不超过限制）
-        if len(text) > max_length:
-            original_length = len(text)
-            text = text[:max_length]
-            logger.warning(f"关系标签过长({original_length}字符)，截断到{max_length}字符: {text}...")
+        # 8. 长度限制（再次检查，确保不超过限制） - 已注释
+        # if len(text) > max_length:
+        #     original_length = len(text)
+        #     text = text[:max_length]
+        #     logger.warning(f"关系标签过长({original_length}字符)，截断到{max_length}字符: {text}...")
         
         # 9. 确保不为空
         if not text:
@@ -241,6 +223,7 @@ class Neo4jTextSanitizer:
         """
         清理实体类型(Label)
         要求更严格,因为Neo4j的Label有更多限制
+        已注释：移除除了防注入以外的所有过滤逻辑
         
         Args:
             text: 原始实体类型
@@ -251,32 +234,32 @@ class Neo4jTextSanitizer:
         if not text:
             return "Entity"
         
-        # 1. 基本清理
+        # 1. 基本清理 - 保留（防注入）
         text = str(text).strip()
         
-        # 2. 移除所有特殊字符和空格
-        # Label只能包含字母、数字、下划线、汉字
-        # 保留汉字、字母、数字、下划线
-        text = re.sub(r'[^\w\u4e00-\u9fff]', '_', text)
+        # 2. 移除所有特殊字符和空格 - 已注释
+        # # Label只能包含字母、数字、下划线、汉字
+        # # 保留汉字、字母、数字、下划线
+        # text = re.sub(r'[^\w\u4e00-\u9fff]', '_', text)
         
-        # 3. 不能以数字开头
-        if text and text[0].isdigit():
-            text = f"Type_{text}"
+        # 3. 不能以数字开头 - 已注释
+        # if text and text[0].isdigit():
+        #     text = f"Type_{text}"
         
-        # 4. 多个下划线合并为一个
-        text = re.sub(r'_+', '_', text)
+        # 4. 多个下划线合并为一个 - 已注释
+        # text = re.sub(r'_+', '_', text)
         
-        # 5. 去除首尾下划线
-        text = text.strip('_')
+        # 5. 去除首尾下划线 - 已注释
+        # text = text.strip('_')
         
-        # 5.5 移除末尾的下划线+数字模式（如 "疾病_12" -> "疾病"）
-        # 这通常是LLM输出带来的额外信息
-        text = re.sub(r'_\d+$', '', text)
+        # 5.5 移除末尾的下划线+数字模式（如 "疾病_12" -> "疾病"） - 已注释
+        # # 这通常是LLM输出带来的额外信息
+        # text = re.sub(r'_\d+$', '', text)
         
-        # 6. 再次去除首尾下划线（防止移除数字后留下下划线）
-        text = text.strip('_')
+        # 6. 再次去除首尾下划线（防止移除数字后留下下划线） - 已注释
+        # text = text.strip('_')
         
-        # 7. 检查Cypher关键字
+        # 7. 检查Cypher关键字 - 保留（防注入）
         if text.upper() in cls.CYPHER_KEYWORDS:
             text = f"Type_{text}"
         

@@ -18,11 +18,11 @@ sys.path.insert(0, str(current_dir))
 
 from flask import Flask, request, jsonify
 import logging
-from kg_manager import builder
-from config import cos_uploader
-from progress_sse import progress_manager, sse_event, create_progress_event, create_error_event, consume_sse_queue
-from file_type_detector import detect_file_type
-from graph_service import graph_service
+from llama.kg_manager import builder
+from llama.config import cos_uploader
+from llama.progress_sse import progress_manager, sse_event, create_progress_event, create_error_event, consume_sse_queue
+from llama.file_type_detector import detect_file_type
+from llama.graph_service import graph_service
 
 logger = logging.getLogger(__name__)
 

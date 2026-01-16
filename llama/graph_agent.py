@@ -18,9 +18,35 @@ logger = logging.getLogger(__name__)
 
 
 class ConnectionDensity:
-    """连接密度信息"""
+    """
+    连接密度信息类
+    
+    用于存储和分析图谱中实体的连接密度信息，包括：
+    - 总连接数
+    - 各关系类型的连接数量
+    - 各邻居类型的连接数量
+    - 连接的邻居实体列表
+    
+    主要用途：
+    - 分析实体的连接特征
+    - 决定查询路径的优先级
+    - 优化图谱查询策略
+    
+    Attributes:
+        entity (str): 实体名称
+        total_connections (int): 总连接数
+        connection_types (Dict[str, int]): 关系类型及其连接数，格式为 {relation_type: count}
+        neighbor_types (Dict[str, int]): 邻居类型及其数量，格式为 {entity_type: count}
+        neighbor_entities (List[str]): 连接的邻居实体列表
+    """
     
     def __init__(self, entity: str):
+        """
+        初始化连接密度对象
+        
+        Args:
+            entity: 实体名称
+        """
         self.entity = entity
         self.total_connections = 0
         self.connection_types = {}  # relation_type -> count
@@ -28,7 +54,14 @@ class ConnectionDensity:
         self.neighbor_entities = []  # list of connected entities
         
     def add_connection(self, relation: str, neighbor_type: str, neighbor_entity: str):
-        """添加连接信息"""
+        """
+        添加连接信息
+        
+        Args:
+            relation: 关系类型
+            neighbor_type: 邻居实体类型
+            neighbor_entity: 邻居实体名称
+        """
         self.total_connections += 1
         self.connection_types[relation] = self.connection_types.get(relation, 0) + 1
         self.neighbor_types[neighbor_type] = self.neighbor_types.get(neighbor_type, 0) + 1
@@ -36,20 +69,59 @@ class ConnectionDensity:
             self.neighbor_entities.append(neighbor_entity)
     
     def get_dominant_relation(self) -> Optional[str]:
-        """获取主导关系类型"""
+        """
+        获取主导关系类型
+        
+        Returns:
+            连接数最多的关系类型，如果没有连接则返回 None
+        """
         if not self.connection_types:
             return None
         return max(self.connection_types.items(), key=lambda x: x[1])[0]
     
     def get_dominant_neighbor_type(self) -> Optional[str]:
-        """获取主导邻居类型"""
+        """
+        获取主导邻居类型
+        
+        Returns:
+            连接数最多的邻居类型，如果没有连接则返回 None
+        """
         if not self.neighbor_types:
             return None
         return max(self.neighbor_types.items(), key=lambda x: x[1])[0]
 
 
 class GraphAgent:
-    """智能图谱查询代理"""
+    """
+    智能图谱查询代理
+    
+    根据图谱中的连接密度和查询意图自主决定查询路径，实现智能化的图谱查询。
+    
+    主要功能：
+    - 查询意图分析：使用关键词匹配和 LLM 分类器分析用户查询意图
+    - 连接密度探测：分析实体在图谱中的连接特征
+    - 智能路径决策：根据意图和连接密度选择最优查询路径
+    - 多路径查询执行：支持 Neo4j 和内存图谱的查询执行
+    - 结果合并与聚合：合并多个路径的查询结果
+    
+    支持的查询意图：
+    - TREATMENT: 治疗、防控、矫正等
+    - MECHANISM: 发病机制、原理等
+    - SYMPTOM: 症状、表现、体征等
+    - DIAGNOSIS: 诊断、检查、检测等
+    - PREVENTION: 预防、保健等
+    - COMPLICATION: 并发症、副作用等
+    - RISK_FACTOR: 风险因素、诱因等
+    - GENERAL: 综合查询
+    
+    Attributes:
+        graph_store: 图谱存储对象（Neo4j 或内存图谱）
+        is_neo4j (bool): 是否为 Neo4j 图谱
+        cache (Dict[str, ConnectionDensity]): 连接密度缓存
+        use_llm_classifier (bool): 是否使用 LLM 意图分类器
+        llm: LLM 实例
+        llm_classifier: LLM 意图分类器实例
+    """
     
     # 查询意图关键词映射
     INTENT_KEYWORDS = {
@@ -126,18 +198,55 @@ class GraphAgent:
         ]
     }
     
+    # 意图权重调整规则
+    # 当查询中包含特定关键词时，提升对应意图的权重
+    INTENT_WEIGHT_ADJUSTMENTS = {
+        QueryIntent.TREATMENT: {
+            "keywords": ["阿托品", "OK镜", "塑形镜", "RGP", "眼镜", "手术", "激光"],
+            "weight_boost": 2
+        },
+        QueryIntent.DIAGNOSIS: {
+            "keywords": ["眼压", "角膜曲率", "屈光度", "眼轴长度", "视力"],
+            "weight_boost": 2
+        },
+        QueryIntent.MECHANISM: {
+            "keywords": ["眼轴", "屈光", "调节", "集合", "融像"],
+            "weight_boost": 1
+        },
+        QueryIntent.COMPLICATION: {
+            "keywords": ["视网膜脱落", "青光眼", "白内障"],
+            "weight_boost": 2
+        }
+    }
+    
+    # 意图优先级
+    # 当多个意图得分相同时，按优先级选择（数字越小优先级越高）
+    INTENT_PRIORITY = {
+        QueryIntent.TREATMENT: 1,
+        QueryIntent.DIAGNOSIS: 2,
+        QueryIntent.MECHANISM: 3,
+        QueryIntent.SYMPTOM: 4,
+        QueryIntent.PREVENTION: 5,
+        QueryIntent.COMPLICATION: 6,
+        QueryIntent.RISK_FACTOR: 7,
+        QueryIntent.GENERAL: 999
+    }
+    
     def __init__(self, graph_store, llm_instance=None, use_llm_classifier=True):
         """
         初始化 Graph-Agent
         
         Args:
-            graph_store: 图谱存储对象
-            llm_instance: LLM实例，用于意图分类
-            use_llm_classifier: 是否使用LLM意图分类器，默认为True
+            graph_store: 图谱存储对象，支持 Neo4j 和内存图谱
+            llm_instance: LLM 实例，用于意图分类（可选）
+            use_llm_classifier: 是否使用 LLM 意图分类器，默认为 True
+                              如果为 False，则仅使用关键词匹配进行意图分析
         """
         self.graph_store = graph_store
         self.is_neo4j = "Neo4jPropertyGraphStore" in str(type(graph_store))
         self.cache = {}  # 缓存连接密度信息
+        self._node_map_cache = None  # 缓存节点映射
+        self._triplets_cache = None  # 缓存三元组
         self.use_llm_classifier = use_llm_classifier
         self.llm = llm_instance
         
@@ -161,11 +270,21 @@ class GraphAgent:
         """
         分析查询意图
         
+        使用 LLM 分类器或关键词匹配分析用户查询的意图。
+        优先使用 LLM 分类器，如果失败则降级到关键词匹配。
+        
+        意图分析流程：
+        1. 如果启用了 LLM 分类器，优先使用 LLM 进行意图分类
+        2. 如果 LLM 分类失败，降级到关键词匹配
+        3. 关键词匹配计算每个意图的匹配分数
+        4. 应用权重调整规则（根据特定关键词提升对应意图的权重）
+        5. 如果多个意图得分相同，按优先级选择
+        
         Args:
             query: 用户查询文本
             
         Returns:
-            查询意图枚举
+            QueryIntent: 查询意图枚举值，表示识别出的查询意图
         """
         # 如果启用了LLM分类器，优先使用
         if self.use_llm_classifier and self.llm_classifier:
@@ -222,12 +341,24 @@ class GraphAgent:
         """
         探测实体的连接密度
         
+        分析实体在图谱中的连接特征，包括连接数、关系类型、邻居类型等。
+        支持缓存以提高性能。
+        
+        探测流程：
+        1. 检查缓存，如果已存在则直接返回
+        2. 根据图谱类型（Neo4j 或内存图谱）选择探测方法
+        3. 查询实体的直接连接（一阶邻居）
+        4. 如果需要深度探测，查询二阶连接
+        5. 统计连接密度信息并缓存结果
+        
         Args:
             entity: 实体名称
-            max_depth: 探测深度
+            max_depth: 探测深度，默认为 2
+                      1 表示只查询直接连接
+                      2 表示查询直接连接和二阶连接
             
         Returns:
-            连接密度对象
+            ConnectionDensity: 连接密度对象，包含实体的连接统计信息
         """
         cache_key = f"{entity}_{max_depth}"
         if cache_key in self.cache:
@@ -251,7 +382,20 @@ class GraphAgent:
         return density
     
     def _detect_neo4j_density(self, density: ConnectionDensity, entity: str, max_depth: int):
-        """探测 Neo4j 图谱的连接密度"""
+        """
+        探测 Neo4j 图谱的连接密度
+        
+        使用 Cypher 查询语言查询 Neo4j 图谱中实体的连接信息。
+        
+        查询内容：
+        1. 查询实体的直接连接（一阶邻居）
+        2. 如果需要深度探测，查询二阶连接
+        
+        Args:
+            density: ConnectionDensity 对象，用于存储连接密度信息
+            entity: 实体名称
+            max_depth: 探测深度
+        """
         try:
             # 查询实体的直接连接
             query = f"""
@@ -287,7 +431,21 @@ class GraphAgent:
             logger.warning(f"Neo4j 连接密度探测失败: {e}")
     
     def _detect_memory_density(self, density: ConnectionDensity, entity: str, max_depth: int):
-        """探测内存图谱的连接密度"""
+        """
+        探测内存图谱的连接密度
+        
+        使用 SimplePropertyGraphStore 的 get_triplets() 方法查询内存图谱中实体的连接信息。
+        
+        查询流程：
+        1. 获取所有三元组（source, relation, target）
+        2. 查找与实体相关的连接（作为 source 或 target）
+        3. 统计连接密度信息
+        
+        Args:
+            density: ConnectionDensity 对象，用于存储连接密度信息
+            entity: 实体名称
+            max_depth: 探测深度（当前版本仅支持一阶连接）
+        """
         try:
             # SimplePropertyGraphStore 使用 get_triplets() 获取所有三元组
             triplets = self.graph_store.get_triplets()
@@ -317,12 +475,26 @@ class GraphAgent:
         """
         根据查询意图和连接密度决定查询路径
         
+        智能决策查询路径，结合查询意图和实体连接密度信息。
+        
+        决策流程：
+        1. 分析查询意图
+        2. 探测每个实体的连接密度
+        3. 根据意图和连接密度决定路径
+           - 综合查询（GENERAL）：探索多个路径
+           - 特定意图：优先选择相关路径
+        4. 按优先级排序路径
+        
         Args:
             query: 用户查询文本
             entities: 查询实体列表
             
         Returns:
-            查询路径列表，每个路径包含优先级和查询参数
+            List[Dict[str, Any]]: 查询路径列表，每个路径包含：
+                - type: 路径类型
+                - description: 路径描述
+                - priority: 优先级（0-1，越高越优先）
+                - query_params: 查询参数
         """
         paths = []
         
@@ -358,7 +530,24 @@ class GraphAgent:
     
     def _decide_general_paths(self, entities: List[str], 
                               densities: Dict[str, ConnectionDensity]) -> List[Dict[str, Any]]:
-        """决定综合查询的路径"""
+        """
+        决定综合查询的路径
+        
+        根据实体的主导关系类型决定查询路径。
+        
+        路径决策规则：
+        - 主导关系为治疗/防控/矫正：选择治疗防控路径
+        - 主导关系为导致/引起/形成：选择发病机制路径
+        - 主导关系为表现为/症状/体征：选择症状表现路径
+        - 其他：选择通用路径
+        
+        Args:
+            entities: 实体列表
+            densities: 实体到连接密度的映射
+            
+        Returns:
+            List[Dict[str, Any]]: 查询路径列表
+        """
         paths = []
         
         for entity, density in densities.items():
@@ -422,7 +611,23 @@ class GraphAgent:
     
     def _decise_intent_paths(self, intent: QueryIntent, entities: List[str],
                             densities: Dict[str, ConnectionDensity]) -> List[Dict[str, Any]]:
-        """根据特定意图决定路径"""
+        """
+        根据特定意图决定路径
+        
+        根据查询意图和实体的连接特征决定查询路径。
+        
+        路径决策规则：
+        - 如果实体有相关连接，优先级更高（0.9）
+        - 如果实体没有相关连接，优先级较低（0.6）
+        
+        Args:
+            intent: 查询意图
+            entities: 实体列表
+            densities: 实体到连接密度的映射
+            
+        Returns:
+            List[Dict[str, Any]]: 查询路径列表
+        """
         paths = []
         
         # 获取意图对应的路径类型
@@ -459,7 +664,14 @@ class GraphAgent:
         return paths
     
     def _get_default_paths(self) -> List[Dict[str, Any]]:
-        """获取默认路径"""
+        """
+        获取默认路径
+        
+        当没有提供查询实体时，返回默认的查询路径配置。
+        
+        Returns:
+            List[Dict[str, Any]]: 默认查询路径列表，包含一个通用路径配置
+        """
         return [{
             "type": "default",
             "description": "默认查询路径",
@@ -476,11 +688,28 @@ class GraphAgent:
         """
         执行图谱查询
         
+        根据查询路径配置执行图谱查询，支持 Neo4j 和内存图谱。
+        
+        执行流程：
+        1. 根据图谱类型选择查询方法
+        2. 执行查询并获取结果
+        3. 记录查询日志
+        
         Args:
-            path: 查询路径配置
+            path: 查询路径配置，包含：
+                - description: 路径描述
+                - query_params: 查询参数
+                    - entity: 查询实体
+                    - relations: 关系类型列表
+                    - direction: 查询方向（outgoing/incoming/both）
+                    - max_depth: 查询深度
             
         Returns:
-            查询结果列表
+            List[Dict[str, Any]]: 查询结果列表，每个结果包含：
+                - source: 源实体
+                - relation: 关系
+                - target: 目标实体
+                - target_type: 目标实体类型
         """
         results = []
         params = path['query_params']
@@ -498,7 +727,27 @@ class GraphAgent:
         return results
     
     def _execute_neo4j_query(self, params: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """执行 Neo4j 查询"""
+        """
+        执行 Neo4j 查询
+        
+        使用 Cypher 查询语言查询 Neo4j 图谱。
+        
+        查询类型：
+        - 特定关系查询：根据关系类型和方向查询
+        - 通用查询：查询所有连接
+        
+        查询参数：
+        - entity: 查询实体名称
+        - relations: 关系类型列表（可选）
+        - direction: 查询方向（outgoing/incoming/both）
+        - max_depth: 查询深度（1 或 2）
+        
+        Args:
+            params: 查询参数字典
+            
+        Returns:
+            List[Dict[str, Any]]: 查询结果列表
+        """
         results = []
         entity = params.get('entity', '')
         relations = params.get('relations', [])
@@ -598,7 +847,28 @@ class GraphAgent:
         return results
     
     def _execute_memory_query(self, params: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """执行内存图谱查询"""
+        """
+        执行内存图谱查询
+        
+        使用 SimplePropertyGraphStore 的 get_triplets() 方法查询内存图谱。
+        
+        查询流程：
+        1. 获取所有三元组（使用缓存）
+        2. 构建节点映射（使用缓存）
+        3. 查找与实体相关的连接
+        4. 根据关系类型过滤结果
+        
+        查询参数：
+        - entity: 查询实体名称
+        - relations: 关系类型列表（可选）
+        - max_depth: 查询深度（当前版本仅支持一阶连接）
+        
+        Args:
+            params: 查询参数字典
+            
+        Returns:
+            List[Dict[str, Any]]: 查询结果列表
+        """
         results = []
         entity = params.get('entity', '')
         relations = params.get('relations', [])
@@ -608,23 +878,30 @@ class GraphAgent:
             return results
         
         try:
-            # SimplePropertyGraphStore 使用 get_triplets() 获取所有三元组
-            triplets = self.graph_store.get_triplets()
-            
-            # 构建节点映射（name -> node）
-            node_map = {}
-            for triplet in triplets:
-                source = triplet[0]
-                target = triplet[2]
+            # 使用缓存的三元组和节点映射
+            if self._triplets_cache is None or self._node_map_cache is None:
+                triplets = self.graph_store.get_triplets()
+                self._triplets_cache = triplets
                 
-                # 获取节点名称
-                source_name = getattr(source, 'name', str(source))
-                target_name = getattr(target, 'name', str(target))
+                # 构建节点映射（name -> node）
+                node_map = {}
+                for triplet in triplets:
+                    source = triplet[0]
+                    target = triplet[2]
+                    
+                    # 获取节点名称
+                    source_name = getattr(source, 'name', str(source))
+                    target_name = getattr(target, 'name', str(target))
+                    
+                    if source_name not in node_map:
+                        node_map[source_name] = source
+                    if target_name not in node_map:
+                        node_map[target_name] = target
                 
-                if source_name not in node_map:
-                    node_map[source_name] = source
-                if target_name not in node_map:
-                    node_map[target_name] = target
+                self._node_map_cache = node_map
+            else:
+                triplets = self._triplets_cache
+                node_map = self._node_map_cache
             
             # 查找相关关系
             for triplet in triplets:
@@ -670,11 +947,24 @@ class GraphAgent:
         """
         合并多个路径的查询结果
         
+        将多个查询路径的结果合并为一个统一的结果结构，便于后续处理。
+        
+        合并内容：
+        - 路径统计：总路径数、总结果数
+        - 实体统计：各实体的出现次数
+        - 关系统计：各关系的出现次数
+        - 路径详情：每个路径的结果统计
+        
         Args:
-            path_results: 多个路径的查询结果列表
+            path_results: 多个路径的查询结果列表，每个元素是一个路径的结果列表
             
         Returns:
-            合并后的结果，包含路径统计和去重后的实体
+            Dict[str, Any]: 合并后的结果，包含：
+                - total_paths: 总路径数
+                - total_results: 总结果数
+                - entities: 实体及其出现次数的字典
+                - relations: 关系及其出现次数的字典
+                - paths: 每个路径的详细信息列表
         """
         merged = {
             "total_paths": len(path_results),
@@ -723,12 +1013,25 @@ class GraphAgent:
         """
         执行智能图谱查询
         
+        这是 GraphAgent 的主要入口方法，整合了意图分析、路径决策、查询执行和结果合并。
+        
+        查询流程：
+        1. 分析查询意图
+        2. 决定查询路径（根据意图和连接密度）
+        3. 执行查询（支持多路径并行查询）
+        4. 合并结果
+        
         Args:
             query: 用户查询文本
             entities: 查询实体列表
             
         Returns:
-            查询结果，包含意图、路径和合并结果
+            Dict[str, Any]: 查询结果，包含：
+                - query: 原始查询文本
+                - intent: 识别出的查询意图
+                - paths: 使用的查询路径列表
+                - path_results: 每个路径的查询结果
+                - merged_results: 合并后的结果统计
         """
         logger.info(f"开始智能图谱查询: '{query}', 实体: {entities}")
         
@@ -754,3 +1057,15 @@ class GraphAgent:
             "path_results": path_results,
             "merged_results": merged_results
         }
+    
+    def clear_cache(self):
+        """
+        清除所有缓存
+        
+        清除连接密度缓存、三元组缓存和节点映射缓存。
+        应在图谱存储发生变化时调用此方法以确保数据一致性。
+        """
+        self.cache.clear()
+        self._triplets_cache = None
+        self._node_map_cache = None
+        logger.info("已清除所有缓存")

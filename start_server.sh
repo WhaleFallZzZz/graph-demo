@@ -37,8 +37,13 @@ shift $((OPTIND-1)) # Remove parsed options from arguments list
 echo "Checking server configuration..."
 
 if command -v gunicorn &> /dev/null; then
-    echo "Starting server with Gunicorn..."
-    gunicorn --workers 4 --bind 0.0.0.0:8001 --timeout 0 --access-logfile - --error-logfile - $DAEMONIZE_GUNICORN llama.server:app
+    echo "Starting server with Gunicorn (Threaded Mode)..."
+    # 修改说明：
+    # --worker-class gthread : 使用线程模式，适合 IO 密集型（如 API 调用）
+    # --workers 1            : 只启动 1 个进程，大幅节省内存（只加载一次模型/代码）
+    # --threads 8            : 在该进程内启动 8 个线程处理并发（可根据需要调整为 4-10）
+    # --timeout 0            : 保持原样，防止长任务被杀
+    gunicorn --worker-class gthread --workers 1 --threads 8 --bind 0.0.0.0:8001 --timeout 0 --access-logfile - --error-logfile - $DAEMONIZE_GUNICORN llama.server:app
 elif command -v waitress-serve &> /dev/null; then
     echo "Starting server with Waitress (Windows)..."
     # Waitress does not have a direct daemonize flag.

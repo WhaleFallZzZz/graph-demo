@@ -1,12 +1,24 @@
 """
 基于LLM的意图识别器
 使用Few-Shot Learning进行智能意图分类
+
+功能：
+1. 使用LLM进行意图分类，支持Few-Shot学习
+2. 提供降级策略，当LLM失败时使用关键词匹配
+3. 支持多种医疗健康查询意图类型
+4. 提供详细的推理过程和置信度评分
+
+使用场景：
+- 知识图谱查询的意图识别
+- 智能问答系统的查询分类
+- 医疗健康领域的用户意图分析
 """
 
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 from enum import Enum
 import json
+import re
 
 try:
     from .query_intent import QueryIntent
@@ -17,16 +29,41 @@ logger = logging.getLogger(__name__)
 
 
 class LLMIntentClassifier:
-    """基于LLM的意图分类器"""
+    """
+    基于LLM的意图分类器
+    
+    使用Few-Shot Learning技术，通过提供示例来指导LLM进行意图分类。
+    当LLM调用失败时，自动降级到关键词匹配策略。
+    
+    属性：
+        llm: LLM实例，用于执行意图分类
+        intent_mapping: 意图名称到QueryIntent枚举的映射
+        few_shot_examples: Few-Shot学习示例列表
+        intent_descriptions: 各意图类型的详细描述
+    
+    示例：
+        >>> from llama.factories import ModelFactory
+        >>> llm = ModelFactory.create_llm()
+        >>> classifier = LLMIntentClassifier(llm)
+        >>> intent, confidence, reasoning = classifier.classify("阿托品的副作用")
+        >>> print(f"意图: {intent}, 置信度: {confidence}")
+    """
     
     def __init__(self, llm_instance=None):
         """
         初始化意图分类器
         
         Args:
-            llm_instance: LLM实例，如果为None则使用默认LLM
+            llm_instance: LLM实例，如果为None则使用默认LLM。
+                         应该是实现了complete()方法的LLM对象。
+        
+        Raises:
+            ImportError: 如果无法导入QueryIntent枚举
         """
         self.llm = llm_instance
+        
+        # 意图名称到QueryIntent枚举的映射
+        # 用于将LLM返回的意图名称转换为枚举值
         self.intent_mapping = {
             "治疗防控": QueryIntent.TREATMENT,
             "发病机制": QueryIntent.MECHANISM,
@@ -38,7 +75,8 @@ class LLMIntentClassifier:
             "综合查询": QueryIntent.GENERAL
         }
         
-        # Few-Shot 示例
+        # Few-Shot 学习示例
+        # 这些示例用于指导LLM理解不同意图的特征
         self.few_shot_examples = [
             {
                 "query": "阿托品对青少年近视的副作用",
@@ -112,7 +150,8 @@ class LLMIntentClassifier:
             }
         ]
         
-        # 意图描述
+        # 意图类型详细描述
+        # 用于帮助LLM理解每种意图的含义和特征
         self.intent_descriptions = {
             "治疗防控": "询问治疗方法、防控措施、矫正方案、改善手段等",
             "发病机制": "询问疾病形成的原因、原理、机制、病理过程等",
@@ -128,15 +167,23 @@ class LLMIntentClassifier:
         """
         构建Few-Shot提示词
         
+        将Few-Shot示例和意图描述组合成一个完整的提示词，
+        用于指导LLM进行意图分类。
+        
         Args:
-            query: 用户查询
-            
+            query: 用户查询文本，需要进行意图分类的查询内容
+        
         Returns:
-            构建的提示词
+            构建好的提示词字符串，包含意图说明、示例和当前查询
+        
+        Note:
+            - 使用前8个示例作为Few-Shot学习材料
+            - 提示词格式包含意图类型说明、示例和输出格式要求
+            - 特别强调了对"副作用"、"治疗"等关键词的处理规则
         """
-        # 构建Few-Shot示例
+        # 构建Few-Shot示例部分
         examples_text = ""
-        for i, example in enumerate(self.few_shot_examples[:8], 1):  # 使用前8个示例
+        for i, example in enumerate(self.few_shot_examples[:8], 1):
             examples_text += f"""
 示例 {i}:
 查询: {example['query']}
@@ -144,6 +191,7 @@ class LLMIntentClassifier:
 推理: {example['reasoning']}
 """
         
+        # 构建完整提示词
         prompt = f"""你是一个专业的医疗健康查询意图分类助手。请根据用户的查询内容，判断其意图类型。
 
 ## 意图类型说明：
@@ -174,21 +222,47 @@ class LLMIntentClassifier:
         return prompt
     
     def _format_intent_descriptions(self) -> str:
-        """格式化意图描述"""
+        """
+        格式化意图描述为列表形式
+        
+        将意图描述字典转换为易读的列表格式，
+        用于在提示词中展示意图类型的详细说明。
+        
+        Returns:
+            格式化后的意图描述字符串，每行一个意图及其描述
+        """
         descriptions = []
         for intent, desc in self.intent_descriptions.items():
             descriptions.append(f"- {intent}: {desc}")
         return "\n".join(descriptions)
     
-    def classify(self, query: str) -> tuple[QueryIntent, float, str]:
+    def classify(self, query: str) -> Tuple[QueryIntent, float, str]:
         """
         使用LLM分类查询意图
         
+        这是主要的方法入口，执行以下步骤：
+        1. 检查LLM实例是否可用
+        2. 构建Few-Shot提示词
+        3. 调用LLM进行分类
+        4. 解析LLM响应
+        5. 如果失败，降级到关键词匹配
+        
         Args:
-            query: 用户查询文本
-            
+            query: 用户查询文本，需要进行意图分类的查询内容
+        
         Returns:
-            (意图, 置信度, 推理过程)
+            包含三个元素的元组：
+            - QueryIntent: 分类出的意图枚举值
+            - float: 置信度（0.0-1.0），表示分类的可信程度
+            - str: 推理过程，说明分类的依据和逻辑
+        
+        Raises:
+            Exception: 当LLM调用失败且降级策略也失败时抛出异常
+        
+        Note:
+            - 如果LLM实例未提供，直接使用关键词匹配
+            - 如果LLM调用失败，自动降级到关键词匹配
+            - 置信度越高表示分类结果越可信
         """
         if self.llm is None:
             logger.warning("LLM实例未提供，使用默认分类逻辑")
@@ -231,27 +305,39 @@ class LLMIntentClassifier:
         """
         解析LLM的JSON响应
         
+        从LLM返回的文本中提取JSON格式的分类结果。
+        支持多种JSON格式，包括带代码块标记的格式。
+        
         Args:
-            response_text: LLM返回的文本
-            
+            response_text: LLM返回的原始文本，可能包含JSON数据
+        
         Returns:
-            解析后的字典，失败返回None
+            解析后的字典，包含intent、confidence和reasoning字段。
+            如果解析失败，返回None。
+        
+        Note:
+            - 支持```json ... ```格式的代码块
+            - 支持``` ... ```格式的代码块
+            - 支持纯JSON格式
+            - 解析失败时会记录错误日志
         """
         try:
-            # 尝试提取JSON部分
-            if "```json" in response_text:
-                json_start = response_text.find("```json") + 7
-                json_end = response_text.find("```", json_start)
-                json_text = response_text[json_start:json_end].strip()
-            elif "```" in response_text:
-                json_start = response_text.find("```") + 3
-                json_end = response_text.find("```", json_start)
-                json_text = response_text[json_start:json_end].strip()
-            else:
-                json_text = response_text.strip()
+            # 尝试提取JSON部分（支持多种格式）
+            json_text = self._extract_json_from_response(response_text)
+            
+            if not json_text:
+                logger.warning("未能从响应中提取JSON")
+                return None
             
             # 解析JSON
             result = json.loads(json_text)
+            
+            # 验证必需字段
+            required_fields = ["intent", "confidence", "reasoning"]
+            if not all(field in result for field in required_fields):
+                logger.warning(f"JSON响应缺少必需字段: {required_fields}")
+                return None
+            
             return result
             
         except json.JSONDecodeError as e:
@@ -261,17 +347,56 @@ class LLMIntentClassifier:
             logger.error(f"响应解析失败: {e}")
             return None
     
-    def _fallback_classify(self, query: str) -> tuple[QueryIntent, float, str]:
+    def _extract_json_from_response(self, response_text: str) -> Optional[str]:
+        """
+        从响应文本中提取JSON部分
+        
+        支持多种JSON格式，包括带代码块标记的格式。
+        
+        Args:
+            response_text: LLM返回的原始文本
+        
+        Returns:
+            提取出的JSON字符串，如果未找到则返回None
+        """
+        # 尝试提取 ```json ... ``` 格式
+        json_match = re.search(r'```json\s*(.*?)\s*```', response_text, re.DOTALL)
+        if json_match:
+            return json_match.group(1).strip()
+        
+        # 尝试提取 ``` ... ``` 格式
+        json_match = re.search(r'```\s*(.*?)\s*```', response_text, re.DOTALL)
+        if json_match:
+            return json_match.group(1).strip()
+        
+        # 尝试直接使用整个响应
+        if response_text.strip():
+            return response_text.strip()
+        
+        return None
+    
+    def _fallback_classify(self, query: str) -> Tuple[QueryIntent, float, str]:
         """
         降级分类逻辑（基于关键词匹配）
         
+        当LLM分类失败时，使用关键词匹配作为降级策略。
+        通过计算查询中各意图关键词的出现次数来确定意图。
+        
         Args:
-            query: 用户查询文本
-            
+            query: 用户查询文本，需要进行意图分类的查询内容
+        
         Returns:
-            (意图, 置信度, 推理过程)
+            包含三个元素的元组：
+            - QueryIntent: 分类出的意图枚举值
+            - float: 置信度（0.0-1.0），基于关键词匹配数量计算
+            - str: 推理过程，说明匹配的关键词数量和分类依据
+        
+        Note:
+            - 置信度基于匹配的关键词数量，范围在0.3-0.9之间
+            - 如果没有匹配到任何关键词，返回GENERAL意图
+            - 匹配数量越多，置信度越高
         """
-        # 关键词映射
+        # 关键词映射：每个意图对应一组关键词
         intent_keywords = {
             QueryIntent.COMPLICATION: ["副作用", "不良反应", "并发症", "不良后果", "风险", "危害"],
             QueryIntent.TREATMENT: ["治疗", "防控", "控制", "矫正", "改善", "缓解", "方案", "方法"],
@@ -289,6 +414,7 @@ class LLMIntentClassifier:
             if score > 0:
                 intent_scores[intent] = score
         
+        # 如果没有匹配到任何关键词，返回综合查询
         if not intent_scores:
             return QueryIntent.GENERAL, 0.3, "未匹配到明确意图，归类为综合查询"
         
@@ -296,8 +422,8 @@ class LLMIntentClassifier:
         max_intent = max(intent_scores.items(), key=lambda x: x[1])
         intent, score = max_intent
         
-        # 计算置信度（归一化到0-1）
-        confidence = min(0.5 + (score * 0.1), 0.9)
+        # 计算置信度（基于匹配数量，归一化到0.3-0.9）
+        confidence = min(0.3 + (score * 0.15), 0.9)
         
         reasoning = f"基于关键词匹配，找到 {score} 个相关关键词，归类为{intent.value}"
         

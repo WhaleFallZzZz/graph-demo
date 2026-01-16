@@ -22,10 +22,10 @@ current_dir = Path(__file__).parent
 if str(current_dir) not in sys.path:
     sys.path.insert(0, str(current_dir))
 
-from kg_manager import builder
-from progress_sse import ProgressTracker, progress_manager
-from config import DOCUMENT_CONFIG, task_results, RATE_LIMIT_CONFIG
-from common.dynamic_resource_allocator import DynamicScalingManager, ResourceAllocation
+from llama.kg_manager import builder
+from llama.progress_sse import ProgressTracker, progress_manager
+from llama.config import DOCUMENT_CONFIG, task_results, RATE_LIMIT_CONFIG
+from llama.common.dynamic_resource_allocator import DynamicScalingManager, ResourceAllocation
 
 logger = logging.getLogger(__name__)
 
@@ -113,6 +113,66 @@ class GraphService:
         except Exception as e:
             logger.error(f"应用资源分配失败: {e}")
 
+    def _run_node_cleaning(self):
+        """运行节点清洗脚本"""
+        try:
+            import subprocess
+            import sys
+            script_path = Path(__file__).parent.parent / "scripts" / "offline_node_cleaning.py"
+            logger.info(f"开始执行节点清洗: {script_path}")
+            result = subprocess.run(
+                [sys.executable, str(script_path)],
+                capture_output=True,
+                text=True,
+                timeout=300
+            )
+            if result.returncode != 0:
+                logger.warning(f"节点清洗执行失败: {result.stderr}")
+            else:
+                logger.info(f"节点清洗执行成功")
+        except Exception as e:
+            logger.error(f"节点清洗执行出错: {e}")
+
+    def _run_entity_alignment(self):
+        """运行实体对齐脚本"""
+        try:
+            import subprocess
+            import sys
+            script_path = Path(__file__).parent.parent / "scripts" / "offline_entity_alignment.py"
+            logger.info(f"开始执行实体对齐: {script_path}")
+            result = subprocess.run(
+                [sys.executable, str(script_path)],
+                capture_output=True,
+                text=True,
+                timeout=300
+            )
+            if result.returncode != 0:
+                logger.warning(f"实体对齐执行失败: {result.stderr}")
+            else:
+                logger.info(f"实体对齐执行成功")
+        except Exception as e:
+            logger.error(f"实体对齐执行出错: {e}")
+
+    def _run_property_sinking(self):
+        """运行属性下沉脚本"""
+        try:
+            import subprocess
+            import sys
+            script_path = Path(__file__).parent.parent / "scripts" / "offline_property_sinking.py"
+            logger.info(f"开始执行属性下沉: {script_path}")
+            result = subprocess.run(
+                [sys.executable, str(script_path)],
+                capture_output=True,
+                text=True,
+                timeout=300
+            )
+            if result.returncode != 0:
+                logger.warning(f"属性下沉执行失败: {result.stderr}")
+            else:
+                logger.info(f"属性下沉执行成功")
+        except Exception as e:
+            logger.error(f"属性下沉执行出错: {e}")
+
     def submit_build_task(self, file_url: str, client_id: str, custom_file_name: Optional[str] = None):
         """提交构建任务到线程池"""
         return self.executor.submit(self.build_graph_with_progress, file_url, client_id, custom_file_name)
@@ -134,7 +194,7 @@ class GraphService:
         
         try:
             # 创建进度跟踪器
-            progress_tracker = ProgressTracker(client_id, total_steps=8)
+            progress_tracker = ProgressTracker(client_id, total_steps=9)
             
             # 阶段1：初始化
             progress_tracker.update_stage("initialization", "正在初始化构建器...", 10)
@@ -156,7 +216,7 @@ class GraphService:
                 try:
                     response = requests.get(file_url, timeout=30, verify=certifi.where())
                 except requests.exceptions.SSLError as ssl_err:
-                    logger.warning(f"COS证书验证失败，降级为不验证: {ssl_err}")
+                    logger.info(f"COS证书验证失败，降级为不验证: {ssl_err}")
                     response = requests.get(file_url, timeout=30, verify=False)
                 response.raise_for_status()
                 
@@ -257,7 +317,19 @@ class GraphService:
                 
             logger.info("builder.build_knowledge_graph 调用成功")
             
-            # 阶段5：完成
+            # 阶段5：后处理 - 节点清洗
+            progress_tracker.update_stage("postprocessing_node_cleaning", "正在执行节点清洗...", 50)
+            self._run_node_cleaning()
+            
+            # todo 有 bug 先注释掉，阶段6：后处理 - 实体对齐
+            # progress_tracker.update_stage("postprocessing_entity_alignment", "正在执行实体对齐...", 60)
+            # self._run_entity_alignment()
+            
+            # 阶段7：后处理 - 属性下沉
+            progress_tracker.update_stage("postprocessing_property_sinking", "正在执行属性下沉...", 70)
+            self._run_property_sinking()
+            
+            # 阶段8：完成
             processing_time = (datetime.now() - start_time).total_seconds()
             task_id = f"task_{int(start_time.timestamp())}"
             

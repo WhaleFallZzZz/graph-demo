@@ -1,0 +1,822 @@
+[
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:716",
+    "name": "晶状体",
+    "reason": "Low Semantic Score (0.0118)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:738",
+    "name": "检查",
+    "reason": "Low Semantic Score (0.0053)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:726",
+    "name": "康复",
+    "reason": "Low Semantic Score (0.0039)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:735",
+    "name": "中央注视点",
+    "reason": "Low Semantic Score (0.0038)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:728",
+    "name": "青光眼",
+    "reason": "Low Semantic Score (0.0025)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:715",
+    "name": "眼科检查",
+    "reason": "Low Semantic Score (0.0022)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:774",
+    "name": "家族聚集性",
+    "reason": "Low Semantic Score (0.0015)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:772",
+    "name": "眼健康检查",
+    "reason": "Low Semantic Score (0.0014)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:734",
+    "name": "视野状况",
+    "reason": "Low Semantic Score (0.0010)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:714",
+    "name": "视力筛查",
+    "reason": "Low Semantic Score (0.0007)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:709",
+    "name": "白内障",
+    "reason": "Low Semantic Score (0.0007)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:711",
+    "name": "沙眼",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:737",
+    "name": "视力损伤者",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:724",
+    "name": "防盲治盲",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:751",
+    "name": "白内障超声乳化术",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:718",
+    "name": "白内障囊外摘除术",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:713",
+    "name": "视觉2020",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:723",
+    "name": "患病率",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:730",
+    "name": "屈光不正",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:731",
+    "name": "遗传因素",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:739",
+    "name": "测量",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:745",
+    "name": "河盲",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:778",
+    "name": "高湿",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:732",
+    "name": "盲",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:736",
+    "name": "视力损伤",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:773",
+    "name": "年龄相关性黄斑变性",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:717",
+    "name": "年龄",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:710",
+    "name": "紫外线辐射",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:712",
+    "name": "SAFE战略",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:776",
+    "name": "急性结膜炎",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:748",
+    "name": "白内障手术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:719",
+    "name": "视觉2020行动",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:733",
+    "name": "视野半径",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:742",
+    "name": "0.6%",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:749",
+    "name": "白内障盲",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:725",
+    "name": "低视力",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:775",
+    "name": "变性的危险性",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:741",
+    "name": "0.3%",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:777",
+    "name": "高温",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:721",
+    "name": "视野缺损",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:722",
+    "name": "眼红",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:729",
+    "name": "高眼压",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:740",
+    "name": "日常生活视力测量",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:727",
+    "name": "不良卫生习惯",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:744",
+    "name": "80亿",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:747",
+    "name": "白内障手术率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:743",
+    "name": "全球人口数",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:746",
+    "name": "儿童盲",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:750",
+    "name": "吸烟",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:720",
+    "name": "视力下降",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:857",
+    "name": "疾病",
+    "reason": "Low Semantic Score (0.0128)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:818",
+    "name": "台布",
+    "reason": "Low Semantic Score (0.0105)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:826",
+    "name": "疾病防治",
+    "reason": "Low Semantic Score (0.0070)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:859",
+    "name": "药物",
+    "reason": "Low Semantic Score (0.0050)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:782",
+    "name": "环境卫生状况差",
+    "reason": "Low Semantic Score (0.0030)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:788",
+    "name": "康复治疗",
+    "reason": "Low Semantic Score (0.0026)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:862",
+    "name": "免疫系统异常",
+    "reason": "Low Semantic Score (0.0025)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:832",
+    "name": "视网膜",
+    "reason": "Low Semantic Score (0.0020)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:833",
+    "name": "抗生素",
+    "reason": "Low Semantic Score (0.0012)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:822",
+    "name": "安全别针",
+    "reason": "Low Semantic Score (0.0009)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:783",
+    "name": "室内环境差",
+    "reason": "Low Semantic Score (0.0007)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:827",
+    "name": "眼部疾病",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:856",
+    "name": "保护因素",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:790",
+    "name": "视力损害者",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:831",
+    "name": "紫外线",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:855",
+    "name": "暴露因素",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:854",
+    "name": "危险因素",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:863",
+    "name": "疼痛",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:828",
+    "name": "糖尿病",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:860",
+    "name": "葡萄膜炎",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:784",
+    "name": "拥挤",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:829",
+    "name": "房水",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:885",
+    "name": "糖尿病性视网膜病变",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:861",
+    "name": "病毒感染",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:779",
+    "name": "灰尘",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:823",
+    "name": "衣服上做标识",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:858",
+    "name": "干预措施",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:814",
+    "name": "45岁",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:864",
+    "name": "畏光",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:886",
+    "name": "糖化血红蛋白",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:792",
+    "name": "21%",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:789",
+    "name": "视力损害",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:888",
+    "name": "颞侧神经纤维层厚度",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:887",
+    "name": "神经纤维层厚度",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:830",
+    "name": "发病率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:793",
+    "name": "5%",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:786",
+    "name": "不良的个人卫生习惯",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:825",
+    "name": "与其他颜色的袜子混淆",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:819",
+    "name": "单一颜色",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:815",
+    "name": "厨房用具",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:780",
+    "name": "太阳辐射",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:791",
+    "name": "30%",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:781",
+    "name": "生物燃料燃烧产生的烟雾",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:820",
+    "name": "衣服颜色",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:817",
+    "name": "防止切菜时伤手的手套",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:824",
+    "name": "鞋袜",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:787",
+    "name": "共用毛巾与手帕",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:785",
+    "name": "通风不足",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:821",
+    "name": "黑色和蓝色衬衫混淆",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:816",
+    "name": "大字体计时钟表",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:947",
+    "name": "顺义县眼科",
+    "reason": "Low Semantic Score (0.0217)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:973",
+    "name": "疾病筛查",
+    "reason": "Low Semantic Score (0.0181)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:930",
+    "name": "膜标本",
+    "reason": "Low Semantic Score (0.0095)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:972",
+    "name": "筛查",
+    "reason": "Low Semantic Score (0.0059)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:934",
+    "name": "手术",
+    "reason": "Low Semantic Score (0.0017)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:977",
+    "name": "疾病患病率",
+    "reason": "Low Semantic Score (0.0014)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:974",
+    "name": "确诊和治疗",
+    "reason": "Low Semantic Score (0.0014)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:908",
+    "name": "队列研究",
+    "reason": "Low Semantic Score (0.0007)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:975",
+    "name": "可靠性",
+    "reason": "Low Semantic Score (0.0006)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:904",
+    "name": "显著性",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:890",
+    "name": "近视眼",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:946",
+    "name": "教育潜能冲击",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:900",
+    "name": "卡他性结膜炎",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:907",
+    "name": "横断面研究",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:906",
+    "name": "激光治疗",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:935",
+    "name": "视力",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:895",
+    "name": "内因性葡萄膜炎",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:901",
+    "name": "急性卡他性结膜炎",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:905",
+    "name": "抗青光眼手术",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:933",
+    "name": "样本量",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:898",
+    "name": "构成比",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:976",
+    "name": "重复性",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:936",
+    "name": "术前视力",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:938",
+    "name": "眼压",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:903",
+    "name": "自由度",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:941",
+    "name": "炎症控制率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:899",
+    "name": "多个构成比",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:889",
+    "name": "近视眼患病率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:932",
+    "name": "所选定量显著性检验的假定分布",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:893",
+    "name": "感染率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:902",
+    "name": "理论频数",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:929",
+    "name": "黄斑移位手术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:944",
+    "name": "种族",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:897",
+    "name": "多个率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:894",
+    "name": "弓形虫感染",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:978",
+    "name": "阳性预测值",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:943",
+    "name": "视力问题",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:948",
+    "name": "儿童屈光不正",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:896",
+    "name": "率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:939",
+    "name": "术前眼压",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:891",
+    "name": "95% 可信区间",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:949",
+    "name": "非应答率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:945",
+    "name": "学习能力下降",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:937",
+    "name": "术后视力",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:892",
+    "name": "99% 可信区间",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:940",
+    "name": "术后眼压",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:970",
+    "name": "视物模糊",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:931",
+    "name": "P值大小",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:942",
+    "name": "手术后炎症控制率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:971",
+    "name": "视力疲劳",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:982",
+    "name": "健康教育",
+    "reason": "Low Semantic Score (0.0324)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:989",
+    "name": "人工晶状体",
+    "reason": "Low Semantic Score (0.0088)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:993",
+    "name": "人工晶状体植入术",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:987",
+    "name": "白内障治疗",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:992",
+    "name": "白内障复明手术规范",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:990",
+    "name": "白内障手术能力",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:986",
+    "name": "白内障复明手术",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:980",
+    "name": "眯眼",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:988",
+    "name": "视力恢复",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:991",
+    "name": "白内障致盲",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:985",
+    "name": "视觉第一中国行动",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:983",
+    "name": "肥胖",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:984",
+    "name": "糖尿病家族史",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:979",
+    "name": "眼压波动",
+    "reason": "Low Semantic Score (0.0000)"
+  }
+]

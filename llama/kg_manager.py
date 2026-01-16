@@ -19,21 +19,22 @@ from llama_index.core.graph_stores.types import EntityNode, Relation
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
-from config import setup_logging, DOCUMENT_CONFIG, API_CONFIG, EMBEDDING_CONFIG, NEO4J_CONFIG, OSS_CONFIG, RERANK_CONFIG, VALIDATOR_CONFIG, EXTRACTOR_CONFIG, ENTITY_DESCRIPTION_CONFIG
-from factories import LlamaModuleFactory, ModelFactory, GraphStoreFactory, ExtractorFactory, RerankerFactory
-from progress_sse import ProgressTracker, progress_callback
-from oss_uploader import COSUploader, OSSConfig
-from ocr_parser import DeepSeekOCRParser
-from enhanced_entity_extractor import StandardTermMapper
-from graph_agent import GraphAgent
+from llama.config import setup_logging, DOCUMENT_CONFIG, API_CONFIG, EMBEDDING_CONFIG, NEO4J_CONFIG, OSS_CONFIG, RERANK_CONFIG, EXTRACTOR_CONFIG, ENTITY_DESCRIPTION_CONFIG
+from llama.factories import LlamaModuleFactory, ModelFactory, GraphStoreFactory, ExtractorFactory, RerankerFactory
+from llama.progress_sse import ProgressTracker, progress_callback
+from llama.oss_uploader import COSUploader, OSSConfig
+from llama.ocr_parser import DeepSeekOCRParser
+# 注释 StandardTermMapper (标准词映射) 相关代码
+# from enhanced_entity_extractor import StandardTermMapper
+from llama.graph_agent import GraphAgent
+from llama.semantic_chunker import ImprovedSemanticChunker, ImprovedSemanticSplitter
 import json
 import collections
 
 # 导入 common 模块的工具
 from llama.common import (
     get_file_hash,
-    DynamicThreadPool,
-    TaskManager
+    DynamicThreadPool
 )
 
 class DocumentIndex:
@@ -202,16 +203,71 @@ class KnowledgeGraphManager:
             progress_callback("initialization", f"初始化失败: {str(e)}", 0)
             return False
     
-    def _is_relevant_chunk(self, text: str) -> bool:
-        """检查分块是否包含相关的医学关键词"""
-        # 核心医学关键词列表 - 用于预筛选分块，减少无效LLM调用
-        keywords = [
-            "近视", "远视", "散光", "弱视", "斜视", "屈光", "老视", "白内障", 
-            "视力", "眼轴", "角膜", "晶状体", "视网膜", "脉络膜", "巩膜", "眼压",
-            "阿托品", "OK镜", "塑形镜", "RGP", "眼镜", "接触镜", "手术", "激光",
-            "调节", "集合", "融像", "视疲劳", "眼底", "黄斑", "视神经", "度数"
-        ]
-        return any(k in text for k in keywords)
+    def cleanup(self):
+        """清理资源，释放内存"""
+        try:
+            logger.info("开始清理资源...")
+            
+            # 清理线程池
+            if hasattr(self, 'thread_pool') and self.thread_pool:
+                try:
+                    self.thread_pool.shutdown(wait=True)
+                    logger.info("✅ 线程池已关闭")
+                except Exception as e:
+                    logger.warning(f"关闭线程池失败: {e}")
+            
+            # 清理 LLM
+            if hasattr(self, 'llm') and self.llm:
+                try:
+                    del self.llm
+                    self.llm = None
+                    logger.info("✅ LLM 已清理")
+                except Exception as e:
+                    logger.warning(f"清理 LLM 失败: {e}")
+            
+            # 清理 Embedding 模型
+            if hasattr(self, 'embed_model') and self.embed_model:
+                try:
+                    del self.embed_model
+                    self.embed_model = None
+                    logger.info("✅ Embedding 模型已清理")
+                except Exception as e:
+                    logger.warning(f"清理 Embedding 模型失败: {e}")
+            
+            # 清理图存储
+            if hasattr(self, 'graph_store') and self.graph_store:
+                try:
+                    if hasattr(self.graph_store, '_driver') and self.graph_store._driver:
+                        self.graph_store._driver.close()
+                    del self.graph_store
+                    self.graph_store = None
+                    logger.info("✅ 图存储已清理")
+                except Exception as e:
+                    logger.warning(f"清理图存储失败: {e}")
+            
+            # 清理图谱代理
+            if hasattr(self, 'graph_agent') and self.graph_agent:
+                try:
+                    del self.graph_agent
+                    self.graph_agent = None
+                    logger.info("✅ 图谱代理已清理")
+                except Exception as e:
+                    logger.warning(f"清理图谱代理失败: {e}")
+            
+            # 清理模块
+            if hasattr(self, 'modules') and self.modules:
+                try:
+                    del self.modules
+                    self.modules = None
+                    logger.info("✅ 模块已清理")
+                except Exception as e:
+                    logger.warning(f"清理模块失败: {e}")
+            
+            self._initialized = False
+            logger.info("✅ 资源清理完成")
+            
+        except Exception as e:
+            logger.error(f"清理资源时发生错误: {e}")
 
     def load_documents(self, progress_tracker: Optional[ProgressTracker] = None) -> list:
         """加载文档并使用优化的分块策略"""
@@ -264,33 +320,87 @@ class KnowledgeGraphManager:
                 raw_documents = new_raw_docs
 
             # 使用自定义的分块策略处理文档
+            # 支持多线程处理以加速 chunk 分割
             documents = []
             total_chunks = 0
             total_chars = 0
             chunk_time_sum = 0.0
             filtered_count = 0
             sample_bench_done = False
-            for raw_doc in raw_documents:
-                t1 = time.time()
-                if DOCUMENT_CONFIG.get("benchmark_chunking", False) and not sample_bench_done:
-                    self._benchmark_chunking(raw_doc)
-                    sample_bench_done = True
-                chunked_docs = self._chunk_document(raw_doc)
+            
+            # 获取多线程配置
+            use_multithreading = DOCUMENT_CONFIG.get("use_multithreading_chunking", True)
+            max_workers = DOCUMENT_CONFIG.get("max_chunking_workers", 4)
+            
+            if use_multithreading and len(raw_documents) > 1:
+                # 使用多线程并行处理文档
+                logger.info(f"使用多线程处理 {len(raw_documents)} 个文档 (workers={max_workers})")
                 
-                # 关键词预筛选
-                relevant_docs = []
-                for d in chunked_docs:
-                    if self._is_relevant_chunk(d.text):
-                        relevant_docs.append(d)
-                    else:
-                        filtered_count += 1
+                def process_document(raw_doc):
+                    """处理单个文档的函数，用于多线程"""
+                    t1 = time.time()
+                    
+                    # 分块处理
+                    chunked_docs = self._chunk_document(raw_doc)
+                    
+                    # 关键词预筛选
+                    relevant_docs = []
+                    doc_filtered_count = 0
+                    for d in chunked_docs:
+                            relevant_docs.append(d)
+                    
+                    chunk_time = time.time() - t1
+                    doc_total_chars = sum(len(getattr(d, "text", "")) for d in relevant_docs)
+                    
+                    return {
+                        'relevant_docs': relevant_docs,
+                        'chunked_count': len(chunked_docs),
+                        'filtered_count': doc_filtered_count,
+                        'chunk_time': chunk_time,
+                        'total_chars': doc_total_chars
+                    }
                 
-                chunk_time = time.time() - t1
-                chunk_time_sum += chunk_time
-                documents.extend(relevant_docs)
-                total_chunks += len(chunked_docs) # 记录总块数（包括被过滤的）
-                for d in relevant_docs:
-                    total_chars += len(getattr(d, "text", ""))
+                # 使用线程池并行处理
+                with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                    # 提交所有任务
+                    future_to_doc = {executor.submit(process_document, doc): doc for doc in raw_documents}
+                    
+                    # 收集结果
+                    for future in as_completed(future_to_doc):
+                        try:
+                            result = future.result()
+                            documents.extend(result['relevant_docs'])
+                            total_chunks += result['chunked_count']
+                            filtered_count += result['filtered_count']
+                            chunk_time_sum += result['chunk_time']
+                            total_chars += result['total_chars']
+                        except Exception as e:
+                            logger.error(f"处理文档时出错: {e}")
+                
+                logger.info(f"多线程处理完成: 总耗时 {chunk_time_sum:.2f}s, 平均每文档 {chunk_time_sum/len(raw_documents):.3f}s")
+                
+            else:
+                # 使用单线程顺序处理文档
+                logger.info(f"使用单线程处理 {len(raw_documents)} 个文档")
+                
+                for raw_doc in raw_documents:
+                    t1 = time.time()
+                    if DOCUMENT_CONFIG.get("benchmark_chunking", False) and not sample_bench_done:
+                        self._benchmark_chunking(raw_doc)
+                        sample_bench_done = True
+                    chunked_docs = self._chunk_document(raw_doc)
+                    
+                    # 关键词预筛选
+                    relevant_docs = []
+                    for d in chunked_docs:
+                            relevant_docs.append(d)
+                    
+                    chunk_time = time.time() - t1
+                    chunk_time_sum += chunk_time
+                    documents.extend(relevant_docs)
+                    total_chunks += len(chunked_docs) # 记录总块数（包括被过滤的）
+                    for d in relevant_docs:
+                        total_chars += len(getattr(d, "text", ""))
             
             if filtered_count > 0:
                 logger.info(f"关键词预筛选: 过滤了 {filtered_count} 个无关分块")
@@ -332,7 +442,12 @@ class KnowledgeGraphManager:
             return []
     
     def _chunk_document(self, document) -> List[Any]:
-        """使用优化的分块策略处理单个文档
+        """使用改进的语义分割策略处理单个文档
+        
+        采用两阶段策略：
+        1. 结构化切分：按段落（双换行 \n\n）切分，保留基本排版逻辑
+        2. 语义聚合：计算相邻段落相似度，高相似度则合并，直到达到大小限制
+        3. 重叠保留：每个 chunk 保留 10%-15% 的重复内容
         
         Args:
             document: 原始文档对象
@@ -340,74 +455,104 @@ class KnowledgeGraphManager:
         Returns:
             分块后的文档列表
         """
-        from llama_index.core.node_parser import SentenceSplitter
-        
         # 获取配置参数
         text_len = len(getattr(document, "text", ""))
+        
+        # 文档分块诊断日志：记录原始文档信息
+        logger.info(f"📄 文档分块诊断 - 原始文本长度: {text_len:,} 字符")
+        
+        use_semantic = DOCUMENT_CONFIG.get('use_semantic_chunking', True)
         dyn = DOCUMENT_CONFIG.get('dynamic_chunking', False)
-        base_chunk_size = DOCUMENT_CONFIG.get('chunk_size', 600)
-        max_chunk_length = DOCUMENT_CONFIG.get('max_chunk_length', 800)
-        min_chunk_length = DOCUMENT_CONFIG.get('min_chunk_length', 500)
+        base_chunk_size = DOCUMENT_CONFIG.get('chunk_size', 1024)
+        max_chunk_length = DOCUMENT_CONFIG.get('max_chunk_length', 1400)
+        min_chunk_length = DOCUMENT_CONFIG.get('min_chunk_length', 600)
         target_chars = DOCUMENT_CONFIG.get('dynamic_target_chars_per_chunk', base_chunk_size)
+        
+        # 动态调整 chunk_size
         if dyn and text_len > 0:
             target_chars = DOCUMENT_CONFIG.get('dynamic_target_chars_per_chunk', base_chunk_size)
             chunk_size = max(min_chunk_length, min(max_chunk_length, target_chars))
             
-            # 2. 实体密度检测
-            # 简单估算实体密度：检查高频医学关键词出现的频率
+            # 实体密度检测
             medical_keywords = ["近视", "远视", "散光", "眼轴", "角膜", "视网膜", "脉络膜", "眼压", "调节", "屈光"]
             doc_text = getattr(document, "text", "")
             if len(doc_text) > 0:
                 keyword_count = sum(doc_text.count(k) for k in medical_keywords)
                 density = keyword_count / len(doc_text)
                 
-                # 如果密度高（例如 > 0.5%），减小 chunk_size 以提高提取精度
                 if density > 0.005:
                     logger.info(f"检测到高密度医学文本 (密度: {density:.2%})，自动缩小分块大小")
-                    chunk_size = int(chunk_size * 0.8) # 缩小 20%
+                    chunk_size = int(chunk_size * 0.8)
                     chunk_size = max(chunk_size, min_chunk_length)
         else:
             chunk_size = base_chunk_size
             
-        # 调整 overlap 为 20%
-        chunk_overlap = max(0, min(int(chunk_size * 0.2), 200, DOCUMENT_CONFIG.get('CHUNK_OVERLAP', int(chunk_size * 0.2))))
-        
-        # 创建句子分隔符
-        sentence_splitter = DOCUMENT_CONFIG.get('sentence_splitter', '。！？!?')
-        semantic_separator = DOCUMENT_CONFIG.get('semantic_separator', '\n\n')
-        
-        # 使用SentenceSplitter进行分块
-        node_parser = SentenceSplitter(
-            chunk_size=chunk_size,
-            chunk_overlap=chunk_overlap,
-            separator=semantic_separator,  # 优先使用语义分隔符
-            paragraph_separator=semantic_separator,
-            # 确保医学术语完整性
-            include_prev_next_rel=True  # 包含前后关系
-        )
-        
-        # 将文档拆分为节点
+        # 使用改进的语义分割器
         import time
         t0 = time.time()
-        nodes = node_parser.get_nodes_from_documents([document])
+        
+        if use_semantic:
+            # 使用改进的语义分割器
+            logger.debug("使用改进的语义分割器进行分块（段落切分 + 语义聚合 + 重叠保留）")
+            embedding_model = self.modules.get('embedding_model')
+            
+            # 使用用户指定的参数
+            improved_chunker = ImprovedSemanticChunker(
+                embedding_model=embedding_model,
+                chunk_size=chunk_size,
+                overlap_ratio=0.12,  # 12% 重叠
+                similarity_threshold=0.70,  # 相似度阈值
+                min_chunk_length=min_chunk_length,
+                max_chunk_length=max_chunk_length
+            )
+            
+            # 直接分割文本
+            doc_text = getattr(document, "text", "")
+            chunks = improved_chunker.split_text(doc_text)
+            
+            # 将 chunks 转换为节点
+            nodes = []
+            for i, chunk in enumerate(chunks):
+                metadata = getattr(document, "metadata", {}).copy()
+                metadata["chunk_index"] = i
+                metadata["chunk_total"] = len(chunks)
+                metadata["chunking_method"] = "improved_semantic"
+                metadata["overlap_ratio"] = 0.12
+                metadata["similarity_threshold"] = 0.70
+                
+                node = self.modules['Document'](text=chunk, metadata=metadata)
+                nodes.append(node)
+        else:
+            # 使用传统的句子分割器
+            logger.debug("使用传统句子分割器进行分块")
+            chunk_overlap = max(0, min(int(chunk_size * 0.2), 200, DOCUMENT_CONFIG.get('CHUNK_OVERLAP', int(chunk_size * 0.2))))
+            sentence_splitter = DOCUMENT_CONFIG.get('sentence_splitter', '。！？!?')
+            semantic_separator = DOCUMENT_CONFIG.get('semantic_separator', '\n\n')
+            
+            node_parser = SentenceSplitter(
+                chunk_size=chunk_size,
+                chunk_overlap=chunk_overlap,
+                separator=semantic_separator,
+                paragraph_separator=semantic_separator,
+                include_prev_next_rel=True
+            )
+            
+            nodes = node_parser.get_nodes_from_documents([document])
+        
         gen_nodes_time = time.time() - t0
         
         # 过滤和优化块大小
         filtered_nodes = []
         for node in nodes:
-            # 获取文本长度
             text_length = len(node.text)
             
             if text_length < min_chunk_length and filtered_nodes:
                 pass
             
-            # 如果块太大，需要进一步分割
             if text_length > max_chunk_length:
-                # 递归分割过大的块
-                sub_chunks = self._split_large_chunk(node, max_chunk_length, chunk_overlap)
+                sub_chunks = self._split_large_chunk(node, max_chunk_length, int(chunk_size * 0.12))
                 filtered_nodes.extend(sub_chunks)
             else:
-                # 检查医学术语完整性
                 processed_node = self._ensure_medical_terminology_integrity(node)
                 filtered_nodes.append(processed_node)
         
@@ -415,8 +560,6 @@ class KnowledgeGraphManager:
         documents = []
         total_chars = 0
         for node in filtered_nodes:
-            # 创建新的文档对象，保留原始元数据
-            # 使用Document的构造函数而不是from_text方法
             doc = self.modules['Document'](
                 text=node.text,
                 metadata=node.metadata
@@ -424,9 +567,60 @@ class KnowledgeGraphManager:
             documents.append(doc)
             total_chars += len(node.text)
         
-        if DOCUMENT_CONFIG.get("log_chunk_metrics", False):
+        # 过滤掉字数太少（<50字）或中文极少（可能是纯图乱码）的 Chunk
+        import re
+        filtered_documents = []
+        noise_count = 0
+        for doc in documents:
+            text = getattr(doc, "text", "")
+            text_len = len(text)
+            
+            # 检查1: 字数是否 >= 50
+            if text_len < 50:
+                noise_count += 1
+                continue
+            
+            # 检查2: 中文字符占比（中文字符应该占一定比例，避免纯图乱码）
+            chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', text))
+            chinese_ratio = chinese_chars / text_len if text_len > 0 else 0
+            
+            # 如果文本长度在 50-200 之间，要求中文占比 >= 30%
+            # 如果文本长度 > 200，要求中文占比 >= 20%
+            min_chinese_ratio = 0.30 if text_len <= 200 else 0.20
+            if chinese_ratio < min_chinese_ratio:
+                noise_count += 1
+                continue
+            
+            filtered_documents.append(doc)
+        
+        # 更新 documents 和统计信息
+        documents = filtered_documents
+        total_chars = sum(len(getattr(d, "text", "")) for d in documents)
+        
+        if noise_count > 0:
+            logger.info(f"🧹 过滤 OCR 噪音: 移除了 {noise_count} 个无效 chunk（字数<50 或中文占比过低）")
+        
+        if DOCUMENT_CONFIG.get("log_chunk_metrics", True):
             avg_len = (total_chars / len(documents)) if documents else 0
-            logger.info(f"ChunkStats: size={chunk_size}, overlap={chunk_overlap}, nodes={len(documents)}, avg_len={avg_len:.1f}, gen_time={gen_nodes_time:.2f}s")
+            chunker_type = "改进语义" if use_semantic else "传统"
+            
+            # 增强的诊断日志：包含原始文本长度、分块后数量、平均 chunk 长度
+            logger.info(
+                f"ChunkStats[{chunker_type}]: size={chunk_size}, overlap=12%, "
+                f"原始长度={text_len:,} 字符, "
+                f"分块后数量={len(documents)}, "
+                f"平均 chunk 长度={avg_len:.1f} 字符, "
+                f"生成时间={gen_nodes_time:.2f}s"
+            )
+            
+            # 计算预期的 chunk 数量（用于对比验证）
+            if chunk_size > 0:
+                expected_chunks = (text_len - int(chunk_size * 0.12)) / (chunk_size - int(chunk_size * 0.12))
+                logger.info(
+                    f"📊 分块对比: 实际={len(documents)} 个 chunks, "
+                    f"理论预期≈{expected_chunks:.0f} 个 chunks "
+                    f"(基于 chunk_size={chunk_size}, overlap={int(chunk_size * 0.12)})"
+                )
         
         return documents
     
@@ -533,23 +727,42 @@ class KnowledgeGraphManager:
                         # 这是一个不完整的截断，例如 "角膜塑"
                         # 我们将其移除，让下一个 chunk (有 overlap) 来处理完整的 "角膜塑形镜"
                         logger.debug(f"边界检测: 发现末尾截断的术语片段 '{prefix}' (原词: {term})，已自动修剪")
-                        node.text = text[:-len(prefix)]
-                        return node
+                        # 创建新的 Document 对象来替换原来的对象
+                        new_text = text[:-len(prefix)]
+                        return self.modules['Document'](text=new_text, metadata=node.metadata.copy())
         
         return node
     
     def _chunk_with_params(self, document, chunk_size: int, chunk_overlap: int, max_chunk_length: int, min_chunk_length: int) -> List[Any]:
-        from llama_index.core.node_parser import SentenceSplitter
-        sentence_splitter = DOCUMENT_CONFIG.get('sentence_splitter', '。！？!?')
-        semantic_separator = DOCUMENT_CONFIG.get('semantic_separator', '\n\n')
-        node_parser = SentenceSplitter(
-            chunk_size=chunk_size,
-            chunk_overlap=chunk_overlap,
-            separator=semantic_separator,
-            paragraph_separator=semantic_separator,
-            include_prev_next_rel=True
-        )
-        nodes = node_parser.get_nodes_from_documents([document])
+        use_semantic = DOCUMENT_CONFIG.get('use_semantic_chunking', True)
+        
+        if use_semantic:
+            embedding_model = self.modules.get('embedding_model')
+            
+            semantic_splitter = ImprovedSemanticSplitter(
+                embedding_model=embedding_model,
+                chunk_size=chunk_size,
+                overlap_ratio=chunk_overlap / chunk_size if chunk_size > 0 else 0.12,
+                min_chunk_length=min_chunk_length,
+                max_chunk_length=max_chunk_length,
+                similarity_threshold=DOCUMENT_CONFIG.get('similarity_threshold', 0.75),
+                paragraph_separator=DOCUMENT_CONFIG.get('semantic_separator', '\n\n')
+            )
+            
+            nodes = semantic_splitter.get_nodes_from_documents([document])
+        else:
+            from llama_index.core.node_parser import SentenceSplitter
+            sentence_splitter = DOCUMENT_CONFIG.get('sentence_splitter', '。！？!?')
+            semantic_separator = DOCUMENT_CONFIG.get('semantic_separator', '\n\n')
+            node_parser = SentenceSplitter(
+                chunk_size=chunk_size,
+                chunk_overlap=chunk_overlap,
+                separator=semantic_separator,
+                paragraph_separator=semantic_separator,
+                include_prev_next_rel=True
+            )
+            nodes = node_parser.get_nodes_from_documents([document])
+        
         filtered_nodes = []
         for node in nodes:
             text_length = len(node.text)
@@ -557,8 +770,9 @@ class KnowledgeGraphManager:
                 prev_node = filtered_nodes[-1]
                 combined_text = prev_node.text + " " + node.text
                 if len(combined_text) <= max_chunk_length:
-                    prev_node.text = combined_text
-                    prev_node.id_ = f"{prev_node.id_}_merged"
+                    merged_node = self.modules['Document'](text=combined_text, metadata=prev_node.metadata.copy())
+                    merged_node.id_ = f"{prev_node.id_}_merged"
+                    filtered_nodes[-1] = merged_node
                     continue
             if text_length > max_chunk_length:
                 sub_chunks = self._split_large_chunk(node, max_chunk_length, chunk_overlap)
@@ -706,6 +920,12 @@ class KnowledgeGraphManager:
                 
                 # 插入节点（实体提取）
                 index.insert_nodes(batch)
+                
+                # 每处理完一批后，清理内存
+                if i % (batch_size * 5) == 0:
+                    import gc
+                    gc.collect()
+                    logger.debug(f"已处理 {current_batch_end}/{total_docs} 个文档块，清理内存")
             
             # # 3. 后处理：创建语义弱关联
             # if progress_tracker:
@@ -728,20 +948,14 @@ class KnowledgeGraphManager:
             if getattr(self.processed_file_manager, "_dirty", False):
                 self.processed_file_manager.save_records()
 
-            # 实体对齐
-            self._perform_entity_resolution(index, progress_tracker)
-            
-            # 三元组反向自检
-            if VALIDATOR_CONFIG.get("enable", False):
-                self._perform_triplet_validation(index, documents, progress_tracker)
-            else:
-                logger.info("三元组反向自检已禁用")
+            # 实体对齐 - 已注释：使用独立的 offline_entity_alignment.py 脚本
+            # self._perform_entity_resolution(index, progress_tracker)
             
             # 为所有实体生成描述
-            if ENTITY_DESCRIPTION_CONFIG.get("enable", False):
-                self._generate_entity_descriptions(index, progress_tracker)
-            else:
-                logger.info("实体描述生成已禁用")
+            # if ENTITY_DESCRIPTION_CONFIG.get("enable", False):
+            #     self._generate_entity_descriptions(index, progress_tracker)
+            # else:
+            #     logger.info("实体描述生成已禁用")
             
             # 创建溯源结构: (Entity)-[:MENTIONS]->(Chunk)-[:FROM]->(Document)
             self._create_provenance_structure(documents, index, progress_tracker)
@@ -768,56 +982,58 @@ class KnowledgeGraphManager:
         """
         创建语义弱关联
         若同一文本块中出现两个标准实体且未建立关系，则创建 'RELATED_TO' 弱关联
+        已注释：移除 StandardTermMapper (标准词映射) 相关代码
         """
         logger.info("正在分析潜在的语义弱关联...")
-        from enhanced_entity_extractor import StandardTermMapper
-        from llama_index.core.graph_stores.types import Relation
-        import itertools
+        # 注释 StandardTermMapper (标准词映射) 相关代码
+        # from enhanced_entity_extractor import StandardTermMapper
+        # from llama_index.core.graph_stores.types import Relation
+        # import itertools
         
-        new_relations = []
-        count = 0
+        # new_relations = []
+        # count = 0
         
-        # 建立实体到标准名的映射以便快速查找
-        # StandardTermMapper.STANDARD_ENTITIES 是个 set
+        # # 建立实体到标准名的映射以便快速查找
+        # # StandardTermMapper.STANDARD_ENTITIES 是个 set
         
-        for doc in documents:
-            text = getattr(doc, "text", "")
-            if not text:
-                continue
-                
-            found_entities = []
-            # 简单的字符串匹配 
-            # 优化：只检查长度 > 1 的实体
-            for entity in StandardTermMapper.STANDARD_ENTITIES:
-                if entity in text:
-                    found_entities.append(entity)
-            
-            # 如果找到2个以上实体
-            if len(found_entities) >= 2:
-                # 生成两两组合
-                for e1, e2 in itertools.combinations(found_entities, 2):
-                    rel = Relation(
-                        source_id=e1,
-                        target_id=e2,
-                        label="RELATED_TO",
-                        properties={"confidence": "low", "type": "co_occurrence", "source_chunk": doc.id_}
-                    )
-                    new_relations.append(rel)
-                    count += 1
+        # for doc in documents:
+        #     text = getattr(doc, "text", "")
+        #     if not text:
+        #         continue
+        #         
+        #     found_entities = []
+        #     # 简单的字符串匹配 
+        #     # 优化：只检查长度 > 1 的实体
+        #     for entity in StandardTermMapper.STANDARD_ENTITIES:
+        #         if entity in text:
+        #             found_entities.append(entity)
+        #     
+        #     # 如果找到2个以上实体
+        #     if len(found_entities) >= 2:
+        #         # 生成两两组合
+        #         for e1, e2 in itertools.combinations(found_entities, 2):
+        #             rel = Relation(
+        #                 source_id=e1,
+        #                 target_id=e2,
+        #                 label="RELATED_TO",
+        #                 properties={"confidence": "low", "type": "co_occurrence", "source_chunk": doc.id_}
+        #             )
+        #             new_relations.append(rel)
+        #             count += 1
         
-        if new_relations:
-            logger.info(f"发现 {count} 个潜在弱关联，正在注入图谱...")
-            try:
-                # 尝试使用 upsert 或 add
-                # LlamaIndex 的 PropertyGraphStore 接口通常有 upsert_relations
-                if hasattr(index.property_graph_store, "upsert_relations"):
-                    index.property_graph_store.upsert_relations(new_relations)
-                elif hasattr(index.property_graph_store, "add"):
-                     index.property_graph_store.add(relations=new_relations)
-                else:
-                    logger.warning("Graph store does not support batch relation insertion")
-            except Exception as e:
-                logger.warning(f"注入弱关联失败: {e}")
+        # if new_relations:
+        #     logger.info(f"发现 {count} 个潜在弱关联，正在注入图谱...")
+        #     try:
+        #         # 尝试使用 upsert 或 add
+        #         # LlamaIndex 的 PropertyGraphStore 接口通常有 upsert_relations
+        #         if hasattr(index.property_graph_store, "upsert_relations"):
+        #             index.property_graph_store.upsert_relations(new_relations)
+        #         elif hasattr(index.property_graph_store, "add"):
+        #              index.property_graph_store.add(relations=new_relations)
+        #         else:
+        #             logger.warning("Graph store does not support batch relation insertion")
+        #     except Exception as e:
+        #         logger.warning(f"注入弱关联失败: {e}")
     
     def _get_graph_counts(self, graph_store) -> tuple:
         try:
@@ -837,395 +1053,6 @@ class KnowledgeGraphManager:
         except Exception:
             return 0, 0
     
-    def _perform_entity_resolution(self, index: Any, progress_tracker: Optional[ProgressTracker] = None):
-        """执行实体对齐并更新图谱"""
-        try:
-            from entity_resolution import EntityResolver
-            import asyncio
-            
-            logger.info("开始执行实体对齐...")
-            if progress_tracker:
-                progress_tracker.update_stage("knowledge_graph", "正在执行实体对齐...", 90)
-            else:
-                progress_callback("knowledge_graph", "正在执行实体对齐...", 90)
-                
-            resolver = EntityResolver(self.embed_model)
-            graph_store = index.property_graph_store
-            
-            # 1. 获取所有三元组/实体
-            entities = []
-            is_neo4j = "Neo4jPropertyGraphStore" in str(type(graph_store))
-            
-            if is_neo4j:
-                try:
-                    with graph_store._driver.session() as session:
-                        result = session.run("MATCH (n:__Entity__) RETURN DISTINCT n.name as name")
-                        entities = [record["name"] for record in result]
-                except Exception as e:
-                    logger.warning(f"Neo4j 获取实体失败，回退到通用方法: {e}")
-                    triplets = graph_store.get_triplets()
-                    entities = list(set([t[0].name for t in triplets] + [t[2].name for t in triplets]))
-            else:
-                triplets = graph_store.get_triplets()
-                entities = list(set([t[0].name for t in triplets] + [t[2].name for t in triplets]))
-                
-            logger.info(f"检测到 {len(entities)} 个实体，开始计算相似度...")
-            
-            # 2. 计算相似度
-            try:
-                loop = asyncio.get_event_loop()
-            except RuntimeError:
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                
-            # 在新循环中运行
-            if loop.is_running():
-                # 如果是主线程且循环正在运行，我们需要小心
-                # 但通常这里的 loop 在 Flask 的线程中是 None 或者是新的
-                # 简单起见，我们创建一个新的 loop 来运行这个任务
-                new_loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(new_loop)
-                duplicates = new_loop.run_until_complete(resolver.find_duplicates(entities))
-                new_loop.close()
-                asyncio.set_event_loop(loop) # 恢复
-            else:
-                duplicates = loop.run_until_complete(resolver.find_duplicates(entities))
-            
-            if not duplicates:
-                logger.info("未发现重复实体")
-                return
-
-            # 3. 生成合并映射
-            merge_map = resolver.apply_resolution_to_triplets([], duplicates)
-            logger.info(f"生成 {len(merge_map)} 个合并操作")
-            
-            # 4. 执行合并
-            if is_neo4j:
-                self._merge_neo4j_entities(graph_store, merge_map)
-            else:
-                self._merge_memory_entities(graph_store, merge_map)
-                
-            logger.info("实体对齐完成")
-            
-        except Exception as e:
-            logger.error(f"实体对齐过程中发生错误: {e}")
-            # 不阻断主流程
-
-    def _merge_neo4j_entities(self, graph_store, merge_map):
-        """Neo4j 专用合并逻辑"""
-        count = 0
-        try:
-            with graph_store._driver.session() as session:
-                tx = session.begin_transaction()
-                for source, target in merge_map.items():
-                    if source == target:
-                        continue
-                    try:
-                        query = """
-                        MATCH (s:Entity {name: $source})
-                        MATCH (t:Entity {name: $target})
-                        WITH s, t
-                        CALL apoc.refactor.mergeNodes([t, s]) YIELD node
-                        RETURN count(node)
-                        """
-                        try:
-                            tx.run(query, source=source, target=target)
-                        except Exception:
-                            manual_query = """
-                            MATCH (s:Entity {name: $source})
-                            MATCH (t:Entity {name: $target})
-                            WITH s, t
-                            MATCH (s)-[r]->(o)
-                            MERGE (t)-[nr:TYPE(r)]->(o)
-                            SET nr = properties(r)
-                            DELETE r
-                            WITH s, t
-                            MATCH (o)-[r]->(s)
-                            MERGE (o)-[nr:TYPE(r)]->(t)
-                            SET nr = properties(r)
-                            DELETE r
-                            DETACH DELETE s
-                            """
-                            tx.run(manual_query, source=source, target=target)
-                        count += 1
-                    except Exception as e:
-                        logger.warning(f"合并实体 {source}->{target} 失败: {e}")
-                try:
-                    tx.commit()
-                except Exception as e:
-                    logger.warning(f"Neo4j 批量事务提交失败: {e}")
-        except Exception as e:
-             logger.error(f"Neo4j 合并会话失败: {e}")
-        logger.info(f"Neo4j: 成功合并 {count} 对实体")
-
-    def _merge_memory_entities(self, graph_store, merge_map):
-        """内存图合并逻辑"""
-        try:
-            # SimplePropertyGraphStore 内部可能有 _graph (NetworkX)
-            # 或者我们需要遍历 get_triplets 重新构建
-            # LlamaIndex 的 SimplePropertyGraphStore 实际上比较简单
-            if hasattr(graph_store, "_graph"):
-                G = graph_store._graph
-                count = 0
-                import networkx as nx
-                # 转换为 NetworkX 的 contract_nodes 或者 relabel_nodes
-                # 但这里是合并两个节点。
-                for source, target in merge_map.items():
-                    # 检查节点是否存在（可能在之前已经被合并掉了？）
-                    # NetworkX 的节点是对象，这里 name 是 string。
-                    # SimplePropertyGraphStore 的 graph node 是 EntityNode 对象吗？
-                    # 让我们假设是 EntityNode 对象，或者是 name string。
-                    # 通常 PropertyGraphStore 用 EntityNode 作为 key? 不，NetworkX node key 通常是 ID 或 Name。
-                    
-                    # 简单实现：只处理 NetworkX 层面
-                    # 注意：如果 source 不在图中（可能已经被作为 target 合并了），跳过
-                    nodes_map = {n.name: n for n in G.nodes() if hasattr(n, 'name')}
-                    # 如果节点是 string
-                    if not nodes_map and list(G.nodes()):
-                        nodes_map = {n: n for n in G.nodes()}
-                    
-                    s_node = nodes_map.get(source)
-                    t_node = nodes_map.get(target)
-                    
-                    if s_node and t_node:
-                         # 使用 NetworkX 的 contracted_nodes (生成新图) 或自定义合并
-                         # 这里我们手动转移边
-                         try:
-                             # 出边
-                             for _, nbr, data in list(G.out_edges(s_node, data=True)):
-                                 if not G.has_edge(t_node, nbr):
-                                     G.add_edge(t_node, nbr, **data)
-                             # 入边
-                             for nbr, _, data in list(G.in_edges(s_node, data=True)):
-                                 if not G.has_edge(nbr, t_node):
-                                     G.add_edge(nbr, t_node, **data)
-                             G.remove_node(s_node)
-                             count += 1
-                         except Exception as e:
-                             logger.warning(f"内存合并失败 {source}->{target}: {e}")
-                logger.info(f"MemoryStore: 合并了 {count} 对实体")
-            else:
-                logger.warning("不支持的内存图存储结构，跳过合并")
-        except Exception as e:
-            logger.error(f"内存图合并失败: {e}")
-
-    def _perform_triplet_validation(
-        self, 
-        index: Any, 
-        documents: List[Any], 
-        progress_tracker: Optional[ProgressTracker] = None
-    ):
-        """执行三元组反向自检"""
-        try:
-            from triplet_validator import TripletValidator
-            
-            logger.info("开始执行三元组反向自检...")
-            if progress_tracker:
-                progress_tracker.update_stage("knowledge_graph", "正在执行三元组反向自检...", 92)
-            else:
-                progress_callback("knowledge_graph", "正在执行三元组反向自检...", 92)
-            
-            # 创建轻量级校验模型
-            lightweight_llm = ModelFactory.create_lightweight_llm()
-            if not lightweight_llm:
-                logger.warning("轻量级校验模型创建失败，跳过反向自检")
-                return
-            
-            # 创建校验器
-            validator = TripletValidator(lightweight_llm, documents)
-            
-            # 获取所有三元组
-            graph_store = index.property_graph_store
-            is_neo4j = "Neo4jPropertyGraphStore" in str(type(graph_store))
-            
-            triplets = []
-            try:
-                triplets = graph_store.get_triplets()
-                logger.info(f"获取到 {len(triplets)} 个三元组用于反向验证")
-            except Exception as e:
-                logger.error(f"获取三元组失败: {e}")
-                return
-            
-            if not triplets:
-                logger.info("没有三元组需要验证")
-                return
-            
-            # 执行批量验证
-            sample_ratio = VALIDATOR_CONFIG.get("sample_ratio", 0.3)
-            core_entities = VALIDATOR_CONFIG.get("core_entities", [])
-            num_workers = VALIDATOR_CONFIG.get("num_workers", 4)  # 并行worker数量
-            
-            validation_results = validator.validate_triplets_batch(
-                triplets,
-                sample_ratio=sample_ratio,
-                core_entities=core_entities,
-                num_workers=num_workers
-            )
-            
-            if not validation_results:
-                logger.info("没有需要验证的三元组")
-                return
-            
-            # 过滤无效三元组
-            confidence_threshold = VALIDATOR_CONFIG.get("confidence_threshold", 0.5)
-            valid_triplets, invalid_triplets = validator.filter_invalid_triplets(
-                triplets,
-                validation_results,
-                confidence_threshold=confidence_threshold
-            )
-            
-                # 从图存储中删除无效的三元组
-            if invalid_triplets:
-                logger.info(f"准备删除 {len(invalid_triplets)} 个无效三元组")
-                try:
-                    deleted_count = self._remove_invalid_triplets(graph_store, invalid_triplets, is_neo4j)
-                    
-                    # 更新统计信息
-                    e_count, r_count = self._get_graph_counts(graph_store)
-                    self.metrics["entities_count"] = e_count
-                    self.metrics["relationships_count"] = r_count
-                    
-                    logger.info(f"✅ 反向自检完成: 成功删除 {deleted_count} 个无效三元组")
-                except Exception as e:
-                    import traceback
-                    logger.error(f"删除无效三元组时发生错误: {e}")
-                    logger.error(f"错误堆栈: {traceback.format_exc()}")
-                    logger.warning(f"警告: {len(invalid_triplets)} 个无效三元组未能删除，数据可能包含无效关系")
-            else:
-                logger.info("✅ 反向自检完成: 所有验证的三元组均有效")
-                
-        except Exception as e:
-            import traceback
-            logger.error(f"三元组反向自检过程中发生错误: {e}")
-            logger.error(f"错误堆栈: {traceback.format_exc()}")
-            # 不阻断主流程
-    
-    def _remove_invalid_triplets(
-        self, 
-        graph_store: Any, 
-        invalid_triplets: List[Tuple[EntityNode, Relation, EntityNode]], 
-        is_neo4j: bool
-    ) -> int:
-        """从图存储中删除无效的三元组
-        
-        Returns:
-            成功删除的三元组数量
-        """
-        deleted_count = 0
-        try:
-            if is_neo4j:
-                # Neo4j 删除逻辑
-                with graph_store._driver.session() as session:
-                    for head, relation, tail in invalid_triplets:
-                        try:
-                            # 确保属性值是字符串类型
-                            head_name = str(head.name) if hasattr(head, 'name') and head.name else ""
-                            tail_name = str(tail.name) if hasattr(tail, 'name') and tail.name else ""
-                            relation_label = str(relation.label) if hasattr(relation, 'label') and relation.label else ""
-                            
-                            # 处理可能的列表类型
-                            if isinstance(head_name, list):
-                                head_name = str(head_name[0]) if head_name else ""
-                            if isinstance(tail_name, list):
-                                tail_name = str(tail_name[0]) if tail_name else ""
-                            if isinstance(relation_label, list):
-                                relation_label = str(relation_label[0]) if relation_label else ""
-                            
-                            if not (head_name and tail_name and relation_label):
-                                logger.warning(f"跳过无效的三元组（缺少必要属性）: {head_name} - {relation_label} - {tail_name}")
-                                continue
-                            
-                            # 删除关系（保留节点）
-                            query = """
-                            MATCH (h:Entity {name: $head_name})-[r]->(t:Entity {name: $tail_name})
-                            WHERE r.label = $relation_label OR type(r) = $relation_label
-                            DELETE r
-                            RETURN count(r) as deleted
-                            """
-                            result = session.run(
-                                query,
-                                head_name=head_name,
-                                tail_name=tail_name,
-                                relation_label=relation_label
-                            )
-                            record = result.single()
-                            if record and record.get("deleted", 0) > 0:
-                                deleted_count += 1
-                                logger.debug(f"✅ 删除Neo4j关系: {head_name} - {relation_label} - {tail_name}")
-                            else:
-                                logger.debug(f"⚠️ 未找到要删除的关系: {head_name} - {relation_label} - {tail_name}")
-                        except Exception as e:
-                            logger.warning(f"删除Neo4j关系失败 ({head.name if hasattr(head, 'name') else 'N/A'} - {relation.label if hasattr(relation, 'label') else 'N/A'} - {tail.name if hasattr(tail, 'name') else 'N/A'}): {e}")
-                
-                return deleted_count
-            else:
-                # 内存图存储删除逻辑
-                # 构建无效三元组的标识集合用于匹配
-                invalid_keys = set()
-                for head, relation, tail in invalid_triplets:
-                    try:
-                        head_name = str(head.name) if hasattr(head, 'name') else str(head)
-                        tail_name = str(tail.name) if hasattr(tail, 'name') else str(tail)
-                        relation_label = str(relation.label) if hasattr(relation, 'label') else str(relation)
-                        # 处理可能的列表类型
-                        if isinstance(head_name, list):
-                            head_name = str(head_name[0]) if head_name else ""
-                        if isinstance(tail_name, list):
-                            tail_name = str(tail_name[0]) if tail_name else ""
-                        if isinstance(relation_label, list):
-                            relation_label = str(relation_label[0]) if relation_label else ""
-                        invalid_keys.add((head_name, relation_label, tail_name))
-                    except Exception as e:
-                        logger.warning(f"构建无效三元组标识时出错: {e}")
-                        continue
-                
-                # 获取所有三元组并过滤
-                try:
-                    all_triplets = graph_store.get_triplets()
-                    deleted_count = 0
-                    
-                    for triplet in all_triplets:
-                        try:
-                            head, relation, tail = triplet
-                            head_name = str(head.name) if hasattr(head, 'name') else str(head)
-                            tail_name = str(tail.name) if hasattr(tail, 'name') else str(tail)
-                            relation_label = str(relation.label) if hasattr(relation, 'label') else str(relation)
-                            # 处理可能的列表类型
-                            if isinstance(head_name, list):
-                                head_name = str(head_name[0]) if head_name else ""
-                            if isinstance(tail_name, list):
-                                tail_name = str(tail_name[0]) if tail_name else ""
-                            if isinstance(relation_label, list):
-                                relation_label = str(relation_label[0]) if relation_label else ""
-                            
-                            triplet_key = (head_name, relation_label, tail_name)
-                            if triplet_key in invalid_keys:
-                                # 尝试从图存储中删除（如果支持）
-                                try:
-                                    # SimplePropertyGraphStore 可能需要特殊处理
-                                    # 这里我们先记录，实际的删除可能需要通过重建图来实现
-                                    deleted_count += 1
-                                except Exception as e:
-                                    logger.debug(f"无法直接删除三元组: {e}")
-                        except Exception as e:
-                            logger.warning(f"处理三元组时出错: {e}")
-                            continue
-                    
-                    logger.info(f"内存图存储: 标识了 {len(invalid_keys)} 个无效三元组（实际删除可能需要重建图）")
-                    return len(invalid_keys)  # 返回标识的数量
-                except Exception as e:
-                    logger.warning(f"处理内存图存储删除时出错: {e}")
-                    logger.info(f"内存图存储: 标记了 {len(invalid_triplets)} 个无效三元组（需重建图以生效）")
-                    return 0
-                
-        except Exception as e:
-            import traceback
-            logger.error(f"删除无效三元组失败: {e}")
-            logger.error(f"错误堆栈: {traceback.format_exc()}")
-            return deleted_count  # 返回已删除的数量
-        
-        return deleted_count
-
     def stream_query_knowledge_graph(self, query: str, index: Any = None) -> Any:
         """
         流式查询知识图谱，返回生成器
@@ -1339,7 +1166,8 @@ class KnowledgeGraphManager:
                                 try:
                                     parsed = _json.loads(paths_data)
                                     if isinstance(parsed, list):
-                                        paths_early = parsed
+                                        # 提取格式化后的路径字符串
+                                        paths_early = [p.get("path_str", p) for p in parsed]
                                         break
                                 except Exception:
                                     pass
@@ -1371,7 +1199,8 @@ class KnowledgeGraphManager:
                                 try:
                                     parsed = _json.loads(paths_data)
                                     if isinstance(parsed, list):
-                                        paths = parsed
+                                        # 提取格式化后的路径字符串
+                                        paths = [p.get("path_str", p) for p in parsed]
                                         break
                                 except Exception:
                                     pass
@@ -1493,9 +1322,30 @@ class KnowledgeGraphManager:
             response = query_engine.query(query)
             answer = str(response)
             
+            # 提取路径
+            paths = []
+            try:
+                import json as _json
+                if hasattr(response, "source_nodes") and response.source_nodes:
+                    for node_with_score in response.source_nodes:
+                        node = getattr(node_with_score, "node", node_with_score)
+                        metadata = getattr(node, "metadata", {}) or {}
+                        if metadata.get("node_type") == "graph_context":
+                            paths_data = metadata.get("paths_data")
+                            if paths_data:
+                                try:
+                                    parsed = _json.loads(paths_data)
+                                    if isinstance(parsed, list):
+                                        paths = [p.get("path_str", p) for p in parsed]
+                                        break
+                                except Exception:
+                                    pass
+            except Exception:
+                pass
+            
             return {
                 "answer": answer,
-                "paths": []
+                "paths": paths
             }
             
         except Exception as e:
@@ -1877,6 +1727,7 @@ class KnowledgeGraphManager:
             
             with self.graph_store._driver.session() as session:
                 # 1. 按文档分组（根据 file_path 或 source_file_name）
+                # 优化：使用生成器减少内存占用
                 doc_groups = {}
                 doc_chunks = {}  # doc_id -> list of (chunk_id, chunk_index, chunk_data)
                 chunk_to_doc = {}  # chunk_id -> document_id
@@ -1917,6 +1768,11 @@ class KnowledgeGraphManager:
                         'page_number': page_number
                     })
                     chunk_to_doc[chunk_id] = file_hash
+                    
+                    # 定期清理内存
+                    if idx % 1000 == 0:
+                        import gc
+                        gc.collect()
                 
                 # 为每个文档的 chunks 分配正确的 chunk_index
                 for file_hash, chunks in doc_chunks.items():
@@ -1956,6 +1812,11 @@ class KnowledgeGraphManager:
                         logger.warning(f"创建 Document 节点失败 ({file_hash}): {e}")
                 
                 logger.info(f"✅ 创建了 {created_docs} 个 Document 节点")
+                
+                # 清理不再需要的 doc_groups
+                del doc_groups
+                import gc
+                gc.collect()
                 
                 # 3. 创建 Chunk 节点并建立 Chunk-[:PART_OF]->Document 和 Chunk-[:NEXT]->Chunk 关系（上下文层）
                 created_chunks = 0
@@ -2018,6 +1879,11 @@ class KnowledgeGraphManager:
                 
                 logger.info(f"✅ 创建了 {created_chunks} 个 Chunk 节点，{created_part_of_rels} 个 PART_OF 关系，{created_next_rels} 个 NEXT 关系")
                 logger.info(f"✅ 骨架创建完成: {created_docs} 个 Document, {created_chunks} 个 Chunk")
+                
+                # 清理不再需要的字典
+                del doc_chunks
+                del chunk_to_doc
+                gc.collect()
                 
         except Exception as e:
             logger.error(f"创建文档和块骨架时发生错误: {e}")

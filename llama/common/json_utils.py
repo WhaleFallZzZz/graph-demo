@@ -1,12 +1,15 @@
 """
-LLM 输出的 JSON 解析和验证工具。
+JSON 解析和处理工具模块
 
-本模块提供健壮的 JSON 解析函数，包括：
+提供健壮的 JSON 解析和处理功能，用于处理 LLM 输出和各种 JSON 格式。
+
+主要功能：
 - 带错误处理的安全 JSON 解析
-- 带类型保留的 LLM 输出解析
+- LLM 输出解析和标准化
 - JSON 语法修复和更正
 - 从混合文本中提取 JSON
-- 结构验证
+- JSON 结构验证
+- CSV 与 JSON 转换
 """
 
 import json
@@ -14,17 +17,32 @@ import re
 import logging
 from typing import Any, List, Dict, Optional, Union
 
+try:
+    import json5
+    HAS_JSON5 = True
+except ImportError:
+    HAS_JSON5 = False
+    logger = logging.getLogger(__name__)
+    logger.warning("json5 库未安装，将使用标准 json 库")
+
 logger = logging.getLogger(__name__)
 
 
 class JSONParseError(Exception):
-    """Custom exception for JSON parsing errors."""
+    """
+    JSON 解析错误
+    
+    自定义异常类，用于表示 JSON 解析过程中发生的错误。
+    """
     pass
 
 
 def safe_json_parse(text: str, default: Any = None) -> Any:
     """
-    安全解析 JSON 文本，带错误处理和自动修复。
+    安全解析 JSON 文本，带错误处理和自动修复
+    
+    优先使用 json5 库进行解析，因为它支持更宽松的 JSON 格式。
+    如果解析失败，会尝试修复语法错误后再解析。
     
     Args:
         text: 要解析的 JSON 字符串
@@ -43,7 +61,16 @@ def safe_json_parse(text: str, default: Any = None) -> Any:
         logger.debug("Empty or whitespace-only JSON input")
         return default if default is not None else None
     
-    # 首先尝试直接解析
+    # 优先使用 json5 库进行解析
+    if HAS_JSON5:
+        try:
+            result = json5.loads(text)
+            logger.debug("JSON parsing succeeded with json5 library")
+            return result
+        except Exception as e:
+            logger.debug(f"json5 parsing failed: {e}")
+    
+    # 首先尝试直接解析（使用标准 json 库）
     try:
         return json.loads(text)
     except json.JSONDecodeError as e:
@@ -78,9 +105,14 @@ def safe_json_parse(text: str, default: Any = None) -> Any:
 
 def parse_llm_output(llm_output: str) -> List[Dict[str, str]]:
     """
-    解析 LLM 输出，提取带有类型信息的实体。
+    解析 LLM 输出，提取带有类型信息的实体
     
     处理各种 LLM 输出格式并尝试提取结构化实体数据。
+    支持以下格式：
+    - JSON 数组
+    - JSON 对象（包含 entities 键）
+    - 单个 JSON 对象
+    - 逐行格式
     
     Args:
         llm_output: 原始 LLM 输出文本
@@ -120,7 +152,7 @@ def parse_llm_output(llm_output: str) -> List[Dict[str, str]]:
 
 def _normalize_entity_list(entities: List[Any]) -> List[Dict[str, str]]:
     """
-    将实体列表标准化为标准格式。
+    将实体列表标准化为标准格式
     
     Args:
         entities: 实体对象列表（各种格式）
@@ -143,7 +175,7 @@ def _normalize_entity_list(entities: List[Any]) -> List[Dict[str, str]]:
 
 def _normalize_entity(entity: Dict[str, Any]) -> Dict[str, str]:
     """
-    将单个实体标准化为标准格式。
+    将单个实体标准化为标准格式
     
     Args:
         entity: 实体字典（可能有各种键名）
@@ -180,9 +212,38 @@ def _normalize_entity(entity: Dict[str, Any]) -> Dict[str, str]:
     return normalized
 
 
+def _parse_line_by_line(text: str) -> List[Dict[str, str]]:
+    """
+    逐行解析文本，尝试提取实体
+    
+    Args:
+        text: 要解析的文本
+        
+    Returns:
+        实体字典列表
+    """
+    entities = []
+    
+    for line in text.split('\n'):
+        line = line.strip()
+        if not line:
+            continue
+        
+        # 尝试解析为 JSON
+        try:
+            entity = json.loads(line)
+            if isinstance(entity, dict):
+                entities.append(_normalize_entity(entity))
+        except:
+            # 如果不是 JSON，作为简单文本处理
+            entities.append({'name': line, 'type': 'unknown'})
+    
+    return entities
+
+
 def fix_json_syntax(json_str: str) -> str:
     """
-    尝试修复常见的 JSON 语法错误。
+    尝试修复常见的 JSON 语法错误
     
     处理以下问题：
     - 键周围缺少引号
@@ -190,6 +251,9 @@ def fix_json_syntax(json_str: str) -> str:
     - 单引号而不是双引号
     - 缺少右括号
     - 中文键名缺少引号
+    - 缺少冒号
+    - 不完整的 JSON 对象
+    - 混合使用单引号和双引号
     
     Args:
         json_str: 可能格式错误的 JSON 字符串
@@ -213,8 +277,10 @@ def fix_json_syntax(json_str: str) -> str:
     # 移除控制字符
     fixed = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', fixed)
     
-    # 先处理键名中的单引号（避免与值中的单引号混淆）
-    # 使用更精确的匹配：键名: 值，但值可能是嵌套结构
+    # 先统一所有单引号为双引号（这是最关键的一步）
+    # 这样可以处理混合使用单引号和双引号的情况
+    fixed = re.sub(r"'", '"', fixed)
+    
     # 为未加引号的键添加引号（支持中文字符）
     # 匹配模式：{ 或 , 后面跟空白，然后是键名（可能包含中文），然后是冒号
     fixed = re.sub(
@@ -223,29 +289,30 @@ def fix_json_syntax(json_str: str) -> str:
         fixed
     )
     
-    # 将单引号替换为双引号（值部分）
-    # 但要小心处理已经处理过的键名
-    # 使用负向前瞻，确保不在键名位置
-    fixed = re.sub(r"(?<![\"'])\s*'([^']*)'\s*(?![,}\]:])", r' "\1"', fixed)
-    # 更简单的方法：替换所有单引号
-    fixed = re.sub(r"'", '"', fixed)
-    
     # 移除尾随逗号（在 } 或 ] 之前）
     fixed = re.sub(r',\s*([}\]])', r'\1', fixed)
     
-    # 修复常见的转义问题
-    fixed = fixed.replace('\\"', '"')  # 但这样可能会破坏合法的转义，需要更谨慎
-    # 实际上不应该这样做，因为会破坏合法的转义字符
+    # 修复缺少右括号的情况
+    # 统计括号数量并添加缺失的括号
+    open_braces = fixed.count('{')
+    close_braces = fixed.count('}')
+    if open_braces > close_braces:
+        fixed += '}' * (open_braces - close_braces)
+    
+    open_brackets = fixed.count('[')
+    close_brackets = fixed.count(']')
+    if open_brackets > close_brackets:
+        fixed += ']' * (open_brackets - close_brackets)
     
     return fixed
 
 
 def extract_json_from_text(text: str) -> Optional[str]:
     """
-    从混合文本中提取 JSON 对象或数组。
+    从混合文本中提取 JSON 对象或数组
     
     处理包含嵌入在 markdown 代码块中或被其他文本包围的 JSON 的文本。
-    改进版本：支持嵌套JSON结构的准确提取。
+    改进版本：支持嵌套 JSON 结构的准确提取。
     
     Args:
         text: 包含 JSON 的混合文本
@@ -329,7 +396,7 @@ def validate_json_structure(data: Any,
                           required_keys: Optional[List[str]] = None,
                           expected_type: Optional[type] = None) -> bool:
     """
-    根据要求验证 JSON 结构。
+    根据要求验证 JSON 结构
     
     Args:
         data: 要验证的已解析 JSON 数据
@@ -363,153 +430,9 @@ def validate_json_structure(data: Any,
     return True
 
 
-def parse_entity_triplets(text: str) -> List[Dict[str, str]]:
-    """
-    从 LLM 输出中解析实体三元组。
-    
-    三元组格式为：(头实体, 关系, 尾实体)
-    
-    Args:
-        text: 包含三元组的 LLM 输出
-        
-    Returns:
-        三元组字典列表
-        
-    Examples:
-        >>> parse_entity_triplets("(disease, causes, symptom)")
-        [{'head': 'disease', 'relation': 'causes', 'tail': 'symptom'}]
-    """
-    if not text:
-        return []
-    
-    triplets = []
-    
-    # 匹配三元组的模式
-    pattern = r'\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^)]+)\s*\)'
-    matches = re.findall(pattern, text)
-    
-    for match in matches:
-        triplets.append({
-            'head': match[0].strip(),
-            'relation': match[1].strip(),
-            'tail': match[2].strip()
-        })
-    
-    return triplets
-
-
-def format_json_output(data: Any, indent: int = 2) -> str:
-    """
-    将数据格式化为带有适当缩进的 JSON 字符串。
-    
-    Args:
-        data: 要格式化的数据
-        indent: 缩进空格数
-        
-    Returns:
-        格式化的 JSON 字符串
-        
-    Examples:
-        >>> format_json_output({'key': 'value'})
-        '{\\n  "key": "value"\\n}'
-    """
-    try:
-        return json.dumps(data, indent=indent, ensure_ascii=False)
-    except Exception as e:
-        logger.error(f"Failed to format JSON: {e}")
-        return str(data)
-
-
-def merge_json_objects(*objects: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    合并多个 JSON 对象，后面的对象会覆盖前面的对象。
-    
-    Args:
-        *objects: 要合并的字典对象
-        
-    Returns:
-        合并后的字典
-        
-    Examples:
-        >>> merge_json_objects({'a': 1}, {'b': 2}, {'a': 3})
-        {'a': 3, 'b': 2}
-    """
-    result = {}
-    
-    for obj in objects:
-        if isinstance(obj, dict):
-            result.update(obj)
-        else:
-            logger.warning(f"Skipping non-dict object in merge: {type(obj)}")
-    
-    return result
-
-
-def flatten_json(data: Dict[str, Any], 
-                 separator: str = '_',
-                 parent_key: str = '') -> Dict[str, Any]:
-    """
-    展平嵌套的 JSON 结构。
-    
-    Args:
-        data: 要展平的嵌套字典
-        separator: 嵌套键的分隔符（默认：'_'）
-        parent_key: 当前父键（内部使用）
-        
-    Returns:
-        展平后的字典
-        
-    Examples:
-        >>> flatten_json({'a': {'b': {'c': 1}}})
-        {'a_b_c': 1}
-    """
-    items = []
-    
-    for key, value in data.items():
-        new_key = f"{parent_key}{separator}{key}" if parent_key else key
-        
-        if isinstance(value, dict):
-            items.extend(flatten_json(value, separator, new_key).items())
-        else:
-            items.append((new_key, value))
-    
-    return dict(items)
-
-
-def unflatten_json(data: Dict[str, Any], separator: str = '_') -> Dict[str, Any]:
-    """
-    将之前展平的 JSON 结构还原为嵌套结构。
-    
-    Args:
-        data: 展平后的字典
-        separator: 展平键中使用的分隔符
-        
-    Returns:
-        嵌套字典
-        
-    Examples:
-        >>> unflatten_json({'a_b_c': 1})
-        {'a': {'b': {'c': 1}}}
-    """
-    result = {}
-    
-    for key, value in data.items():
-        parts = key.split(separator)
-        current = result
-        
-        for part in parts[:-1]:
-            if part not in current:
-                current[part] = {}
-            current = current[part]
-        
-        current[parts[-1]] = value
-    
-    return result
-
-
 def json_to_csv(data: List[Dict[str, Any]]) -> str:
     """
-    将 JSON 对象列表转换为 CSV 格式。
+    将 JSON 对象列表转换为 CSV 格式
     
     Args:
         data: 具有一致键的字典列表
@@ -545,7 +468,7 @@ def json_to_csv(data: List[Dict[str, Any]]) -> str:
 
 def csv_to_json(csv_text: str) -> List[Dict[str, str]]:
     """
-    将 CSV 格式转换为 JSON 对象列表。
+    将 CSV 格式转换为 JSON 对象列表
     
     Args:
         csv_text: CSV 格式字符串

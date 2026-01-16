@@ -1,20 +1,41 @@
 version: '3.8'
 services:
-  knowledge-graph:
-    build: .
+  neo4j:
+    image: neo4j:5.26
+    container_name: neo4j-medical
+    restart: always
     ports:
-      - "8001:8001"
-   environment:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - /var/lib/neo4j/data:/data
+      - /var/lib/neo4j/logs:/logs
+      - /var/lib/neo4j/import:/var/lib/neo4j/import
+      - /var/lib/neo4j/plugins:/plugins
+    environment:
+      - NEO4J_AUTH=neo4j/J.pQF!zg33haagT
+      
+      # --- 内存优化关键修改 START ---
+      # 1. 设置初始堆内存 = 最大堆内存 (防止动态扩容时的性能抖动)
+      - NEO4J_server_memory_heap_initial__size=2G
       - NEO4J_server_memory_heap_max__size=2G
-      - NEO4J_server_memory_pagecache_size=2G
-      # --- 关键配置：解除 APOC 沙箱限制 ---
-      # 1. 将 apoc 所有的过程放入“非受限”名单
+      
+      # 2. 调小 Page Cache！
+      # 计算公式：容器限制(4G) - Heap(2G) - 预留给系统/JVM(1G) = 1G
+      - NEO4J_server_memory_pagecache_size=1G
+      # --- 内存优化关键修改 END ---
+
+      - NEO4J_server_default__listen__address=0.0.0.0
+      
+      # --- APOC 配置 ---
+      # 注意：如果你没有手动下载 jar 包到 plugins 目录，需要加下面这行自动下载
+      - NEO4J_PLUGINS=["apoc"] 
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*
-      # 2. 将 apoc 放入允许加载的名单
       - NEO4J_dbms_security_procedures_allowlist=apoc.*
-      # 3. 允许 APOC 进行文件导入（如果你要处理 OCR 的 PDF 数据，这必开）
       - NEO4J_apoc_import_file_enabled=true
       - NEO4J_apoc_export_file_enabled=true
-    volumes:
-      - ./logs:/app/logs
-    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          # 保持 4G 限制，但现在内部配置只需约 3G+，安全了
+          memory: 4G

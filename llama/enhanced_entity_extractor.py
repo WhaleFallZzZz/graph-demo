@@ -26,7 +26,7 @@ class StandardTermMapper:
         # 症状体征(13)
         "视物模糊", "眼胀", "虹视", "眼痛", "畏光", "流泪", "视力下降", 
         "豹纹状眼底", "视网膜萎缩", "脉络膜萎缩", "黄斑出血", "漆样裂纹", "视盘杯盘比(C/D)扩大",
-        # 解剖结构(12)
+        # 部位结构(12)
         "角膜", "晶状体", "视网膜", "视神经", "黄斑区", "中心凹", 
         "睫状肌", "悬韧带", "脉络膜", "巩膜", "前房", "房水",
         # 检查参数(10)
@@ -166,36 +166,36 @@ class StandardTermMapper:
     "眼睛胀": "眼胀", "眼部胀痛": "眼胀",
     # 注意：不映射"眼球胀痛,甚至恶心呕吐及神经官能症"等，因为它们是复合症状
     
-    # 解剖结构 - 视网膜相关 (扩展)
+    # 部位结构 - 视网膜相关 (扩展)
     "眼底": "视网膜", "视网膜层": "视网膜", "双眼视网膜像差异": "视网膜",
     
-    # 解剖结构 - 视神经相关 (扩展)
+    # 部位结构 - 视神经相关 (扩展)      
     "视盘": "视神经", "视乳头": "视神经", "Optic Nerve": "视神经",
     
-    # 解剖结构 - 黄斑区相关 (扩展)
+    # 部位结构 - 黄斑区相关 (扩展)
     "黄斑": "黄斑区", "黄斑部": "黄斑区",
     "黄斑水肿": "黄斑区", "黄斑功能退化": "黄斑区",
     
-    # 解剖结构 - 中心凹相关 (扩展)
+    # 部位结构 - 中心凹相关 (扩展)
     "中央凹": "中心凹", "黄斑中心凹": "中心凹",
     "黄斑中心凹功能正常": "中心凹",
     
-    # 解剖结构 - 睫状肌相关
+    # 部位结构 - 睫状肌相关
     "睫状体": "睫状肌",
     
-    # 解剖结构 - 晶状体相关 (扩展)
+    # 部位结构 - 晶状体相关 (扩展)
     "晶状体变凸": "晶状体", "晶状体屈光力": "晶状体",
     
-    # 解剖结构 - 脉络膜相关
+    # 部位结构 - 脉络膜相关 
     "脉络膜层": "脉络膜",
     
-    # 解剖结构 - 巩膜相关
+    # 部位结构 - 巩膜相关
     "巩膜层": "巩膜", "白眼球": "巩膜",
     
-    # 解剖结构 - 前房相关
+    # 部位结构 - 前房相关
     "前房角": "前房",
     
-    # 解剖结构 - 房水相关
+    # 部位结构 - 房水相关
     "眼房水": "房水", "前房水": "房水",
     
     # 治疗防控 - 户外活动相关
@@ -238,41 +238,45 @@ class StandardTermMapper:
     @classmethod
     def _get_embedding_model(cls):
         """延迟初始化 Embedding 模型"""
-        if cls._embedding_model is None:
-            with cls._embedding_lock:
-                if cls._embedding_model is None:
-                    try:
-                        api_cfg = API_CONFIG.get("siliconflow", {})
-                        # 使用 HybridSiliconFlowEmbedding (纯在线模式)
-                        cls._embedding_model = HybridSiliconFlowEmbedding(
-                            api_key=api_cfg.get("api_key"),
-                            model=api_cfg.get("embedding_model", "BAAI/bge-m3")
-                        )
-                        logger.info("StandardTermMapper: Vector Embedding model initialized.")
-                    except Exception as e:
-                        logger.error(f"Failed to init embedding model: {e}")
-        return cls._embedding_model
+        # 已注释：移除 Vector Hard-Correction (向量强制合并) 相关代码
+        # if cls._embedding_model is None:
+        #     with cls._embedding_lock:
+        #         if cls._embedding_model is None:
+        #             try:
+        #                 api_cfg = API_CONFIG.get("siliconflow", {})
+        #                 # 使用 HybridSiliconFlowEmbedding (纯在线模式)
+        #                 cls._embedding_model = HybridSiliconFlowEmbedding(
+        #                     api_key=api_cfg.get("api_key"),
+        #                     model=api_cfg.get("embedding_model", "BAAI/bge-m3")
+        #                 )
+        #                 logger.info("StandardTermMapper: Vector Embedding model initialized.")
+        #             except Exception as e:
+        #                 logger.error(f"Failed to init embedding model: {e}")
+        # return cls._embedding_model
+        return None
 
     @classmethod
     def _ensure_standard_embeddings(cls):
         """确保标准实体的 Embedding 已缓存"""
-        if not cls._standard_embeddings:
-            model = cls._get_embedding_model()
-            if not model:
-                return
-            
-            with cls._embedding_lock:
-                if not cls._standard_embeddings:
-                    logger.info("Generating embeddings for 57 standard entities...")
-                    try:
-                        entities = list(cls.STANDARD_ENTITIES)
-                        # 批量获取 Embedding
-                        embeddings = model.get_text_embedding_batch(entities)
-                        for ent, emb in zip(entities, embeddings):
-                            cls._standard_embeddings[ent] = np.array(emb)
-                        logger.info(f"Successfully cached {len(cls._standard_embeddings)} standard entity embeddings.")
-                    except Exception as e:
-                        logger.error(f"Error generating standard embeddings: {e}")
+        # 已注释：移除 Vector Hard-Correction (向量强制合并) 相关代码
+        # if not cls._standard_embeddings:
+        #     model = cls._get_embedding_model()
+        #     if not model:
+        #         return
+        #     
+        #     with cls._embedding_lock:
+        #         if not cls._standard_embeddings:
+        #             logger.info("Generating embeddings for 57 standard entities...")
+        #             try:
+        #                 entities = list(cls.STANDARD_ENTITIES)
+        #                 # 批量获取 Embedding
+        #                 embeddings = model.get_text_embedding_batch(entities)
+        #                 for ent, emb in zip(entities, embeddings):
+        #                     cls._standard_embeddings[ent] = np.array(emb)
+        #                 logger.info(f"Successfully cached {len(cls._standard_embeddings)} standard entity embeddings.")
+        #             except Exception as e:
+        #                 logger.error(f"Error generating standard embeddings: {e}")
+        pass
 
     @classmethod
     def remove_modifiers(cls, entity_name: str) -> str:
@@ -343,32 +347,33 @@ class StandardTermMapper:
                 result = best_match
             
             # 3. Vector 硬纠偏 (Threshold 0.65) - 仅当 Levenshtein 失败且长度足够时尝试
-            elif len(clean_name) >= 2: 
-                try:
-                    cls._ensure_standard_embeddings()
-                    if cls._standard_embeddings:
-                        model = cls._get_embedding_model()
-                        if model:
-                            # 获取当前实体的 Embedding
-                            vec = np.array(model.get_text_embedding(clean_name))
-                            norm_v = np.linalg.norm(vec)
-                            
-                            best_vec_score = 0.0
-                            best_vec_match = None
-                            
-                            for std, std_vec in cls._standard_embeddings.items():
-                                norm_std = np.linalg.norm(std_vec)
-                                # Cosine Similarity
-                                score = np.dot(vec, std_vec) / (norm_v * norm_std + 1e-9)
-                                if score > best_vec_score:
-                                    best_vec_score = score
-                                    best_vec_match = std
-                            
-                            if best_vec_score > 0.60:
-                                logger.info(f"Vector Hard-Correction: '{clean_name}' -> '{best_vec_match}' ({best_vec_score:.2f})")
-                                result = best_vec_match
-                except Exception as e:
-                    logger.warning(f"Vector similarity check failed for '{clean_name}': {e}")
+            # 已注释：移除 Vector Hard-Correction (向量强制合并)
+            # elif len(clean_name) >= 2: 
+            #     try:
+            #         cls._ensure_standard_embeddings()
+            #         if cls._standard_embeddings:
+            #             model = cls._get_embedding_model()
+            #             if model:
+            #                 # 获取当前实体的 Embedding
+            #                 vec = np.array(model.get_text_embedding(clean_name))
+            #                 norm_v = np.linalg.norm(vec)
+            #                 
+            #                 best_vec_score = 0.0
+            #                 best_vec_match = None
+            #                 
+            #                 for std, std_vec in cls._standard_embeddings.items():
+            #                     norm_std = np.linalg.norm(std_vec)
+            #                     # Cosine Similarity
+            #                     score = np.dot(vec, std_vec) / (norm_v * norm_std + 1e-9)
+            #                     if score > best_vec_score:
+            #                         best_vec_score = score
+            #                         best_vec_match = std
+            #                 
+            #                 if best_vec_score > 0.95:
+            #                     logger.info(f"Vector Hard-Correction: '{clean_name}' -> '{best_vec_match}' ({best_vec_score:.2f})")
+            #                     result = best_vec_match
+            #     except Exception as e:
+            #         logger.warning(f"Vector similarity check failed for '{clean_name}': {e}")
 
         cls._lru_cache[key] = result
         if len(cls._lru_cache) > cls._lru_max:
@@ -435,13 +440,13 @@ class StandardTermMapper:
             logger.warning(f"实体被无效后缀拦截: '{text}'")
             return False
 
-        # 5. 过滤纯数字
-        if text.replace(".", "").isdigit():
-            return False
+        # # 5. 过滤纯数字
+        # if text.replace(".", "").isdigit():
+        #     return False
             
-        # 6. 过滤纯标点
-        if all(char in ",./<>?;':\"[]\\{}|`~!@#$%^&*()-_=+" for char in text):
-            return False
+        # # 6. 过滤纯标点
+        # if all(char in ",./<>?;':\"[]\\{}|`~!@#$%^&*()-_=+" for char in text):
+        #     return False
         
         # 7. 机构/场所剔除：以机构后缀结尾或包含机构关键词，且不在医学允许术语例外列表
         try:

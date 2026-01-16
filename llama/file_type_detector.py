@@ -1,27 +1,61 @@
 #!/usr/bin/env python3
 """
-简化版的文件类型检测模块 - 仅使用扩展名和MIME类型检测
+简化版的文件类型检测模块
+
+提供基于文件扩展名和 MIME 类型的文件类型检测功能。
+
+主要功能：
+- 通过文件扩展名检测文件类型
+- 通过 MIME 类型检测文件类型
+- 综合多种检测方法提高准确性
+- 判断文件是否在允许的处理列表中
+- 获取详细的文件信息
+
+适用场景：
+- 文件上传验证
+- 文件类型识别
+- 文件处理前的类型检查
 """
 
-from ast import dump
 import os
 import mimetypes
 from pathlib import Path
-from typing import Optional, Dict, Any, Set
+from typing import Optional, Dict, Any
 from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
 
+
 class SimpleFileTypeDetector:
-    """简化的文件类型检测器 - 仅使用扩展名和MIME类型"""
+    """
+    简化的文件类型检测器
+    
+    仅使用文件扩展名和 MIME 类型进行检测，不依赖复杂的文件内容分析。
+    
+    特点：
+    - 快速检测：仅基于扩展名和 MIME 类型
+    - 支持多种文件类型：文本、文档、PDF、网页、代码等
+    - 多种检测方法：扩展名检测、MIME 类型检测
+    - 置信度评分：根据检测方法给出置信度
+    
+    适用场景：
+    - 文件上传验证
+    - 文件类型识别
+    - 文件处理前的类型检查
+    """
     
     def __init__(self):
+        """
+        初始化文件类型检测器
+        
+        配置支持的文件扩展名和 MIME 类型映射。
+        """
         # 支持的文件扩展名
         self.allowed_extensions = {
             # 文本文件
             'txt', 'md', 'rst', 'text',
-            # Word文档
+            # Word 文档
             'doc', 'docx',
             # PDF
             'pdf',
@@ -31,7 +65,7 @@ class SimpleFileTypeDetector:
             'py', 'js', 'java', 'cpp', 'c', 'h', 'css', 'json', 'yaml', 'yml'
         }
         
-        # MIME类型映射
+        # MIME 类型映射
         self.mime_type_mapping = {
             'text/plain': 'txt',
             'text/html': 'html',
@@ -48,11 +82,20 @@ class SimpleFileTypeDetector:
         }
     
     def detect_by_extension(self, filename: str) -> Optional[str]:
-        """通过文件扩展名检测文件类型"""
+        """
+        通过文件扩展名检测文件类型
+        
+        Args:
+            filename: 文件名
+            
+        Returns:
+            Optional[str]: 检测到的文件类型，如果无法检测则返回 None
+        """
         if not filename:
             return None
             
         ext = Path(filename).suffix.lower().lstrip('.')
+        
         # 兼容处理：如果文件名包含特殊字符导致扩展名识别错误
         # 例如 "文件名.pdf" 可能被识别为 "pdf"
         # 如果 "文件名.tar.gz" 可能被识别为 "gz"
@@ -80,7 +123,15 @@ class SimpleFileTypeDetector:
         return extension_aliases.get(ext)
     
     def detect_by_mime_type(self, file_path: str) -> Optional[str]:
-        """通过MIME类型检测文件类型"""
+        """
+        通过 MIME 类型检测文件类型
+        
+        Args:
+            file_path: 文件路径
+            
+        Returns:
+            Optional[str]: 检测到的文件类型，如果无法检测则返回 None
+        """
         try:
             mime_type, _ = mimetypes.guess_type(file_path)
             
@@ -94,12 +145,30 @@ class SimpleFileTypeDetector:
                     return 'txt'
                     
         except Exception as e:
-            logger.error(f"MIME类型检测失败: {e}")
+            logger.error(f"MIME 类型检测失败: {e}")
             
         return None
     
     def detect_file_type(self, file_path: str, filename: Optional[str] = None) -> Dict[str, Any]:
-        """综合检测文件类型"""
+        """
+        综合检测文件类型
+        
+        使用多种方法检测文件类型，并返回检测结果的详细信息。
+        
+        Args:
+            file_path: 文件路径
+            filename: 可选的文件名，如果未提供则从路径中提取
+            
+        Returns:
+            Dict[str, Any]: 包含检测结果的字典，包括：
+                - type: 检测到的文件类型
+                - filename: 实际使用的文件名
+                - method: 使用的检测方法列表
+                - confidence: 检测置信度（0-5）
+                - allowed: 是否在允许的文件类型列表中
+                - error: 错误信息（如果有）
+                - detected: 检测到的类型（如果不支持）
+        """
         if not os.path.exists(file_path):
             return {'error': '文件不存在', 'type': None, 'method': None}
             
@@ -110,20 +179,21 @@ class SimpleFileTypeDetector:
         detected_type = None
         confidence = 0
         
-        # 方法1：扩展名检测（最快）
+        # 方法 1：扩展名检测（最快）
         ext_type = self.detect_by_extension(actual_filename)
         if ext_type:
             detection_methods.append('extension')
             detected_type = ext_type
             confidence += 3  # 扩展名检测置信度较高
         
-        # 方法2：MIME类型检测
+        # 方法 2：MIME 类型检测
         if not detected_type:
             mime_type = self.detect_by_mime_type(file_path)
             if mime_type:
                 detection_methods.append('mime')
                 detected_type = mime_type
                 confidence += 2
+        
         # 验证检测到的类型是否在允许列表中
         if detected_type and detected_type not in self.allowed_extensions:
             logger.warning(f"检测到的文件类型 '{detected_type}' 不在允许列表中")
@@ -144,12 +214,36 @@ class SimpleFileTypeDetector:
         }
     
     def is_allowed_file(self, file_path: str, filename: Optional[str] = None) -> bool:
-        """判断文件是否允许处理"""
+        """
+        判断文件是否允许处理
+        
+        Args:
+            file_path: 文件路径
+            filename: 可选的文件名
+            
+        Returns:
+            bool: 如果文件在允许的列表中则返回 True，否则返回 False
+        """
         result = self.detect_file_type(file_path, filename)
         return result.get('allowed', False)
     
     def get_file_info(self, file_path: str) -> Dict[str, Any]:
-        """获取详细的文件信息"""
+        """
+        获取详细的文件信息
+        
+        Args:
+            file_path: 文件路径
+            
+        Returns:
+            Dict[str, Any]: 包含文件详细信息的字典，包括：
+                - path: 文件路径
+                - size: 文件大小（字节）
+                - modified: 最后修改时间（ISO 格式）
+                - created: 创建时间（ISO 格式）
+                - type_detection: 文件类型检测结果
+                - readable: 文件是否可读
+                - error: 错误信息（如果有）
+        """
         if not os.path.exists(file_path):
             return {'error': '文件不存在'}
             
@@ -167,18 +261,53 @@ class SimpleFileTypeDetector:
             'readable': os.access(file_path, os.R_OK)
         }
 
+
 # 全局文件类型检测器实例
 file_detector = SimpleFileTypeDetector()
 
-# 便捷的包装函数
+
 def detect_file_type(file_path: str, filename: Optional[str] = None) -> Dict[str, Any]:
-    """检测文件类型"""
+    """
+    检测文件类型（便捷函数）
+    
+    使用全局检测器实例检测文件类型。
+    
+    Args:
+        file_path: 文件路径
+        filename: 可选的文件名
+        
+    Returns:
+        Dict[str, Any]: 检测结果
+    """
     return file_detector.detect_file_type(file_path, filename)
 
+
 def is_allowed_file(file_path: str, filename: Optional[str] = None) -> bool:
-    """判断文件是否允许处理"""
+    """
+    判断文件是否允许处理（便捷函数）
+    
+    使用全局检测器实例判断文件是否在允许列表中。
+    
+    Args:
+        file_path: 文件路径
+        filename: 可选的文件名
+        
+    Returns:
+        bool: 如果文件在允许的列表中则返回 True
+    """
     return file_detector.is_allowed_file(file_path, filename)
 
+
 def get_file_info(file_path: str) -> Dict[str, Any]:
-    """获取文件详细信息"""
+    """
+    获取文件详细信息（便捷函数）
+    
+    使用全局检测器实例获取文件详细信息。
+    
+    Args:
+        file_path: 文件路径
+        
+    Returns:
+        Dict[str, Any]: 文件详细信息
+    """
     return file_detector.get_file_info(file_path)

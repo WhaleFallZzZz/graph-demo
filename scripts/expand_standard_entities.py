@@ -125,7 +125,7 @@ def classify_entities(entities: List[str], driver) -> Dict[str, List[str]]:
     classification = {
         "疾病": [],
         "症状体征": [],
-        "解剖结构": [],
+        "部位": [],
         "检查参数": [],
         "治疗防控": [],
         "其他": []
@@ -174,7 +174,7 @@ def generate_updated_code(non_standard_entities: Dict[str, int], classification:
     code_lines.append("")
     
     # 按分类输出新增实体
-    type_order = ["疾病", "症状体征", "解剖结构", "检查参数", "治疗防控", "其他"]
+    type_order = ["疾病", "症状体征", "部位", "检查参数", "治疗防控", "其他"]
     for entity_type in type_order:
         entities_in_type = classification.get(entity_type, [])
         if entities_in_type:
@@ -235,7 +235,7 @@ def generate_report(non_standard_entities: Dict[str, int], classification: Dict[
     print(f"找到的非标准实体总数: {len(non_standard_entities)}")
     print(f"\n按类型分类:")
     
-    type_order = ["疾病", "症状体征", "解剖结构", "检查参数", "治疗防控", "其他"]
+    type_order = ["疾病", "症状体征", "部位", "检查参数", "治疗防控", "其他"]
     for entity_type in type_order:
         entities_in_type = classification.get(entity_type, [])
         if entities_in_type:

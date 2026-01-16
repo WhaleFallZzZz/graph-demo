@@ -13,7 +13,7 @@ from openai import OpenAI
 from llama_index.core.readers.base import BaseReader
 from llama_index.core.schema import Document
 
-from config import API_CONFIG
+from llama.config import API_CONFIG
 from llama.common import retry_on_failure
 
 logger = logging.getLogger(__name__)
@@ -154,6 +154,15 @@ class DeepSeekOCRParser(BaseReader):
             except Exception:
                 pass
             
+            # OCR 诊断日志：记录提取的文本统计信息
+            total_chars = len(full_text)
+            avg_chars_per_page = total_chars / pages_to_process if pages_to_process > 0 else 0
+            logger.info(
+                f"📊 OCR 提取统计: 总字符数={total_chars:,}, "
+                f"处理页数={pages_to_process}/{total_pages}, "
+                f"平均每页字符数={avg_chars_per_page:.0f}"
+            )
+            
             return [Document(text=full_text, metadata=extra_info or {})]
             
         except Exception as e:
@@ -173,7 +182,7 @@ class DeepSeekOCRParser(BaseReader):
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "仅输出中文正文与阿拉伯数字及中文标点；不要输出英文字母、尖括号、花括号、或符号序列；如果无法识别则输出空。"},
+                        {"type": "text", "text": "请识别图片中的内容，并将其转换为 Markdown 格式。请保留标题层级、表格结构和列表格式。对于复杂的医学公式或符号，请使用 LaTeX 格式。如果无法识别则输出空。"},
                         {
                             "type": "image_url",
                             "image_url": {
@@ -186,7 +195,7 @@ class DeepSeekOCRParser(BaseReader):
             max_tokens=4096,
             temperature=0.0,
             top_p=0.1,
-            frequency_penalty=0.8,
+            frequency_penalty=0.0,
             presence_penalty=0.0
         )
         return response.choices[0].message.content
@@ -233,27 +242,16 @@ class DeepSeekOCRParser(BaseReader):
             
             # Clean content
             try:
-                content = re.sub(r"[\\{\\}<>]+", "", content)
+                # 移除可能的 markdown 代码块标记
+                content = re.sub(r"^```(markdown)?\s*", "", content, flags=re.IGNORECASE)
+                content = re.sub(r"\s*```$", "", content)
+                
+                # 简单的行处理
                 raw_lines = content.splitlines()
                 cleaned_lines = []
                 for ln in raw_lines:
                     s = ln.strip()
                     if not s: continue
-                    low = s.lower()
-                    if re.search(r"(beginarray|endarray|enddocument|endarrayright|\^\]|\^\))", low): continue
-                    if re.search(r"\b(array|hline|textbf|textit|textcolor|cdots)\b", low): continue
-                    if re.search(r"[图表]\s*[0-9一二三四五六七八九十]+", s): continue
-                    if re.search(r"(?:t\^){3,}|\]{2,}|\[\s*\]", s): continue
-                    total = len(s)
-                    cjk = len(re.findall(r"[\u4e00-\u9fff]", s))
-                    digits = len(re.findall(r"\d", s))
-                    punct = len(re.findall(r"[，。；、：！？—《》“”‘’（）\-\.,]", s))
-                    ratio = (cjk + digits + punct) / max(total, 1)
-                    if ratio < 0.35: continue
-                    if digits / max(total, 1) > 0.6: continue
-                    if len(re.findall(r"[,\-\|/]", s)) > 8: continue
-                    if re.search(r"(.)\1{6,}", s): continue
-                    if re.fullmatch(r"[\s\W]+", s): continue
                     cleaned_lines.append(s)
                 content = "\n".join(cleaned_lines)
             except Exception:
@@ -261,9 +259,13 @@ class DeepSeekOCRParser(BaseReader):
                 
             # Retry logic
             try:
-                cn = len(re.findall(r"[\\u4e00-\\u9fff]", content))
-                bad = re.search(r"(?:\\^\\]?|t\\^){3,}|beginarray|endarray|enddocument", content)
-                need_retry = (cn < 30) or bool(bad)
+                # 如果内容过短，可能需要重试（对于图片页面）
+                cn = len(re.findall(r"[\u4e00-\u9fff]", content))
+                # 检查是否包含表格结构的特征（如Markdown表格的分隔线）
+                has_table = bool(re.search(r"\|.*\|", content)) and bool(re.search(r"\|---", content))
+                
+                # 如果中文很少且没有表格结构，可能是识别失败
+                need_retry = (cn < 30) and (not has_table)
             except Exception:
                 need_retry = False
                 
@@ -284,7 +286,7 @@ class DeepSeekOCRParser(BaseReader):
                             {
                                 "role": "user",
                                 "content": [
-                                    {"type": "text", "text": "仅输出中文正文与阿拉伯数字及中文标点；不要输出英文字母、尖括号、花括号、或符号序列；如果无法识别则输出空。"},
+                                    {"type": "text", "text": "请识别图片中的内容，并将其转换为 Markdown 格式。请保留标题层级、表格结构和列表格式。如果无法识别则输出空。"},
                                     {
                                         "type": "image_url",
                                         "image_url": {"url": f"data:image/jpeg;base64,{base64_image2}"}
@@ -295,22 +297,21 @@ class DeepSeekOCRParser(BaseReader):
                         max_tokens=4096,
                         temperature=0.0,
                         top_p=0.1,
-                        frequency_penalty=0.8,
+                        frequency_penalty=0.0,
                         presence_penalty=0.0
                     )
                     c2 = response2.choices[0].message.content
                     try:
-                        c2 = re.sub(r"[\\{\\}<>]+", "", c2)
-                        lines2 = [ln.strip() for ln in c2.splitlines() if ln.strip() and not re.fullmatch(r"[\\s\\W]+", ln.strip())]
+                        c2 = re.sub(r"^```(markdown)?\s*", "", c2, flags=re.IGNORECASE)
+                        c2 = re.sub(r"\s*```$", "", c2)
+                        lines2 = [ln.strip() for ln in c2.splitlines() if ln.strip()]
                         c2 = "\n".join(lines2)
                     except Exception:
                         pass
-                    try:
-                        cn2 = len(re.findall(r"[\\u4e00-\\u9fff]", c2))
-                        if cn2 > cn:
-                            content = c2
-                    except Exception:
-                        pass
+                    
+                    # 如果重试结果看起来内容更多，则采用
+                    if len(c2) > len(content):
+                        content = c2
                 except Exception:
                     pass
             

@@ -247,15 +247,24 @@ class GraphContextPostprocessor(BaseNodePostprocessor):
             entities = p["entities"]
             relations = p["relations"]
             
-            # 格式化路径: A -[导致]-> B -[表现为]-> C
-            path_str = entities[0]
+            # 格式化路径
+            # LLM 上下文格式: A --[关联]--> B
+            context_str = entities[0]
+            # 前端展示格式: A->关联->B (用户期望格式)
+            display_str = entities[0]
+
             for i, rel in enumerate(relations):
                 if i + 1 < len(entities):
                     rel_text = str(rel) if rel is not None else "关联"
                     clean_rel = rel_text.replace("(反向)", "")
-                    path_str += f" --[{clean_rel}]--> {entities[i+1]}"
+                    
+                    context_str += f" --[{clean_rel}]--> {entities[i+1]}"
+                    display_str += f"->{clean_rel}->{entities[i+1]}"
             
-            text_lines.append(f"- {path_str}")
+            # 保存格式化后的路径字符串到 path 对象中
+            p["path_str"] = display_str
+            
+            text_lines.append(f"- {context_str}")
             
         context_text = "\n".join(text_lines)
         

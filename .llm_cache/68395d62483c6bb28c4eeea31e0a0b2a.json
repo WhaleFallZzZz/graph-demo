@@ -1,0 +1,1 @@
+"[\n  {\"head\": \"近视眼\", \"head_type\": \"疾病\", \"relation\": \"建立\", \"tail\": \"动物模型\", \"tail_type\": \"检查\"},\n  {\"head\": \"近视眼\", \"head_type\": \"疾病\", \"relation\": \"影响\", \"tail\": \"视网膜\", \"tail_type\": \"部位\"}\n]"

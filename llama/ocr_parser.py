@@ -13,7 +13,7 @@ from openai import OpenAI
 from llama_index.core.readers.base import BaseReader
 from llama_index.core.schema import Document
 
-from llama.config import API_CONFIG
+from llama.config import API_CONFIG, get_rate_limit
 from llama.common import retry_on_failure
 
 logger = logging.getLogger(__name__)
@@ -28,6 +28,10 @@ class DeepSeekOCRParser(BaseReader):
         self.base_url = base_url or "https://api.siliconflow.cn/v1"
         self.model = model or API_CONFIG["siliconflow"].get("ocr_model", "deepseek-ai/DeepSeek-OCR")
         self.max_pages = max_pages
+        
+        # 获取频控信息
+        self.limit_info = get_rate_limit(self.model)
+        
         # 设置60秒超时
         self.client = OpenAI(api_key=self.api_key, base_url=self.base_url, timeout=60.0)
 
@@ -92,13 +96,17 @@ class DeepSeekOCRParser(BaseReader):
                 
             logger.info(f"PDF has {total_pages} pages. Processing first {pages_to_process} pages using multi-threading.")
             
-            # 多线程设置
-            # 基于 CPU 核心的动态调整，但限制以避免过多的 API 调用
-            # 目标资源利用率 < 80%
+            # 基于 CPU 核心和模型 RPM 的动态调整
+            # 目标并发量不超过 RPM/10 (保守估计)
+            rpm = self.limit_info.get("rpm", 100)
             cpu_count = os.cpu_count() or 4
-            max_workers = min(int(cpu_count * 0.8*2), 10)
-            max_workers = max(1, max_workers) # Ensure at least 1 worker
-            logger.info(f"Using {max_workers} threads for OCR processing (CPU count: {cpu_count}).")
+            
+            # 计算建议并发数
+            suggested_workers = min(int(cpu_count * 0.8 * 2), 16)
+            rpm_capped_workers = max(1, rpm // 10) 
+            
+            max_workers = min(suggested_workers, rpm_capped_workers)
+            logger.info(f"Using {max_workers} threads for OCR processing (CPU: {cpu_count}, Model RPM: {rpm}).")
             
             results = {}
             

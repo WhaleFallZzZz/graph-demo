@@ -12,16 +12,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Neo4j special characters that need to be escaped
-NEO4J_SPECIAL_CHARS = {
-    "'": "\\'",
-    '"': '\\"',
-    '\\': '\\\\',
-    '\n': '\\n',
-    '\r': '\\r',
-    '\t': '\\t',
-    '\b': '\\b',
-    '\f': '\\f'
-}
+# Note: Order matters - backslash must be replaced first to avoid double-escaping
+NEO4J_SPECIAL_CHARS = [
+    ('\\', '\\\\'),
+    ('\'', "\\'"),
+    ('"', '\\"'),
+    ('\n', '\\n'),
+    ('\r', '\\r'),
+    ('\t', '\\t'),
+    ('\b', '\\b'),
+    ('\f', '\\f')
+]
 
 # Characters to remove for cleaner text
 CLEAN_CHARS = r'[_`""\'""]'
@@ -113,9 +114,9 @@ def sanitize_for_neo4j(text: str, max_length: int = 1000) -> str:
         logger.warning(f"Text truncated from {len(text)} to {max_length} characters")
         text = text[:max_length]
     
-    # 转义特殊字符
+    # 转义特殊字符（按顺序处理，避免重复转义）
     result = text
-    for char, escaped in NEO4J_SPECIAL_CHARS.items():
+    for char, escaped in NEO4J_SPECIAL_CHARS:
         result = result.replace(char, escaped)
     
     return result

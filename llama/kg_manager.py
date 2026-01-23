@@ -19,7 +19,7 @@ from llama_index.core.graph_stores.types import EntityNode, Relation
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
-from llama.config import setup_logging, DOCUMENT_CONFIG, API_CONFIG, EMBEDDING_CONFIG, NEO4J_CONFIG, OSS_CONFIG, RERANK_CONFIG, EXTRACTOR_CONFIG, ENTITY_DESCRIPTION_CONFIG
+from llama.config import setup_logging, DOCUMENT_CONFIG, API_CONFIG, EMBEDDING_CONFIG, NEO4J_CONFIG, OSS_CONFIG, RERANK_CONFIG, EXTRACTOR_CONFIG, ENTITY_DESCRIPTION_CONFIG, HYBRID_SEARCH_CONFIG
 from llama.factories import LlamaModuleFactory, ModelFactory, GraphStoreFactory, ExtractorFactory, RerankerFactory
 from llama.progress_sse import ProgressTracker, progress_callback
 from llama.oss_uploader import COSUploader, OSSConfig
@@ -187,7 +187,8 @@ class KnowledgeGraphManager:
             # 5. 初始化智能图谱查询代理
             progress_callback("initialization", "正在初始化智能图谱查询代理...", 90)
             try:
-                self.graph_agent = GraphAgent(self.graph_store)
+                # 传入 LLM 实例以支持 LLM 意图分类器
+                self.graph_agent = GraphAgent(self.graph_store, llm_instance=self.llm)
                 logger.info("✅ 智能图谱查询代理初始化成功")
             except Exception as e:
                 logger.warning(f"智能图谱查询代理初始化失败: {e}")
@@ -298,7 +299,24 @@ class KnowledgeGraphManager:
                 file_extractor=fe
             )
             
-            raw_documents = reader.load_data()
+            try:
+                raw_documents = reader.load_data()
+            except Exception as e:
+                logger.error(f"OCR解析或PDF解析失败，将跳过PDF并重试: {e}")
+                try:
+                    fallback_exts = [ext for ext in DOCUMENT_CONFIG.get('supported_extensions', ['.txt', '.docx', '.pdf']) if ext.lower() != '.pdf']
+                    reader_no_pdf = self.modules['SimpleDirectoryReader'](
+                        input_dir=DOCUMENT_CONFIG['path'],
+                        required_exts=fallback_exts,
+                        recursive=True,
+                        encoding='utf-8',
+                        file_extractor={}
+                    )
+                    raw_documents = reader_no_pdf.load_data()
+                    logger.info("已跳过PDF文件，其他类型文档加载成功")
+                except Exception as e2:
+                    logger.error(f"降级重试仍失败: {e2}")
+                    raw_documents = []
             load_time = time.time() - t0
             logger.info(f"文档加载耗时 {load_time:.2f}s, 原始文档数 {len(raw_documents)}")
             
@@ -383,24 +401,24 @@ class KnowledgeGraphManager:
                 # 使用单线程顺序处理文档
                 logger.info(f"使用单线程处理 {len(raw_documents)} 个文档")
                 
-                for raw_doc in raw_documents:
-                    t1 = time.time()
-                    if DOCUMENT_CONFIG.get("benchmark_chunking", False) and not sample_bench_done:
-                        self._benchmark_chunking(raw_doc)
-                        sample_bench_done = True
-                    chunked_docs = self._chunk_document(raw_doc)
-                    
-                    # 关键词预筛选
-                    relevant_docs = []
-                    for d in chunked_docs:
-                            relevant_docs.append(d)
-                    
-                    chunk_time = time.time() - t1
-                    chunk_time_sum += chunk_time
-                    documents.extend(relevant_docs)
-                    total_chunks += len(chunked_docs) # 记录总块数（包括被过滤的）
-                    for d in relevant_docs:
-                        total_chars += len(getattr(d, "text", ""))
+            for raw_doc in raw_documents:
+                t1 = time.time()
+                if DOCUMENT_CONFIG.get("benchmark_chunking", False) and not sample_bench_done:
+                    self._benchmark_chunking(raw_doc)
+                    sample_bench_done = True
+                chunked_docs = self._chunk_document(raw_doc)
+                
+                # 关键词预筛选
+                relevant_docs = []
+                for d in chunked_docs:
+                        relevant_docs.append(d)
+                
+                chunk_time = time.time() - t1
+                chunk_time_sum += chunk_time
+                documents.extend(relevant_docs)
+                total_chunks += len(chunked_docs) # 记录总块数（包括被过滤的）
+                for d in relevant_docs:
+                    total_chars += len(getattr(d, "text", ""))
             
             if filtered_count > 0:
                 logger.info(f"关键词预筛选: 过滤了 {filtered_count} 个无关分块")
@@ -525,6 +543,7 @@ class KnowledgeGraphManager:
         else:
             # 使用传统的句子分割器
             logger.debug("使用传统句子分割器进行分块")
+            from llama_index.core.node_parser import SentenceSplitter
             chunk_overlap = max(0, min(int(chunk_size * 0.2), 200, DOCUMENT_CONFIG.get('CHUNK_OVERLAP', int(chunk_size * 0.2))))
             sentence_splitter = DOCUMENT_CONFIG.get('sentence_splitter', '。！？!?')
             semantic_separator = DOCUMENT_CONFIG.get('semantic_separator', '\n\n')
@@ -1053,13 +1072,14 @@ class KnowledgeGraphManager:
         except Exception:
             return 0, 0
     
-    def stream_query_knowledge_graph(self, query: str, index: Any = None) -> Any:
+    def stream_query_knowledge_graph(self, query: str, index: Any = None, hard_match_nodes: List = None, query_intent: str = None) -> Any:
         """
         流式查询知识图谱，返回生成器
         
         Args:
             query: 查询字符串
             index: 图谱索引（可选）
+            hard_match_nodes: 硬匹配的节点列表（可选），来自查询前置处理
             
         Returns:
             生成器，依次生成：
@@ -1080,6 +1100,21 @@ class KnowledgeGraphManager:
                          yield "错误: 组件初始化失败"
                          return
                 
+                # 确保 modules 已初始化
+                if not self.modules:
+                    logger.error("modules 未初始化")
+                    yield "错误: 模块未初始化"
+                    return
+                
+                # 检查 modules 是否是字典类型（防止被错误地赋值为函数）
+                if not isinstance(self.modules, dict):
+                    logger.error(f"modules 类型错误: {type(self.modules)}, 期望 dict")
+                    # 尝试重新初始化
+                    self.modules = LlamaModuleFactory.get_modules()
+                    if not isinstance(self.modules, dict):
+                        yield f"错误: 模块初始化失败，类型: {type(self.modules)}"
+                        return
+                
                 try:
                     index = self.modules['PropertyGraphIndex'].from_existing(
                         property_graph_store=self.graph_store,
@@ -1088,54 +1123,122 @@ class KnowledgeGraphManager:
                     )
                 except Exception as e:
                     logger.error(f"加载现有索引失败: {e}")
+                    import traceback
+                    logger.error(traceback.format_exc())
                     yield f"加载索引失败: {str(e)}"
                     return
             
-            # 创建流式查询引擎
-            # 基础配置
-            engine_kwargs = {
-                "include_text": True,
-                "similarity_top_k": 5,
-                "streaming": True  # 启用流式输出
-            }
-
-            # 添加后处理器
+            # 创建检索器：使用纯向量检索
+            # 确保 HYBRID_SEARCH_CONFIG 是字典类型
+            if not isinstance(HYBRID_SEARCH_CONFIG, dict):
+                logger.error(f"HYBRID_SEARCH_CONFIG 类型错误: {type(HYBRID_SEARCH_CONFIG)}")
+                initial_retrieval_k = 50
+            else:
+                initial_retrieval_k = HYBRID_SEARCH_CONFIG.get("initial_top_k", 50)
+            logger.info(f"使用纯向量检索，Top K: {initial_retrieval_k}")
+            
+            # 添加后处理器（按漏斗式过滤顺序）
             postprocessors = []
             
-            # 1. 语义补偿
-            try:
-                from semantic_enrichment_postprocessor import SemanticEnrichmentPostprocessor
-                semantic_enricher = SemanticEnrichmentPostprocessor(
-                    graph_store=self.graph_store,
-                    max_neighbors_per_entity=10
-                )
-                postprocessors.append(semantic_enricher)
-            except Exception as e:
-                logger.warning(f"语义补偿后处理器初始化失败: {e}")
+            # 0. 硬匹配节点后处理器（最优先，放在最前面）
+            if hard_match_nodes:
+                try:
+                    from llama.hard_match_postprocessor import HardMatchPostprocessor
+                    hard_match_processor = HardMatchPostprocessor(hard_match_nodes)
+                    postprocessors.append(hard_match_processor)
+                    logger.info(f"添加硬匹配后处理器: {len(hard_match_nodes)} 个节点")
+                except Exception as e:
+                    logger.warning(f"硬匹配后处理器初始化失败: {e}")
             
-            # 2. 重排序
+            # 1. 初步重排序（Rerank）：从 Top 50 筛选到 Top 10，剔除明显不相关的节点
             reranker = RerankerFactory.create_reranker()
             if reranker:
-                initial_k = RERANK_CONFIG.get('initial_top_k', 10)
-                engine_kwargs["similarity_top_k"] = initial_k
-                postprocessors.append(reranker)
+                # 创建限流重排序器（只保留 Top 10）
+                try:
+                    from llama.limited_rerank_postprocessor import LimitedRerankPostprocessor
+                    limited_reranker = LimitedRerankPostprocessor(
+                        reranker=reranker,
+                        top_n=10  # 重排序后只保留 Top 10
+                    )
+                    postprocessors.append(limited_reranker)
+                    logger.info("添加初步重排序后处理器：从 Top 50 筛选到 Top 10")
+                except ImportError:
+                    # 降级：直接使用重排序器
+                    logger.warning("LimitedRerankPostprocessor 导入失败，直接使用重排序器")
+                    postprocessors.append(reranker)
             
-            # 3. 图谱上下文（最短路径连接Top-K实体，注入Prompt）
+            # 2-3. 并行图谱后处理：语义补偿 + 图谱上下文（并行执行以减少延迟）
             try:
+                from semantic_enrichment_postprocessor import SemanticEnrichmentPostprocessor
                 from graph_context_postprocessor import GraphContextPostprocessor
+                from llama.parallel_graph_postprocessor import ParallelGraphPostprocessor
+                
+                # 创建语义补偿和图谱上下文后处理器实例
+                semantic_enricher = SemanticEnrichmentPostprocessor(
+                    graph_store=self.graph_store,
+                    max_neighbors_per_entity=10,
+                    query_intent=query_intent  # 传递查询意图，用于过滤邻居关系
+                )
+                
                 graph_context = GraphContextPostprocessor(
                     graph_store=self.graph_store,
                     max_path_depth=2,
-                    max_paths=10
+                    max_paths=10,
+                    query_intent=query_intent,  # 传递查询意图，用于元路径搜索
+                    enable_community_detection=True,  # 启用社区发现
+                    community_threshold=0.3  # 社区密度阈值
                 )
-                postprocessors.append(graph_context)
-            except Exception as e:
-                logger.warning(f"图谱上下文后处理器初始化失败: {e}")
                 
+                # 创建并行后处理器（使用线程池并行执行）
+                parallel_processor = ParallelGraphPostprocessor(
+                    semantic_enricher=semantic_enricher,
+                    graph_context=graph_context,
+                    max_workers=2  # 两个并行任务
+                )
+                postprocessors.append(parallel_processor)
+                logger.info(f"✅ 添加并行图谱后处理器（语义补偿 + 图谱上下文并行执行，意图: {query_intent or 'GENERAL'}）")
+            except ImportError as e:
+                logger.warning(f"并行后处理器导入失败，降级到串行执行: {e}")
+                # 降级：串行执行
+                try:
+                    from semantic_enrichment_postprocessor import SemanticEnrichmentPostprocessor
+                    semantic_enricher = SemanticEnrichmentPostprocessor(
+                        graph_store=self.graph_store,
+                        max_neighbors_per_entity=10,
+                        query_intent=query_intent
+                    )
+                    postprocessors.append(semantic_enricher)
+                    logger.info(f"添加语义补偿后处理器（串行模式）")
+                except Exception as e2:
+                    logger.warning(f"语义补偿后处理器初始化失败: {e2}")
+                
+                try:
+                    from graph_context_postprocessor import GraphContextPostprocessor
+                    graph_context = GraphContextPostprocessor(
+                        graph_store=self.graph_store,
+                        max_path_depth=2,
+                        max_paths=10,
+                        query_intent=query_intent,
+                        enable_community_detection=True,
+                        community_threshold=0.3
+                    )
+                    postprocessors.append(graph_context)
+                    logger.info(f"添加图谱上下文后处理器（串行模式）")
+                except Exception as e3:
+                    logger.warning(f"图谱上下文后处理器初始化失败: {e3}")
+            
+            # 创建查询引擎：使用纯向量检索
+            engine_kwargs = {
+                "include_text": True,
+                "similarity_top_k": initial_retrieval_k,
+                "streaming": True
+            }
+            
             if postprocessors:
                 engine_kwargs["node_postprocessors"] = postprocessors
             
             query_engine = index.as_query_engine(**engine_kwargs)
+            logger.info("使用默认查询引擎（纯向量检索）")
             
             # 执行查询，获取流式响应对象
             # 阶段进度：检索开始
@@ -1185,14 +1288,17 @@ class KnowledgeGraphManager:
                 full_answer += token
                 yield token
             
-            # 2. 从 GraphContext 注入的 source_nodes 中提取路径
+            # 2. 从 GraphContext 注入的 source_nodes 中提取路径和原始文本上下文
             paths = []
+            contexts = []
             try:
                 import json as _json
                 if hasattr(streaming_response, "source_nodes") and streaming_response.source_nodes:
                     for node_with_score in streaming_response.source_nodes:
                         node = getattr(node_with_score, "node", node_with_score)
                         metadata = getattr(node, "metadata", {}) or {}
+                        
+                        # 分离图路径数据和普通文本块内容
                         if metadata.get("node_type") == "graph_context":
                             paths_data = metadata.get("paths_data")
                             if paths_data:
@@ -1200,12 +1306,16 @@ class KnowledgeGraphManager:
                                     parsed = _json.loads(paths_data)
                                     if isinstance(parsed, list):
                                         # 提取格式化后的路径字符串
-                                        paths = [p.get("path_str", p) for p in parsed]
-                                        break
+                                        paths.extend([p.get("path_str", p) for p in parsed])
                                 except Exception:
                                     pass
-            except Exception:
-                paths = []
+                        else:
+                            # 提取原始文本内容作为上下文
+                            content = node.get_content()
+                            if content and content not in contexts:
+                                contexts.append(content)
+            except Exception as e:
+                logger.warning(f"提取上下文或路径失败: {e}")
             
             # 3. 推送路径数据（如果有）
             if paths:
@@ -1215,10 +1325,18 @@ class KnowledgeGraphManager:
                     "full_answer": full_answer
                 }
             
-            # 4. 完成事件
+            # 4. 推送检索到的上下文（用于评估等场景）
+            if contexts:
+                yield {
+                    "type": "retrieved_contexts",
+                    "data": contexts
+                }
+            
+            # 5. 完成事件
             yield {
                 "type": "done",
-                "full_answer": full_answer
+                "full_answer": full_answer,
+                "contexts": contexts
             }
             
         except Exception as e:
@@ -1255,7 +1373,17 @@ class KnowledgeGraphManager:
                              "paths": []
                          }
                 
-                logger.info("正在从现有存储加载索引...")
+                # 确保 modules 已初始化且类型正确
+                if not self.modules or not isinstance(self.modules, dict):
+                    logger.warning(f"modules 类型异常: {type(self.modules)}，尝试重新获取")
+                    self.modules = LlamaModuleFactory.get_modules()
+                    if not isinstance(self.modules, dict):
+                         return {
+                             "answer": "错误: 模块初始化失败",
+                             "paths": [],
+                             "contexts": []
+                         }
+                
                 try:
                     index = self.modules['PropertyGraphIndex'].from_existing(
                         property_graph_store=self.graph_store,
@@ -1264,9 +1392,12 @@ class KnowledgeGraphManager:
                     )
                 except Exception as e:
                     logger.error(f"加载现有索引失败: {e}")
+                    import traceback
+                    logger.error(traceback.format_exc())
                     return {
                         "answer": f"加载索引失败: {str(e)}",
-                        "paths": []
+                        "paths": [],
+                        "contexts": []
                     }
             
             query_engine = index.as_query_engine(
@@ -1322,37 +1453,44 @@ class KnowledgeGraphManager:
             response = query_engine.query(query)
             answer = str(response)
             
-            # 提取路径
+            # 提取路径和上下文
             paths = []
+            contexts = []
             try:
                 import json as _json
                 if hasattr(response, "source_nodes") and response.source_nodes:
                     for node_with_score in response.source_nodes:
                         node = getattr(node_with_score, "node", node_with_score)
                         metadata = getattr(node, "metadata", {}) or {}
+                        
                         if metadata.get("node_type") == "graph_context":
                             paths_data = metadata.get("paths_data")
                             if paths_data:
                                 try:
                                     parsed = _json.loads(paths_data)
                                     if isinstance(parsed, list):
-                                        paths = [p.get("path_str", p) for p in parsed]
-                                        break
+                                        paths.extend([p.get("path_str", p) for p in parsed])
                                 except Exception:
                                     pass
-            except Exception:
-                pass
+                        else:
+                            content = node.get_content()
+                            if content and content not in contexts:
+                                contexts.append(content)
+            except Exception as e:
+                logger.warning(f"提取上下文或路径失败: {e}")
             
             return {
                 "answer": answer,
-                "paths": paths
+                "paths": paths,
+                "contexts": contexts
             }
             
         except Exception as e:
             logger.error(f"查询失败: {e}")
             return {
                 "answer": f"查询失败: {str(e)}",
-                "paths": []
+                "paths": [],
+                "contexts": []
             }
     
     def generate_embeddings_for_nodes(self, node_ids: List[str] = None, node_names: List[str] = None) -> Dict[str, Any]:

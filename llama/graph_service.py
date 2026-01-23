@@ -288,23 +288,6 @@ class GraphService:
             # 阶段4：构建知识图谱
             progress_tracker.update_stage("knowledge_graph", "开始构建知识图谱...", 40)
             
-            # 预检: 检查llm_outputs目录权限
-            llm_outputs_dir = Path(os.getcwd()) / "llm_outputs"
-            try:
-                if not llm_outputs_dir.exists():
-                    llm_outputs_dir.mkdir(parents=True, exist_ok=True)
-                    logger.info(f"已创建输出目录: {llm_outputs_dir}")
-                
-                # 检查写权限
-                test_file = llm_outputs_dir / ".test_write"
-                with open(test_file, 'w') as f:
-                    f.write('test')
-                test_file.unlink()
-                logger.info(f"输出目录权限检查通过: {llm_outputs_dir}")
-            except Exception as e:
-                logger.error(f"输出目录权限检查失败: {e}")
-                # 不阻断流程，但记录警告
-            
             logger.info(f"开始调用 builder.build_knowledge_graph, 文档数: {len(documents)}")
             
             # 构建知识图谱
@@ -322,8 +305,8 @@ class GraphService:
             self._run_node_cleaning()
             
             # todo 有 bug 先注释掉，阶段6：后处理 - 实体对齐
-            # progress_tracker.update_stage("postprocessing_entity_alignment", "正在执行实体对齐...", 60)
-            # self._run_entity_alignment()
+            progress_tracker.update_stage("postprocessing_entity_alignment", "正在执行实体对齐...", 60)
+            self._run_entity_alignment()
             
             # 阶段7：后处理 - 属性下沉
             progress_tracker.update_stage("postprocessing_property_sinking", "正在执行属性下沉...", 70)

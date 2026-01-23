@@ -1,822 +1,2527 @@
 [
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:716",
-    "name": "晶状体",
-    "reason": "Low Semantic Score (0.0118)"
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:272",
+    "name": "医学研究",
+    "reason": "Low Semantic Score (0.0980)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:738",
-    "name": "检查",
-    "reason": "Low Semantic Score (0.0053)"
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:271",
+    "name": "临床循证医学",
+    "reason": "Low Semantic Score (0.0148)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:726",
-    "name": "康复",
-    "reason": "Low Semantic Score (0.0039)"
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:310",
+    "name": "验光",
+    "reason": "Low Semantic Score (0.0037)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:735",
-    "name": "中央注视点",
-    "reason": "Low Semantic Score (0.0038)"
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:303",
+    "name": "国家卫计委近视眼重点实验室主任",
+    "reason": "Low Semantic Score (0.0032)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:728",
-    "name": "青光眼",
-    "reason": "Low Semantic Score (0.0025)"
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:270",
+    "name": "遗传学",
+    "reason": "Low Semantic Score (0.0031)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:715",
-    "name": "眼科检查",
-    "reason": "Low Semantic Score (0.0022)"
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:306",
+    "name": "阴正勤教授",
+    "reason": "Low Semantic Score (0.0011)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:774",
-    "name": "家族聚集性",
-    "reason": "Low Semantic Score (0.0015)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:772",
-    "name": "眼健康检查",
-    "reason": "Low Semantic Score (0.0014)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:734",
-    "name": "视野状况",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:305",
+    "name": "陈伟民教授",
     "reason": "Low Semantic Score (0.0010)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:714",
-    "name": "视力筛查",
-    "reason": "Low Semantic Score (0.0007)"
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:304",
+    "name": "褚仁远教授",
+    "reason": "Low Semantic Score (0.0010)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:709",
-    "name": "白内障",
-    "reason": "Low Semantic Score (0.0007)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:711",
-    "name": "沙眼",
-    "reason": "Low Semantic Score (0.0004)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:737",
-    "name": "视力损伤者",
-    "reason": "Low Semantic Score (0.0004)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:724",
-    "name": "防盲治盲",
-    "reason": "Low Semantic Score (0.0003)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:751",
-    "name": "白内障超声乳化术",
-    "reason": "Low Semantic Score (0.0002)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:718",
-    "name": "白内障囊外摘除术",
-    "reason": "Low Semantic Score (0.0002)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:713",
-    "name": "视觉2020",
-    "reason": "Low Semantic Score (0.0002)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:723",
-    "name": "患病率",
-    "reason": "Low Semantic Score (0.0002)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:730",
-    "name": "屈光不正",
-    "reason": "Low Semantic Score (0.0002)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:731",
-    "name": "遗传因素",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:739",
-    "name": "测量",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:745",
-    "name": "河盲",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:778",
-    "name": "高湿",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:732",
-    "name": "盲",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:736",
-    "name": "视力损伤",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:773",
-    "name": "年龄相关性黄斑变性",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:717",
-    "name": "年龄",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:710",
-    "name": "紫外线辐射",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:712",
-    "name": "SAFE战略",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:776",
-    "name": "急性结膜炎",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:748",
-    "name": "白内障手术",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:719",
-    "name": "视觉2020行动",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:733",
-    "name": "视野半径",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:742",
-    "name": "0.6%",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:749",
-    "name": "白内障盲",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:725",
-    "name": "低视力",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:775",
-    "name": "变性的危险性",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:741",
-    "name": "0.3%",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:777",
-    "name": "高温",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:721",
-    "name": "视野缺损",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:722",
-    "name": "眼红",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:729",
-    "name": "高眼压",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:740",
-    "name": "日常生活视力测量",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:727",
-    "name": "不良卫生习惯",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:744",
-    "name": "80亿",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:747",
-    "name": "白内障手术率",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:743",
-    "name": "全球人口数",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:746",
-    "name": "儿童盲",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:750",
-    "name": "吸烟",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:720",
-    "name": "视力下降",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:857",
-    "name": "疾病",
-    "reason": "Low Semantic Score (0.0128)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:818",
-    "name": "台布",
-    "reason": "Low Semantic Score (0.0105)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:826",
-    "name": "疾病防治",
-    "reason": "Low Semantic Score (0.0070)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:859",
-    "name": "药物",
-    "reason": "Low Semantic Score (0.0050)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:782",
-    "name": "环境卫生状况差",
-    "reason": "Low Semantic Score (0.0030)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:788",
-    "name": "康复治疗",
-    "reason": "Low Semantic Score (0.0026)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:862",
-    "name": "免疫系统异常",
-    "reason": "Low Semantic Score (0.0025)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:832",
-    "name": "视网膜",
-    "reason": "Low Semantic Score (0.0020)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:833",
-    "name": "抗生素",
-    "reason": "Low Semantic Score (0.0012)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:822",
-    "name": "安全别针",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:277",
+    "name": "普通眼科医生",
     "reason": "Low Semantic Score (0.0009)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:783",
-    "name": "室内环境差",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:285",
+    "name": "环境",
+    "reason": "Low Semantic Score (0.0008)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:276",
+    "name": "中学以上学生",
     "reason": "Low Semantic Score (0.0007)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:827",
-    "name": "眼部疾病",
-    "reason": "Low Semantic Score (0.0005)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:856",
-    "name": "保护因素",
-    "reason": "Low Semantic Score (0.0005)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:790",
-    "name": "视力损害者",
-    "reason": "Low Semantic Score (0.0004)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:831",
-    "name": "紫外线",
-    "reason": "Low Semantic Score (0.0004)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:855",
-    "name": "暴露因素",
-    "reason": "Low Semantic Score (0.0004)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:854",
-    "name": "危险因素",
-    "reason": "Low Semantic Score (0.0003)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:863",
-    "name": "疼痛",
-    "reason": "Low Semantic Score (0.0002)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:828",
-    "name": "糖尿病",
-    "reason": "Low Semantic Score (0.0002)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:860",
-    "name": "葡萄膜炎",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:784",
-    "name": "拥挤",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:829",
-    "name": "房水",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:885",
-    "name": "糖尿病性视网膜病变",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:861",
-    "name": "病毒感染",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:779",
-    "name": "灰尘",
-    "reason": "Low Semantic Score (0.0001)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:823",
-    "name": "衣服上做标识",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:858",
-    "name": "干预措施",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:814",
-    "name": "45岁",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:864",
-    "name": "畏光",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:886",
-    "name": "糖化血红蛋白",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:792",
-    "name": "21%",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:789",
-    "name": "视力损害",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:888",
-    "name": "颞侧神经纤维层厚度",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:887",
-    "name": "神经纤维层厚度",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:830",
-    "name": "发病率",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:793",
-    "name": "5%",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:786",
-    "name": "不良的个人卫生习惯",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:825",
-    "name": "与其他颜色的袜子混淆",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:819",
-    "name": "单一颜色",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:815",
-    "name": "厨房用具",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:780",
-    "name": "太阳辐射",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:791",
-    "name": "30%",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:781",
-    "name": "生物燃料燃烧产生的烟雾",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:820",
-    "name": "衣服颜色",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:817",
-    "name": "防止切菜时伤手的手套",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:824",
-    "name": "鞋袜",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:787",
-    "name": "共用毛巾与手帕",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:785",
-    "name": "通风不足",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:821",
-    "name": "黑色和蓝色衬衫混淆",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:816",
-    "name": "大字体计时钟表",
-    "reason": "Low Semantic Score (0.0000)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:947",
-    "name": "顺义县眼科",
-    "reason": "Low Semantic Score (0.0217)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:973",
-    "name": "疾病筛查",
-    "reason": "Low Semantic Score (0.0181)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:930",
-    "name": "膜标本",
-    "reason": "Low Semantic Score (0.0095)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:972",
-    "name": "筛查",
-    "reason": "Low Semantic Score (0.0059)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:934",
-    "name": "手术",
-    "reason": "Low Semantic Score (0.0017)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:977",
-    "name": "疾病患病率",
-    "reason": "Low Semantic Score (0.0014)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:974",
-    "name": "确诊和治疗",
-    "reason": "Low Semantic Score (0.0014)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:908",
-    "name": "队列研究",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:284",
+    "name": "遗传",
     "reason": "Low Semantic Score (0.0007)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:975",
-    "name": "可靠性",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:273",
+    "name": "易虹主任",
     "reason": "Low Semantic Score (0.0006)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:904",
-    "name": "显著性",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:315",
+    "name": "视力表",
     "reason": "Low Semantic Score (0.0005)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:890",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:314",
+    "name": "屈光度",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:278",
     "name": "近视眼",
     "reason": "Low Semantic Score (0.0004)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:946",
-    "name": "教育潜能冲击",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:269",
+    "name": "表观遗传学",
     "reason": "Low Semantic Score (0.0003)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:900",
-    "name": "卡他性结膜炎",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:301",
+    "name": "屈光矫正手术",
     "reason": "Low Semantic Score (0.0003)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:907",
-    "name": "横断面研究",
-    "reason": "Low Semantic Score (0.0003)"
-  },
-  {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:906",
-    "name": "激光治疗",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:299",
+    "name": "近视患者",
     "reason": "Low Semantic Score (0.0002)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:935",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:300",
+    "name": "眼屈光相关性疾病",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:302",
+    "name": "近视治疗",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:307",
     "name": "视力",
     "reason": "Low Semantic Score (0.0002)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:895",
-    "name": "内因性葡萄膜炎",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:294",
+    "name": "光线",
     "reason": "Low Semantic Score (0.0002)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:901",
-    "name": "急性卡他性结膜炎",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:290",
+    "name": "环境因素",
     "reason": "Low Semantic Score (0.0002)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:905",
-    "name": "抗青光眼手术",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:279",
+    "name": "屈光不正",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:297",
+    "name": "遗传因素",
     "reason": "Low Semantic Score (0.0001)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:933",
-    "name": "样本量",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:267",
+    "name": "近视",
     "reason": "Low Semantic Score (0.0001)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:898",
-    "name": "构成比",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:283",
+    "name": "斜视",
     "reason": "Low Semantic Score (0.0001)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:976",
-    "name": "重复性",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:287",
+    "name": "国际‘爱眼日’",
     "reason": "Low Semantic Score (0.0001)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:936",
-    "name": "术前视力",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:293",
+    "name": "阅读时间",
     "reason": "Low Semantic Score (0.0001)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:938",
-    "name": "眼压",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:281",
+    "name": "远视",
     "reason": "Low Semantic Score (0.0001)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:903",
-    "name": "自由度",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:298",
+    "name": "青少年",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:941",
-    "name": "炎症控制率",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:288",
+    "name": "近视眼防控",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:899",
-    "name": "多个构成比",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:309",
+    "name": "近视矫正手段",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:889",
-    "name": "近视眼患病率",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:311",
+    "name": "双眼视觉",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:932",
-    "name": "所选定量显著性检验的假定分布",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:266",
+    "name": "青少年近视防控",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:893",
-    "name": "感染率",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:282",
+    "name": "弱视",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:902",
-    "name": "理论频数",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:308",
+    "name": "框架眼镜",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:929",
-    "name": "黄斑移位手术",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:275",
+    "name": "普通的学生家长",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:944",
-    "name": "种族",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:296",
+    "name": "遗传性近视",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:897",
-    "name": "多个率",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:268",
+    "name": "遗传与环境因素",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:894",
-    "name": "弓形虫感染",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:289",
+    "name": "青少年近视",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:978",
-    "name": "阳性预测值",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:295",
+    "name": "病理性近视",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:943",
-    "name": "视力问题",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:312",
+    "name": "夜盲",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:948",
-    "name": "儿童屈光不正",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:291",
+    "name": "户外活动",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:896",
-    "name": "率",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:292",
+    "name": "预防青少年近视的措施",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:939",
-    "name": "术前眼压",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:274",
+    "name": "青少年近视防控手册",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:891",
-    "name": "95% 可信区间",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:286",
+    "name": "用眼卫生习惯",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:949",
-    "name": "非应答率",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:313",
+    "name": "夜间视力",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:945",
-    "name": "学习能力下降",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:280",
+    "name": "视力下降",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:937",
-    "name": "术后视力",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:369",
+    "name": "RGP",
+    "reason": "Low Semantic Score (0.0072)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:320",
+    "name": "眼科检查",
+    "reason": "Low Semantic Score (0.0022)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:331",
+    "name": "中国",
+    "reason": "Low Semantic Score (0.0019)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:365",
+    "name": "治疗手段",
+    "reason": "Low Semantic Score (0.0015)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:333",
+    "name": "美国",
+    "reason": "Low Semantic Score (0.0011)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:332",
+    "name": "中国香港",
+    "reason": "Low Semantic Score (0.0008)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:363",
+    "name": "手术治疗",
+    "reason": "Low Semantic Score (0.0008)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:367",
+    "name": "配镜治疗",
+    "reason": "Low Semantic Score (0.0007)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:326",
+    "name": "近视眼研究",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:362",
+    "name": "矫正手段",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:383",
+    "name": "角膜接触镜",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:321",
+    "name": "激光类手术",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:322",
+    "name": "屈光手术",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:334",
+    "name": "北美洲",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:336",
+    "name": "亚洲",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:370",
+    "name": "OK镜",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:380",
+    "name": "药物治疗与防控",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:384",
+    "name": "角膜供氧",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:366",
+    "name": "激光手术",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:335",
+    "name": "印度",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:316",
+    "name": "视力检查手段",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:324",
+    "name": "准分子激光手术",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:330",
+    "name": "中国台湾",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:381",
+    "name": "远视的治疗",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:892",
-    "name": "99% 可信区间",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:374",
+    "name": "OK 镜",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:940",
-    "name": "术后眼压",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:378",
+    "name": "长期配戴角膜塑形镜的青少年",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:970",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:323",
+    "name": "飞秒激光手术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:319",
+    "name": "眼镜",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:318",
+    "name": "眼轴长度",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:338",
+    "name": "字迹不清",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:328",
+    "name": "近视眼发病率上升",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:385",
+    "name": "阿托品滴眼液",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:382",
+    "name": "散光的治疗",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:364",
+    "name": "阿托品眼液",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:376",
+    "name": "配戴OK镜的青少年",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:339",
+    "name": "阅读距离过近",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:317",
+    "name": "假性近视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:377",
+    "name": "眼轴长度进展",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:327",
+    "name": "中国近视眼发病率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:329",
+    "name": "儿童近视眼",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:372",
+    "name": "中度以上近视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:368",
+    "name": "隐形眼镜",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:361",
+    "name": "视网膜脱落",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:337",
+    "name": "镜片起毛",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:325",
+    "name": "全球近视眼发病率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:379",
+    "name": "角膜接触镜的弊端",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:375",
+    "name": "近视增长",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:340",
+    "name": "用眼时间过长",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:371",
+    "name": "混合型近视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:373",
+    "name": "青少年近视加深",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:410",
+    "name": "手术",
+    "reason": "Low Semantic Score (0.0017)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:432",
+    "name": "视网膜黄斑部",
+    "reason": "Low Semantic Score (0.0016)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:408",
+    "name": "眼部情况检查",
+    "reason": "Low Semantic Score (0.0012)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:393",
+    "name": "硬性角膜接触镜（RGP）",
+    "reason": "Low Semantic Score (0.0010)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:429",
+    "name": "视网膜黄斑区",
+    "reason": "Low Semantic Score (0.0010)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:435",
+    "name": "旁中心注视",
+    "reason": "Low Semantic Score (0.0009)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:411",
+    "name": "散瞳验光",
+    "reason": "Low Semantic Score (0.0008)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:419",
+    "name": "弱视治疗仪",
+    "reason": "Low Semantic Score (0.0006)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:418",
+    "name": "描图",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:407",
+    "name": "神经官能症",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:396",
+    "name": "光学镜片",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:427",
+    "name": "后像疗法",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:386",
+    "name": "抗乙酰胆碱药物",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:431",
+    "name": "协调校正器",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:401",
+    "name": "视网膜成像",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:425",
+    "name": "增视疗法",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:428",
+    "name": "弱视治疗",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:430",
+    "name": "海丁格尔光刷",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:416",
+    "name": "早期治疗",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:413",
+    "name": "遮盖疗法",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:426",
+    "name": "三色光闪烁治疗仪",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:417",
+    "name": "穿珠子",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:415",
+    "name": "双眼单视功能",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:409",
+    "name": "三棱镜矫正",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:403",
+    "name": "双眼内转",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:402",
+    "name": "睫状肌痉挛",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:433",
+    "name": "旁中心注视性弱视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:395",
+    "name": "规则散光",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:392",
+    "name": "反弹及不良反应越多",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:397",
+    "name": "轻中度散光",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:436",
+    "name": "弱视眼",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:421",
+    "name": "网络视功能训练",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:420",
+    "name": "压贴膜",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:399",
+    "name": "难以达到良好矫正视力",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:423",
+    "name": "眼贴遮盖法",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:388",
+    "name": "眼压升高",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:414",
+    "name": "视觉训练",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:390",
+    "name": "写字不便",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:387",
+    "name": "控制近视发展",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:391",
+    "name": "近视控制效果越好",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:412",
+    "name": "戴眼镜矫正",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:424",
+    "name": "压抑膜遮盖法",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:405",
+    "name": "眼球胀痛",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:404",
     "name": "视物模糊",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:931",
-    "name": "P值大小",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:394",
+    "name": "不规则散光",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:942",
-    "name": "手术后炎症控制率",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:422",
+    "name": "眼罩遮盖法",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:971",
-    "name": "视力疲劳",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:398",
+    "name": "正常范围视力",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:982",
-    "name": "健康教育",
-    "reason": "Low Semantic Score (0.0324)"
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:406",
+    "name": "恶心呕吐",
+    "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:989",
-    "name": "人工晶状体",
-    "reason": "Low Semantic Score (0.0088)"
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:400",
+    "name": "普通眼镜",
+    "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:993",
-    "name": "人工晶状体植入术",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:389",
+    "name": "瞳孔放大",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:459",
+    "name": "Lasik",
+    "reason": "Low Semantic Score (0.0043)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:458",
+    "name": "PRK",
+    "reason": "Low Semantic Score (0.0037)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:464",
+    "name": "前弹力层",
+    "reason": "Low Semantic Score (0.0029)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:462",
+    "name": "角膜瓣",
+    "reason": "Low Semantic Score (0.0018)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:465",
+    "name": "角膜基质层",
+    "reason": "Low Semantic Score (0.0015)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:463",
+    "name": "角膜上皮",
+    "reason": "Low Semantic Score (0.0014)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:470",
+    "name": "Lasek",
+    "reason": "Low Semantic Score (0.0013)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:482",
+    "name": "Haze的形成",
+    "reason": "Low Semantic Score (0.0009)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:478",
+    "name": "Lasek与Epi-lasik",
     "reason": "Low Semantic Score (0.0005)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:987",
-    "name": "白内障治疗",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:472",
+    "name": "Epi-lasik",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:453",
+    "name": "非激光类手术",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:446",
+    "name": "增强现实",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:466",
+    "name": "板层刀",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:479",
+    "name": "只要术中不保留上皮瓣",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:451",
+    "name": "眼屈光手术",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:452",
+    "name": "眼内接触镜植入手术",
     "reason": "Low Semantic Score (0.0002)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:992",
-    "name": "白内障复明手术规范",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:455",
+    "name": "后巩膜加固术",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:484",
+    "name": "矫正的精确度高",
     "reason": "Low Semantic Score (0.0001)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:990",
-    "name": "白内障手术能力",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:440",
+    "name": "虚拟现实技术",
     "reason": "Low Semantic Score (0.0001)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:986",
-    "name": "白内障复明手术",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:454",
+    "name": "屈光性晶体置换手术",
     "reason": "Low Semantic Score (0.0001)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:980",
-    "name": "眯眼",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:487",
+    "name": "手术价格昂贵",
     "reason": "Low Semantic Score (0.0001)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:988",
-    "name": "视力恢复",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:467",
+    "name": "角膜瓣制作",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:476",
+    "name": "容易产生瘢痕增生反应",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:481",
+    "name": "上皮瓣手术",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:460",
+    "name": "角膜表层切削术",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:471",
+    "name": "PRK及Lasik手术的改进型",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:991",
-    "name": "白内障致盲",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:488",
+    "name": "全飞秒手术",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:985",
-    "name": "视觉第一中国行动",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:469",
+    "name": "全飞秒激光手术",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:983",
-    "name": "肥胖",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:447",
+    "name": "双眼分视的头戴式显示器",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:984",
-    "name": "糖尿病家族史",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:456",
+    "name": "准分子激光",
     "reason": "Low Semantic Score (0.0000)"
   },
   {
-    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:979",
-    "name": "眼压波动",
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:449",
+    "name": "日常视觉任务",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:437",
+    "name": "视觉刺激疗法",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:489",
+    "name": "Lasik手术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:442",
+    "name": "VR/AR 治疗手段",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:461",
+    "name": "基质层切削术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:468",
+    "name": "飞秒激光刀",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:473",
+    "name": "角膜厚度",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:457",
+    "name": "飞秒激光",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:438",
+    "name": "感知觉学习法",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:444",
+    "name": "双眼分视训练",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:445",
+    "name": "AR技术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:439",
+    "name": "VR/AR 治疗法",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:480",
+    "name": "Epi-Lasik手术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:441",
+    "name": "VR眼镜",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:450",
+    "name": "弱视训练的依从性",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:474",
+    "name": "制作上皮瓣方式依赖酒精浸泡",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:475",
+    "name": "使用自动上皮刀制作上皮瓣",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:477",
+    "name": "减少Haze的形成和近视回退",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:443",
+    "name": "游戏或程序刺激",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:485",
+    "name": "基本消除了高阶像差",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:500",
+    "name": "ICL",
+    "reason": "Low Semantic Score (0.0836)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:512",
+    "name": "人类晶状体",
+    "reason": "Low Semantic Score (0.0221)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1030",
+    "name": "晶状体",
+    "reason": "Low Semantic Score (0.0125)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1013",
+    "name": "上皮细胞",
+    "reason": "Low Semantic Score (0.0104)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:492",
+    "name": "ICRs手术",
+    "reason": "Low Semantic Score (0.0030)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:504",
+    "name": "青光眼",
+    "reason": "Low Semantic Score (0.0025)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1027",
+    "name": "美国费里斯大学密歇根视光学院",
+    "reason": "Low Semantic Score (0.0024)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1029",
+    "name": "视网膜",
+    "reason": "Low Semantic Score (0.0020)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:520",
+    "name": "屈光检查",
+    "reason": "Low Semantic Score (0.0019)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:516",
+    "name": "年龄40岁以上",
+    "reason": "Low Semantic Score (0.0019)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:499",
+    "name": "人工晶体",
+    "reason": "Low Semantic Score (0.0019)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:503",
+    "name": "角膜内皮",
+    "reason": "Low Semantic Score (0.0015)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1012",
+    "name": "上皮瓣",
+    "reason": "Low Semantic Score (0.0014)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1014",
+    "name": "基底膜",
+    "reason": "Low Semantic Score (0.0013)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1017",
+    "name": "眼卡",
+    "reason": "Low Semantic Score (0.0011)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:518",
+    "name": "ICL手术",
+    "reason": "Low Semantic Score (0.0008)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:506",
+    "name": "白内障",
+    "reason": "Low Semantic Score (0.0007)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1026",
+    "name": "欧洲",
+    "reason": "Low Semantic Score (0.0007)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:493",
+    "name": "角膜基质环成形术",
+    "reason": "Low Semantic Score (0.0006)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:507",
+    "name": "人工晶体置换术",
+    "reason": "Low Semantic Score (0.0006)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:514",
+    "name": "晶状体去除",
+    "reason": "Low Semantic Score (0.0006)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:501",
+    "name": "眼内接触镜",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:513",
+    "name": "凸透镜",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1018",
+    "name": "个性化手术",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:523",
+    "name": "年满18岁",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1025",
+    "name": "德国",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1028",
+    "name": "眼球",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1015",
+    "name": "疼痛",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:511",
+    "name": "晶体置换手术",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:517",
+    "name": "角膜激光手术",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:515",
+    "name": "晶体置换",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:510",
+    "name": "巩膜加固术",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:509",
+    "name": "视网膜复位手术",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:508",
+    "name": "后巩膜葡萄膜肿",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:490",
+    "name": "FS-Lasik手术",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:519",
+    "name": "非激光类手术方式",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1023",
+    "name": "最完美的屈光矫正手术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:505",
+    "name": "屈光性透明晶体置换术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:491",
+    "name": "SMILE手术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1024",
+    "name": "非洲",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1019",
+    "name": "角膜地形图引导的Lasik",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1021",
+    "name": "眩光",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1016",
+    "name": "流泪",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:522",
+    "name": "30天",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1020",
+    "name": "波前像差引导的Lasik",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:521",
+    "name": "硬性隐形眼镜",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:498",
+    "name": "超高度近视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:502",
+    "name": "软性隐形眼镜",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1011",
+    "name": "近视回退",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1022",
+    "name": "夜视力下降",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1052",
+    "name": "视网膜中心",
+    "reason": "Low Semantic Score (0.0264)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1041",
+    "name": "眼内晶状体",
+    "reason": "Low Semantic Score (0.0100)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1054",
+    "name": "视锥细胞",
+    "reason": "Low Semantic Score (0.0083)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1046",
+    "name": "眼科专业",
+    "reason": "Low Semantic Score (0.0082)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1067",
+    "name": "视标",
+    "reason": "Low Semantic Score (0.0057)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1045",
+    "name": "屈光学",
+    "reason": "Low Semantic Score (0.0032)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1053",
+    "name": "中心凹",
+    "reason": "Low Semantic Score (0.0032)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1061",
+    "name": "斯内伦",
+    "reason": "Low Semantic Score (0.0024)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1032",
+    "name": "角膜",
+    "reason": "Low Semantic Score (0.0016)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1034",
+    "name": "生物电",
+    "reason": "Low Semantic Score (0.0013)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1031",
+    "name": "视神经",
+    "reason": "Low Semantic Score (0.0011)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1065",
+    "name": "缪天荣",
+    "reason": "Low Semantic Score (0.0008)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1044",
+    "name": "矫正手术",
+    "reason": "Low Semantic Score (0.0007)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1077",
+    "name": "视力筛查",
+    "reason": "Low Semantic Score (0.0007)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1051",
+    "name": "黄斑区",
+    "reason": "Low Semantic Score (0.0006)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1069",
+    "name": "国外学者",
+    "reason": "Low Semantic Score (0.0006)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1081",
+    "name": "后照法",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1036",
+    "name": "睫状肌",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1050",
+    "name": "成像",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1037",
+    "name": "瞳孔",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1057",
+    "name": "周边视力",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1070",
+    "name": "视角",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1072",
+    "name": "图形视力表",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1039",
+    "name": "眼内睫状肌",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1055",
+    "name": "中心视力",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1082",
+    "name": "视觉",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1038",
+    "name": "眼外肌",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1040",
+    "name": "大脑意识",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1033",
+    "name": "图像",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1079",
+    "name": "视力检测",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1071",
+    "name": "视力检查",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1047",
+    "name": "视光学",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1042",
+    "name": "屈光能力",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1062",
+    "name": "以小数记录",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1043",
+    "name": "散光",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1060",
+    "name": "视力检查工具",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1048",
+    "name": "眼球的成像功能",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1075",
+    "name": "视力检查过程",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1068",
+    "name": "对数视力表",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1076",
+    "name": "视力检查标准",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1049",
+    "name": "传递光线",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1035",
+    "name": "眼球的成像",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1058",
+    "name": "黄斑成像",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1073",
+    "name": "视力检查结果",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1066",
+    "name": "五分记录法",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1059",
+    "name": "黄斑",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1074",
+    "name": "视力检查准确性",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1078",
+    "name": "人工照明",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1080",
+    "name": "直接照明法",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1064",
+    "name": "改变检查距离后数值改变",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1105",
+    "name": "视网膜黄斑中心",
+    "reason": "Low Semantic Score (0.0278)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1096",
+    "name": "睫状体（肌）",
+    "reason": "Low Semantic Score (0.0153)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1090",
+    "name": "眼轴",
+    "reason": "Low Semantic Score (0.0064)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1104",
+    "name": "屈光状态",
+    "reason": "Low Semantic Score (0.0052)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1141",
+    "name": "新生血管",
+    "reason": "Low Semantic Score (0.0037)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1087",
+    "name": "焦度",
+    "reason": "Low Semantic Score (0.0016)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1092",
+    "name": "视野",
+    "reason": "Low Semantic Score (0.0014)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1083",
+    "name": "视中枢",
+    "reason": "Low Semantic Score (0.0011)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1091",
+    "name": "屈光异常",
+    "reason": "Low Semantic Score (0.0011)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1106",
+    "name": "屈光",
+    "reason": "Low Semantic Score (0.0010)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1116",
+    "name": "近距离学习或工作",
+    "reason": "Low Semantic Score (0.0010)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1085",
+    "name": "视功能",
+    "reason": "Low Semantic Score (0.0006)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1144",
+    "name": "玻璃体液化",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1145",
+    "name": "玻璃体混浊",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1097",
+    "name": "老视",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1114",
+    "name": "眼保健操",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1098",
+    "name": "老花眼",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1084",
+    "name": "光觉",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1088",
+    "name": "视力矫正",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1147",
+    "name": "裂孔",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1089",
+    "name": "远视储备",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1142",
+    "name": "开角型青光眼",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1095",
+    "name": "调节",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1143",
+    "name": "视网膜后脱离",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1148",
+    "name": "屈光性近视",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1099",
+    "name": "年龄",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1150",
+    "name": "眼轴延长",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1113",
+    "name": "近视眼易感性",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1086",
+    "name": "色觉",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1107",
+    "name": "角膜屈光力",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1151",
+    "name": "眼轴缩短",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1102",
+    "name": "调节训练",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1139",
+    "name": "视网膜脱离",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1149",
+    "name": "轴性近视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1152",
+    "name": "眼轴正常",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1115",
+    "name": "预防措施",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1146",
+    "name": "视网膜撕裂",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1112",
+    "name": "行动和思维能力减退",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1093",
+    "name": "视觉调节",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1118",
+    "name": "轻度近视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1108",
+    "name": "视疲劳",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1103",
+    "name": "视功能训练",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1140",
+    "name": "黄斑出血",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1111",
+    "name": "情绪急躁",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1109",
+    "name": "近视眼的早期症状",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1100",
+    "name": "调节幅度",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1110",
+    "name": "学习缺乏耐性",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1117",
+    "name": "间断性地遥望远处",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1094",
+    "name": "视觉疲劳",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1101",
+    "name": "调节灵敏度",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1192",
+    "name": "神经系统",
+    "reason": "Low Semantic Score (0.0135)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1196",
+    "name": "屈光系统",
+    "reason": "Low Semantic Score (0.0041)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1168",
+    "name": "睑板",
+    "reason": "Low Semantic Score (0.0035)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1167",
+    "name": "眼睑组织",
+    "reason": "Low Semantic Score (0.0023)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1201",
+    "name": "慧差",
+    "reason": "Low Semantic Score (0.0011)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1160",
+    "name": "眼底",
+    "reason": "Low Semantic Score (0.0010)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1181",
+    "name": "圆锥角膜",
+    "reason": "Low Semantic Score (0.0008)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1182",
+    "name": "角膜疾病",
+    "reason": "Low Semantic Score (0.0007)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1164",
+    "name": "子午线",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1169",
+    "name": "眼轮匝肌",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1187",
+    "name": "角膜胶原组织应力不均",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1179",
+    "name": "角膜外伤",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1161",
+    "name": "眼球后部形态",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1163",
+    "name": "散光眼",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1176",
+    "name": "睑板及轮匝肌",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1183",
+    "name": "角膜屈光手术",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1191",
+    "name": "眼肌",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1197",
+    "name": "角膜地形图仪",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1184",
+    "name": "近视矫正手术",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1158",
+    "name": "黄斑新生血管",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1162",
+    "name": "远视眼",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1194",
+    "name": "双眼视网膜的倒像",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1165",
+    "name": "重影",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1185",
+    "name": "准分子激光近视矫正手术",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1173",
+    "name": "中年后",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1172",
+    "name": "近视散光",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1156",
+    "name": "视网膜脉络膜大片萎缩",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1189",
+    "name": "双眼单视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1174",
+    "name": "睑板及轮匝肌萎缩",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1170",
+    "name": "角膜曲率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1190",
+    "name": "眼肌功能正常",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1188",
+    "name": "双眼视觉或双眼单视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1193",
+    "name": "立体视觉",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1199",
+    "name": "像差",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1202",
+    "name": "球差",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1186",
+    "name": "角膜厚度过薄",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1171",
+    "name": "眼睑压迫眼球角膜",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1200",
+    "name": "高阶像差",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1178",
+    "name": "眼球形态变形",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1198",
+    "name": "低阶像差",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1155",
+    "name": "眼轴增长正常",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1180",
+    "name": "角膜溃疡治愈结疤",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1166",
+    "name": "高度散光",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1195",
+    "name": "视乳头",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1159",
+    "name": "Fuchs 斑",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1157",
+    "name": "黄斑漆样裂纹",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1175",
+    "name": "垂直方向的近视散光",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1177",
+    "name": "眼睑松弛",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1153",
+    "name": "眼轴增长过快",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1154",
+    "name": "眼轴增长缓慢",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1231",
+    "name": "神经",
+    "reason": "Low Semantic Score (0.0059)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1227",
+    "name": "眼位",
+    "reason": "Low Semantic Score (0.0040)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1208",
+    "name": "个性化LASIK",
+    "reason": "Low Semantic Score (0.0016)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1203",
+    "name": "屈光参差",
+    "reason": "Low Semantic Score (0.0006)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1205",
+    "name": "LASIK",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1224",
+    "name": "双眼的合像发射系统",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1229",
+    "name": "内斜视",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1242",
+    "name": "有角膜混浊",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1234",
+    "name": "矫正视力",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1233",
+    "name": "糖尿病",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1244",
+    "name": "先天性白内障",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1222",
+    "name": "显斜视",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1251",
+    "name": "视觉障碍",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1209",
+    "name": "屈光参差性视觉障碍",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1219",
+    "name": "容貌",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1217",
+    "name": "双眼视功能",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1232",
+    "name": "高血压",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1237",
+    "name": "屈光参差性弱视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1235",
+    "name": "屈光不正性弱视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1218",
+    "name": "立体视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1230",
+    "name": "外斜视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1221",
+    "name": "隐斜视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1254",
+    "name": "畏光",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1228",
+    "name": "麻痹性斜视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1248",
+    "name": "暗适应能力",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1220",
+    "name": "共同性斜视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1215",
+    "name": "废用性弱视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1211",
+    "name": "交替视力",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1223",
+    "name": "屈光原因",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1252",
+    "name": "视野缺损",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1225",
+    "name": "合像冲动",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1212",
+    "name": "单眼视力",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1239",
+    "name": "斜视性弱视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1249",
+    "name": "行动困难",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1213",
+    "name": "面部发育不对称",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1206",
+    "name": "准分子激光角膜磨镶术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1253",
+    "name": "眼红",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1246",
+    "name": "视力低下",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1207",
+    "name": "波前像差引导的LASIK",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1226",
+    "name": "眼肌的不平衡程度",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1238",
+    "name": "形觉剥夺性弱视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1216",
+    "name": "调节矛盾和融合困难",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1243",
+    "name": "上睑下垂",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1236",
+    "name": "高度远视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1210",
+    "name": "双眼视力降低",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1240",
+    "name": "高度远视或散光",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1247",
+    "name": "视力低于正常值",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1204",
+    "name": "两眼的屈光度数不相对称",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1250",
+    "name": "不能晚上驾车",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1245",
+    "name": "长期不恰当遮盖单眼的儿童",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1281",
+    "name": "医学验光配镜",
+    "reason": "Low Semantic Score (0.0057)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1290",
+    "name": "出具科学的验光处方",
+    "reason": "Low Semantic Score (0.0025)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1295",
+    "name": "阿托品",
+    "reason": "Low Semantic Score (0.0023)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1273",
+    "name": "黄斑中心离焦",
+    "reason": "Low Semantic Score (0.0019)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1282",
+    "name": "普通验光",
+    "reason": "Low Semantic Score (0.0017)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1286",
+    "name": "眼位检查",
+    "reason": "Low Semantic Score (0.0012)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1255",
+    "name": "复视",
+    "reason": "Low Semantic Score (0.0008)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1272",
+    "name": "旁中心离焦",
+    "reason": "Low Semantic Score (0.0008)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1285",
+    "name": "度数",
+    "reason": "Low Semantic Score (0.0006)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1269",
+    "name": "散瞳查视力法",
+    "reason": "Low Semantic Score (0.0005)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1275",
+    "name": "角膜塑形镜",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1296",
+    "name": "后马托品",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1276",
+    "name": "硬性角膜接触镜",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1258",
+    "name": "视网膜脉络病变",
+    "reason": "Low Semantic Score (0.0004)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1283",
+    "name": "优势眼矫正视力略好于对侧眼",
+    "reason": "Low Semantic Score (0.0003)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1260",
+    "name": "周边性白内障",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1287",
+    "name": "调节力检查",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1256",
+    "name": "视网膜色素变性",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1257",
+    "name": "白点状视网膜炎",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1271",
+    "name": "近视发展",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1288",
+    "name": "散光轴向检查",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1297",
+    "name": "复方托吡卡胺",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1263",
+    "name": "真性近视",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1301",
+    "name": "睫状肌麻痹验光",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1305",
+    "name": "复方托吡卡胺滴眼液",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1268",
+    "name": "散瞳药物",
+    "reason": "Low Semantic Score (0.0001)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1262",
+    "name": "肝脏疾患后引起的视网膜功能不全",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1307",
+    "name": "睫状肌麻痹",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1298",
+    "name": "新福林滴眼液",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1302",
+    "name": "睫状肌麻痹药物",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1294",
+    "name": "散瞳剂",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1267",
+    "name": "阿托品眼膏",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1280",
+    "name": "主动离焦",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1291",
+    "name": "预防或减缓近视加深的建议或药物",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1264",
+    "name": "阿托品眼膏或眼液散瞳",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1278",
+    "name": "眼球转动",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1270",
+    "name": "睫状肌麻痹眼液",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1261",
+    "name": "高度近视",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1265",
+    "name": "麻痹睫状肌",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1304",
+    "name": "1%盐酸环喷托酯滴眼液",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1266",
+    "name": "解除紧张的调节状态",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1277",
+    "name": "近视发展速度",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1259",
+    "name": "视神经萎缩",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1292",
+    "name": "人工智能技术",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1274",
+    "name": "眼镜片周边的曲率",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1289",
+    "name": "配镜后的双眼调节平衡",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1303",
+    "name": "1%阿托品眼膏或凝胶",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1279",
+    "name": "普通隐形眼镜",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1306",
+    "name": "1%阿托品眼用凝胶",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1308",
+    "name": "屈光不正情况",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1310",
+    "name": "表观遗传",
+    "reason": "Low Semantic Score (0.0002)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1309",
+    "name": "近视的发生",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1312",
+    "name": "坐姿不正确",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1313",
+    "name": "照明不足",
+    "reason": "Low Semantic Score (0.0000)"
+  },
+  {
+    "id": "4:7175ef5b-a302-4007-ad18-3d046f84d1b2:1311",
+    "name": "握笔姿势不正确",
     "reason": "Low Semantic Score (0.0000)"
   }
 ]

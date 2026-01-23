@@ -23,6 +23,8 @@ from llama.config import cos_uploader
 from llama.progress_sse import progress_manager, sse_event, create_progress_event, create_error_event, consume_sse_queue
 from llama.file_type_detector import detect_file_type
 from llama.graph_service import graph_service
+from llama.query_preprocessor import QueryPreprocessor
+from llama.hard_match_postprocessor import HardMatchPostprocessor
 
 logger = logging.getLogger(__name__)
 
@@ -565,8 +567,31 @@ def search_knowledge_graph():
         
         logger.info(f"收到流式搜索请求: {msg}")
         
+        # 查询前置处理：意图分析、查询改写、实体硬匹配
+        preprocess_result = None
+        try:
+            if builder.graph_agent and builder.graph_store:
+                preprocessor = QueryPreprocessor(builder.graph_agent, builder.graph_store)
+                preprocess_result = preprocessor.preprocess(msg)
+                logger.info(f"查询前置处理完成: 意图={preprocess_result['intent']}, "
+                          f"提取实体={len(preprocess_result['extracted_entities'])}, "
+                          f"硬匹配实体={len(preprocess_result['hard_match_entities'])}")
+        except Exception as e:
+            logger.warning(f"查询前置处理失败，使用原始查询: {e}")
+        
         def generate():
-            stream_gen = builder.stream_query_knowledge_graph(msg)
+            # 如果前置处理成功，使用增强后的查询和硬匹配节点
+            if preprocess_result:
+                enhanced_query = preprocess_result['enhanced_query']
+                hard_match_nodes = preprocess_result['hard_match_nodes']
+                query_intent = preprocess_result['intent']
+                stream_gen = builder.stream_query_knowledge_graph(
+                    enhanced_query, 
+                    hard_match_nodes=hard_match_nodes,
+                    query_intent=query_intent
+                )
+            else:
+                stream_gen = builder.stream_query_knowledge_graph(msg)
             for item in stream_gen:
                 if isinstance(item, str):
                     if item.startswith("错误:") or item.startswith("查询出错:"):
@@ -581,10 +606,18 @@ def search_knowledge_graph():
                         "event": "graph_data",
                         "data": item["data"]
                     })
+                elif isinstance(item, dict) and item.get("type") == "retrieved_contexts":
+                    yield sse_event({
+                        "event": "contexts",
+                        "data": item["data"]
+                    })
                 elif isinstance(item, dict) and item.get("type") == "done":
                     yield sse_event({
                         "event": "done",
-                        "data": {"full_answer": item.get("full_answer", "")}
+                        "data": {
+                            "full_answer": item.get("full_answer", ""),
+                            "contexts": item.get("contexts", [])
+                        }
                     })
                 elif isinstance(item, dict):
                     yield sse_event(item)

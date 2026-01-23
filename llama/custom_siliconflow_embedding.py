@@ -48,7 +48,7 @@ def _get_global_async_semaphore():
 
 # 从配置文件导入速率限制配置 - 优化在线 API 性能
 try:
-    from config import RATE_LIMIT_CONFIG, EMBEDDING_CONFIG
+    from config import RATE_LIMIT_CONFIG, EMBEDDING_CONFIG, get_rate_limit
     DEFAULT_REQUEST_DELAY = RATE_LIMIT_CONFIG.get('request_delay', 0.5)
     MAX_RETRIES = RATE_LIMIT_CONFIG.get('max_retries', 2)
     RETRY_DELAY = RATE_LIMIT_CONFIG.get('retry_delay', 5.0)
@@ -56,6 +56,14 @@ try:
     USE_HYBRID_EMBEDDING = False
     MODEL_KWARGS = {}
 except ImportError:
+    from llama.config import RATE_LIMIT_CONFIG, EMBEDDING_CONFIG, get_rate_limit
+    DEFAULT_REQUEST_DELAY = RATE_LIMIT_CONFIG.get('request_delay', 0.5)
+    MAX_RETRIES = RATE_LIMIT_CONFIG.get('max_retries', 2)
+    RETRY_DELAY = RATE_LIMIT_CONFIG.get('retry_delay', 5.0)
+    ENABLE_LOCAL_FALLBACK = False
+    USE_HYBRID_EMBEDDING = False
+    MODEL_KWARGS = {}
+except (ImportError, Exception):
     DEFAULT_REQUEST_DELAY = 0.5
     MAX_RETRIES = 2
     RETRY_DELAY = 5.0
@@ -295,14 +303,17 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
         kwargs.pop('request_delay', None)
         kwargs.pop('max_retries', None)
         
-        actual_max_retries = max_retries if max_retries is not None else MAX_RETRIES
+        # 获取模型特定的频控配置
+        limit_info = get_rate_limit(model)
+        
+        actual_max_retries = max_retries if max_retries is not None else limit_info["max_retries"]
         
         base_url = "https://api.siliconflow.cn/v1/embeddings"
         kwargs['base_url'] = base_url
         
         super().__init__(model=model, api_key=api_key, max_retries=actual_max_retries, **kwargs)
         
-        self._request_delay = request_delay if request_delay is not None else DEFAULT_REQUEST_DELAY
+        self._request_delay = request_delay if request_delay is not None else limit_info["request_delay"]
         self._max_retries = actual_max_retries
         self._api_key = api_key
         self._model = model
@@ -310,9 +321,9 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
         
         logger.debug(
             f"CustomSiliconFlowEmbedding 初始化完成: "
-            f"delay={self._request_delay}s, "
-            f"retries={self._max_retries}, "
-            f"global_concurrency=1"
+            f"model={self._model}, "
+            f"delay={self._request_delay:.4f}s, "
+            f"retries={self._max_retries}"
         )
 
     def _mean_pooling(self, embeddings: List[List[float]]) -> List[float]:
@@ -379,13 +390,12 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
                 requests.Response: HTTP 响应对象
             """
             try:
-                verify_path = certifi.where() if verify_ssl else False
                 response = requests.post(
                     self._base_url,
                     headers=headers,
                     data=payload_json,
                     timeout=60,
-                    verify=verify_path
+                    verify=False
                 )
                 response.raise_for_status()
                 return response
@@ -476,8 +486,7 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
                 httpx.Response: HTTP 响应对象
             """
             try:
-                verify_path = certifi.where() if verify_ssl else False
-                async with httpx.AsyncClient(verify=verify_path) as client:
+                async with httpx.AsyncClient(verify=False, trust_env=False) as client:
                     response = await client.post(
                         self._base_url,
                         headers=headers,
@@ -679,7 +688,7 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
                     return result
                     
                 except HTTPError as e:
-                    if e.response.status_code in [403, 429]:
+                    if e.response.status_code in [403, 429, 500, 502, 503, 504]:
                         self._handle_rate_limit_error(attempt, self._max_retries, e)
                         continue
                     elif e.response.status_code == 413:
@@ -789,9 +798,10 @@ class CustomSiliconFlowEmbedding(SiliconFlowEmbedding):
                     
                 except Exception as e:
                     error_str = str(e)
-                    if "403" in error_str or "429" in error_str:
+                    status_code = getattr(getattr(e, 'response', None), 'status_code', None)
+                    if "403" in error_str or "429" in error_str or status_code in [403, 429, 500, 502, 503, 504]:
                         wait_time = RETRY_DELAY * (2 ** attempt)
-                        logger.warning(f"异步 API 限制错误 (403/429): {e}，等待 {wait_time:.1f} 秒后重试")
+                        logger.warning(f"异步 API 错误 ({status_code or 'N/A'}): {e}，等待 {wait_time:.1f} 秒后重试")
                         if attempt < self._max_retries - 1:
                             await asyncio.sleep(wait_time)
                             continue

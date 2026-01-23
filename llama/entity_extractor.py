@@ -271,31 +271,31 @@ def parse_llm_output_to_enhanced_triplets(llm_output: str) -> List[Tuple[EntityN
             head_type = Neo4jTextSanitizer.sanitize_entity_type(head_type)
             tail_type = Neo4jTextSanitizer.sanitize_entity_type(tail_type)
             
-            # 应用本体约束：验证和映射实体类型
-            original_head_type = head_type
-            original_tail_type = tail_type
-            head_type = validate_and_map_entity_type(head_type)
-            tail_type = validate_and_map_entity_type(tail_type)
+            # # 应用本体约束：验证和映射实体类型
+            # original_head_type = head_type
+            # original_tail_type = tail_type
+            # head_type = validate_and_map_entity_type(head_type)
+            # tail_type = validate_and_map_entity_type(tail_type)
             
-            # 如果类型被丢弃（返回 None），跳过该三元组
-            if head_type is None or tail_type is None:
-                discarded_types = []
-                if head_type is None:
-                    discarded_types.append(f"head: {original_head_type}")
-                if tail_type is None:
-                    discarded_types.append(f"tail: {original_tail_type}")
-                logger.warning(
-                    f"实体类型不在允许列表中，跳过三元组: "
-                    f"{head_name}({original_head_type}) - {relation_type} - {tail_name}({original_tail_type}) | "
-                    f"丢弃原因: {', '.join(discarded_types)}"
-                )
-                continue
+            # # 如果类型被丢弃（返回 None），跳过该三元组
+            # if head_type is None or tail_type is None:
+            #     discarded_types = []
+            #     if head_type is None:
+            #         discarded_types.append(f"head: {original_head_type}")
+            #     if tail_type is None:
+            #         discarded_types.append(f"tail: {original_tail_type}")
+            #     logger.warning(
+            #         f"实体类型不在允许列表中，跳过三元组: "
+            #         f"{head_name}({original_head_type}) - {relation_type} - {tail_name}({original_tail_type}) | "
+            #         f"丢弃原因: {', '.join(discarded_types)}"
+            #     )
+            #     continue
             
-            # 如果类型被映射为 Concept，记录日志
-            if original_head_type != head_type and head_type == "Concept":
-                logger.info(f"实体类型映射: {head_name} '{original_head_type}' -> 'Concept'")
-            if original_tail_type != tail_type and tail_type == "Concept":
-                logger.info(f"实体类型映射: {tail_name} '{original_tail_type}' -> 'Concept'")
+            # # 如果类型被映射为 Concept，记录日志
+            # if original_head_type != head_type and head_type == "Concept":
+            #     logger.info(f"实体类型映射: {head_name} '{original_head_type}' -> 'Concept'")
+            # if original_tail_type != tail_type and tail_type == "Concept":
+            #     logger.info(f"实体类型映射: {tail_name} '{original_tail_type}' -> 'Concept'")
             
             # 确保清理后不为 None 或空字符串（备用检查）
             if not head_type or head_type == "None":

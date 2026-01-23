@@ -22,6 +22,13 @@ import certifi
 from llama_index.core.bridge.pydantic import Field, PrivateAttr
 from llama_index.core.postprocessor.types import BaseNodePostprocessor
 from llama_index.core.schema import NodeWithScore, QueryBundle
+try:
+    from llama.config import get_rate_limit
+except ImportError:
+    try:
+        from config import get_rate_limit
+    except ImportError:
+        get_rate_limit = None
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +63,8 @@ class CustomSiliconFlowRerank(BaseNodePostprocessor):
         model: str = "BAAI/bge-reranker-v2-m3",
         top_n: int = 2,
         base_url: str = "https://api.siliconflow.cn/v1/rerank",
+        request_delay: Optional[float] = None,
+        max_retries: Optional[int] = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -66,6 +75,8 @@ class CustomSiliconFlowRerank(BaseNodePostprocessor):
             model: Rerank 模型名称，默认为 BAAI/bge-reranker-v2-m3
             top_n: 返回的节点数量，默认为 2
             base_url: API 基础 URL，默认为 https://api.siliconflow.cn/v1/rerank
+            request_delay: 请求延迟，若不提供则从 config 获取
+            max_retries: 最大重试次数，若不提供则从 config 获取
             **kwargs: 其他传递给父类的参数
         """
         super().__init__(
@@ -75,6 +86,19 @@ class CustomSiliconFlowRerank(BaseNodePostprocessor):
             base_url=base_url,
             **kwargs
         )
+        
+        # 获取频控配置
+        if get_rate_limit:
+            limit_info = get_rate_limit(model)
+            self._request_delay = request_delay if request_delay is not None else limit_info["request_delay"]
+            self._max_retries = max_retries if max_retries is not None else limit_info["max_retries"]
+            self._retry_delay = limit_info["retry_delay"]
+        else:
+            self._request_delay = request_delay if request_delay is not None else 0.5
+            self._max_retries = max_retries if max_retries is not None else 3
+            self._retry_delay = 5.0
+            
+        logger.debug(f"CustomSiliconFlowRerank 初始化: model={model}, delay={self._request_delay:.4f}s")
 
     @classmethod
     def class_name(cls) -> str:
@@ -147,13 +171,12 @@ class CustomSiliconFlowRerank(BaseNodePostprocessor):
                 requests.Response: HTTP 响应对象
             """
             try:
-                verify_path = certifi.where() if verify_ssl else False
                 response = requests.post(
                     self.base_url,
                     headers=headers,
                     json=payload,
                     timeout=30,
-                    verify=verify_path
+                    verify=False
                 )
                 response.raise_for_status()
                 return response
@@ -168,44 +191,56 @@ class CustomSiliconFlowRerank(BaseNodePostprocessor):
                     return _do_request(verify_ssl=False)
                 raise
         
-        try:
-            response = _do_request(verify_ssl=True)
-            result = response.json()
-            
-            # 解析结果
-            # 预期格式: {"results": [{"index": 0, "relevance_score": 0.9}, ...]}
-            rerank_results = result.get("results", [])
-            
-            if not rerank_results:
-                logger.warning("Rerank API 返回空结果，使用原始排序")
-                return nodes[:self.top_n]
-            
-            new_nodes = []
-            for item in rerank_results:
-                idx = item.get("index")
-                score = item.get("relevance_score")
-                
-                if idx is not None and 0 <= idx < len(nodes):
-                    node = nodes[idx]
-                    node.score = score
-                    new_nodes.append(node)
-                    logger.debug(f"节点 {idx}: 相关性分数 = {score:.4f}")
-            
-            logger.info(f"✅ 重排序完成，返回 {len(new_nodes)} 个节点")
-            return new_nodes
-            
-        except requests.exceptions.HTTPError as e:
-            logger.error(f"SiliconFlow Rerank HTTP 错误: {e}")
-            if e.response is not None:
-                logger.error(f"响应状态码: {e.response.status_code}")
-                logger.error(f"响应内容: {e.response.text[:200]}")
-        except requests.exceptions.Timeout as e:
-            logger.error(f"SiliconFlow Rerank 请求超时: {e}")
-        except requests.exceptions.ConnectionError as e:
-            logger.error(f"SiliconFlow Rerank 连接错误: {e}")
-        except Exception as e:
-            logger.error(f"SiliconFlow Rerank 未知错误: {type(e).__name__}: {e}")
+        import time
+        max_retries = self._max_retries
+        retry_delay = self._retry_delay
+        result = None
         
-        # 如果失败，降级为返回原始节点的前 top_n
-        logger.warning("⚠️ Rerank 失败，降级为原始排序")
-        return nodes[:self.top_n]
+        # 在请求前执行延迟
+        time.sleep(self._request_delay)
+        
+        for attempt in range(max_retries):
+            try:
+                response = _do_request(verify_ssl=True)
+                result = response.json()
+                break
+            except (requests.exceptions.HTTPError, requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+                status_code = getattr(getattr(e, 'response', None), 'status_code', None)
+                if status_code in [403, 429, 500, 502, 503, 504] or isinstance(e, (requests.exceptions.Timeout, requests.exceptions.ConnectionError)):
+                    if attempt < max_retries - 1:
+                        wait_time = retry_delay * (2 ** attempt)
+                        logger.warning(f"Rerank API 错误 ({status_code or 'N/A'}): {e}，将在 {wait_time:.1f} 秒后重试 (第 {attempt + 1} 次)")
+                        time.sleep(wait_time)
+                        continue
+                
+                logger.error(f"Rerank API 最终失败: {e}")
+                return nodes[:self.top_n]
+            except Exception as e:
+                logger.error(f"Rerank 未知错误: {e}")
+                return nodes[:self.top_n]
+        
+        if not result:
+            return nodes[:self.top_n]
+
+        # 解析结果
+        # 预期格式: {"results": [{"index": 0, "relevance_score": 0.9}, ...]}
+        rerank_results = result.get("results", [])
+        
+        if not rerank_results:
+            logger.warning("Rerank API 返回空结果，使用原始排序")
+            return nodes[:self.top_n]
+        
+        new_nodes = []
+        for item in rerank_results:
+            idx = item.get("index")
+            score = item.get("relevance_score")
+            
+            if idx is not None and 0 <= idx < len(nodes):
+                node = nodes[idx]
+                node.score = score
+                new_nodes.append(node)
+                logger.debug(f"节点 {idx}: 相关性分数 = {score:.4f}")
+        
+        logger.info(f"✅ 重排序完成，返回 {len(new_nodes)} 个节点")
+        return new_nodes
+

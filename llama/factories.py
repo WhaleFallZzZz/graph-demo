@@ -76,12 +76,14 @@ class ModelFactory:
             return None
 
         try:
+            import httpx
             llm = modules["SiliconFlow"](
                 api_key=API_CONFIG["siliconflow"]["api_key"],
                 model=API_CONFIG["siliconflow"]["llm_model"],
                 timeout=API_CONFIG["siliconflow"]["timeout"],
                 max_tokens=API_CONFIG["siliconflow"]["max_tokens"],
                 temperature=API_CONFIG["siliconflow"]["temperature"],
+                http_client=httpx.Client(verify=False)
             )
             # 配置全局设置
             modules["Settings"].llm = llm
@@ -127,12 +129,14 @@ class ModelFactory:
                 or "Qwen/Qwen2.5-7B-Instruct"
             )
 
+            import httpx
             lightweight_llm = modules["SiliconFlow"](
                 api_key=API_CONFIG["siliconflow"]["api_key"],
                 model=lightweight_model,
                 timeout=API_CONFIG["siliconflow"]["timeout"],
                 max_tokens=2048,  # 轻量级模型使用较小的max_tokens
                 temperature=0.0,  # 校验任务需要确定性输出
+                http_client=httpx.Client(verify=False)
             )
             logger.info(f"创建轻量级校验模型成功: {lightweight_model}")
             return lightweight_llm
